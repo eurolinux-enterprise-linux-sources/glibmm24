@@ -599,6 +599,22 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum
+;; {
+;;   G_LOG_WRITER_HANDLED = 1,
+;;   G_LOG_WRITER_UNHANDLED = 0,
+;; } GLogWriterOutput;
+
+(define-enum-extended LogWriterOutput
+  (in-module "G")
+  (c-name "GLogWriterOutput")
+  (values
+    '("handled" "G_LOG_WRITER_HANDLED" "1")
+    '("unhandled" "G_LOG_WRITER_UNHANDLED" "0")
+  )
+)
+
 ;; From gnode.h
 
 ;; Original typedef:
@@ -1669,7 +1685,15 @@
 ;;   G_UNICODE_SCRIPT_PSALTER_PAHLAVI,        /* Phlp */
 ;;   G_UNICODE_SCRIPT_SIDDHAM,                /* Sidd */
 ;;   G_UNICODE_SCRIPT_TIRHUTA,                /* Tirh */
-;;   G_UNICODE_SCRIPT_WARANG_CITI             /* Wara */
+;;   G_UNICODE_SCRIPT_WARANG_CITI,            /* Wara */
+;; 
+;;   /* Unicode 8.0 additions */
+;;   G_UNICODE_SCRIPT_AHOM,                   /* Ahom */
+;;   G_UNICODE_SCRIPT_ANATOLIAN_HIEROGLYPHS,  /* Hluw */
+;;   G_UNICODE_SCRIPT_HATRAN,                 /* Hatr */
+;;   G_UNICODE_SCRIPT_MULTANI,                /* Mult */
+;;   G_UNICODE_SCRIPT_OLD_HUNGARIAN,          /* Hung */
+;;   G_UNICODE_SCRIPT_SIGNWRITING             /* Sgnw */
 ;; } GUnicodeScript;
 
 (define-enum-extended UnicodeScript
@@ -1803,6 +1827,12 @@
     '("siddham" "G_UNICODE_SCRIPT_SIDDHAM" "123")
     '("tirhuta" "G_UNICODE_SCRIPT_TIRHUTA" "124")
     '("warang-citi" "G_UNICODE_SCRIPT_WARANG_CITI" "125")
+    '("ahom" "G_UNICODE_SCRIPT_AHOM" "126")
+    '("anatolian-hieroglyphs" "G_UNICODE_SCRIPT_ANATOLIAN_HIEROGLYPHS" "127")
+    '("hatran" "G_UNICODE_SCRIPT_HATRAN" "128")
+    '("multani" "G_UNICODE_SCRIPT_MULTANI" "129")
+    '("old-hungarian" "G_UNICODE_SCRIPT_OLD_HUNGARIAN" "130")
+    '("signwriting" "G_UNICODE_SCRIPT_SIGNWRITING" "131")
   )
 )
 
@@ -1978,6 +2008,26 @@
     '("unknown-keyword" "G_VARIANT_PARSE_ERROR_UNKNOWN_KEYWORD" "15")
     '("unterminated-string-constant" "G_VARIANT_PARSE_ERROR_UNTERMINATED_STRING_CONSTANT" "16")
     '("value-expected" "G_VARIANT_PARSE_ERROR_VALUE_EXPECTED" "17")
+  )
+)
+
+;; From gwin32.h
+
+;; Original typedef:
+;; typedef enum
+;; {
+;;   G_WIN32_OS_ANY,
+;;   G_WIN32_OS_WORKSTATION,
+;;   G_WIN32_OS_SERVER,
+;; } GWin32OSType;
+
+(define-enum-extended Win32OSType
+  (in-module "G")
+  (c-name "GWin32OSType")
+  (values
+    '("any" "G_WIN32_OS_ANY" "0")
+    '("workstation" "G_WIN32_OS_WORKSTATION" "1")
+    '("server" "G_WIN32_OS_SERVER" "2")
   )
 )
 

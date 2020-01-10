@@ -17,12 +17,6 @@
 
 _DEFS(glibmm,glib)
 
-#m4 _PUSH(SECTION_CC_PRE_INCLUDES)
-/* So we can use deprecated functions in our deprecated methods */
-#undef G_DISABLE_DEPRECATED
-#define GLIB_DISABLE_DEPRECATION_WARNINGS 1
-#m4 _POP()
-
 #include <glibmmconfig.h>
 #include <glibmm/ustring.h>
 #include <glib.h>
@@ -40,8 +34,8 @@ namespace Glib
 class Date
 {
 public:
-  typedef guint8  Day;
-  typedef guint16 Year;
+  using Day = guint8 ;
+  using Year = guint16;
 
   _WRAP_ENUM(Month, GDateMonth, s#^DATE_##, NO_GTYPE, get_type_func=)
   _WRAP_ENUM(Weekday, GDateWeekday, s#^DATE_##, NO_GTYPE)

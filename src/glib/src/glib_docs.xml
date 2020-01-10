@@ -1,4 +1,51 @@
 <root>
+<property name="GBinding:flags">
+<description>
+Flags to be used to control the #GBinding
+
+Since: 2.26
+
+</description>
+</property>
+
+<property name="GBinding:source">
+<description>
+The #GObject that should be used as the source of the binding
+
+Since: 2.26
+
+</description>
+</property>
+
+<property name="GBinding:source-property">
+<description>
+The name of the property of #GBinding:source that should be used
+as the source of the binding
+
+Since: 2.26
+
+</description>
+</property>
+
+<property name="GBinding:target">
+<description>
+The #GObject that should be used as the target of the binding
+
+Since: 2.26
+
+</description>
+</property>
+
+<property name="GBinding:target-property">
+<description>
+The name of the property of #GBinding:target that should be used
+as the target of the binding
+
+Since: 2.26
+
+</description>
+</property>
+
 <enum name="GBindingFlags">
 <description>
 Flags to be passed to g_object_bind_property() or
@@ -106,7 +153,7 @@ Since: 2.16
 </parameter_description>
 </parameter>
 <parameter name="G_CHECKSUM_SHA512">
-<parameter_description> Use the SHA-512 hashing algorithm
+<parameter_description> Use the SHA-512 hashing algorithm (Since: 2.36)
 </parameter_description>
 </parameter>
 </parameters>
@@ -852,7 +899,8 @@ This level is also used for messages produced by g_assert().
 </parameter_description>
 </parameter>
 <parameter name="G_LOG_LEVEL_CRITICAL">
-<parameter_description> log level for critical messages, see g_critical().
+<parameter_description> log level for critical warning messages, see
+g_critical().
 This level is also used for messages produced by g_return_if_fail()
 and g_return_val_if_fail().
 </parameter_description>
@@ -875,6 +923,30 @@ and g_return_val_if_fail().
 </parameter>
 <parameter name="G_LOG_LEVEL_MASK">
 <parameter_description> a mask including all log levels
+</parameter_description>
+</parameter>
+</parameters>
+</enum>
+
+<enum name="GLogWriterOutput">
+<description>
+Return values from #GLogWriterFuncs to indicate whether the given log entry
+was successfully handled by the writer, or whether there was an error in
+handling it (and hence a fallback writer should be used).
+
+If a #GLogWriterFunc ignores a log entry, it should return
+%G_LOG_WRITER_HANDLED.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="G_LOG_WRITER_HANDLED">
+<parameter_description> Log writer has handled the log entry.
+</parameter_description>
+</parameter>
+<parameter name="G_LOG_WRITER_UNHANDLED">
+<parameter_description> Log writer could not handle the log entry.
 </parameter_description>
 </parameter>
 </parameters>
@@ -1169,8 +1241,8 @@ option: `--name arg` or combined in a single argument: `--name=arg`.
 </parameter_description>
 </parameter>
 <parameter name="G_OPTION_ARG_CALLBACK">
-<parameter_description> The option provides a callback to parse the
-extra argument.
+<parameter_description> The option provides a callback (of type
+#GOptionArgFunc) to parse the extra argument.
 </parameter_description>
 </parameter>
 <parameter name="G_OPTION_ARG_FILENAME">
@@ -1284,7 +1356,7 @@ your direct control. Since 2.8.
 <enum name="GParamFlags">
 <description>
 Through the #GParamFlags flag values, certain aspects of parameters
-can be configured. See also #G_PARAM_READWRITE and #G_PARAM_STATIC_STRINGS.
+can be configured. See also #G_PARAM_STATIC_STRINGS.
 
 </description>
 <parameters>
@@ -1305,7 +1377,7 @@ can be configured. See also #G_PARAM_READWRITE and #G_PARAM_STATIC_STRINGS.
 </parameter_description>
 </parameter>
 <parameter name="G_PARAM_CONSTRUCT_ONLY">
-<parameter_description> the parameter will only be set upon object construction
+<parameter_description> the parameter can only be set upon object construction
 </parameter_description>
 </parameter>
 <parameter name="G_PARAM_LAX_VALIDATION">
@@ -2558,6 +2630,10 @@ Deprecated: 2.36: g_type_init() is now done automatically
 <parameter_description> Mask covering all debug flags
 </parameter_description>
 </parameter>
+<parameter name="G_TYPE_DEBUG_INSTANCE_COUNT">
+<parameter_description> Keep a count of instances of each type
+</parameter_description>
+</parameter>
 </parameters>
 </enum>
 
@@ -2807,7 +2883,7 @@ a value never returned from g_unichar_get_script()
 </parameter>
 <parameter name="G_UNICODE_SCRIPT_INHERITED">
 <parameter_description>  a mark glyph that takes its script from the
-i                             base glyph to which it is attached
+base glyph to which it is attached
 </parameter_description>
 </parameter>
 <parameter name="G_UNICODE_SCRIPT_ARABIC">
@@ -3310,7 +3386,34 @@ Old South Arabian. Since 2.26
 </parameter>
 <parameter name="G_UNICODE_SCRIPT_TIRHUTA">
 <parameter_description>              Tirhuta. Since: 2.42
-@G_UNICODE_SCRIPT_WARANG_CITI           Warang Citi. Since: 2.42
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_WARANG_CITI">
+<parameter_description>          Warang Citi. Since: 2.42
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_AHOM">
+<parameter_description>                 Ahom. Since: 2.48
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_ANATOLIAN_HIEROGLYPHS">
+<parameter_description> Anatolian Hieroglyphs. Since: 2.48
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_HATRAN">
+<parameter_description>               Hatran. Since: 2.48
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_MULTANI">
+<parameter_description>              Multani. Since: 2.48
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_OLD_HUNGARIAN">
+<parameter_description>        Old Hungarian. Since: 2.48
+</parameter_description>
+</parameter>
+<parameter name="G_UNICODE_SCRIPT_SIGNWRITING">
+<parameter_description>          Signwriting. Since: 2.48
 </parameter_description>
 </parameter>
 </parameters>
@@ -3320,7 +3423,7 @@ Old South Arabian. Since 2.26
 <description>
 These are the possible character classifications from the
 Unicode specification.
-See &lt;ulink url=&quot;http://www.unicode.org/Public/UNIDATA/UnicodeData.html&quot;&gt;http://www.unicode.org/Public/UNIDATA/UnicodeData.html&lt;/ulink&gt;.
+See &lt;ulink url=&quot;http://www.unicode.org/reports/tr44/#General_Category_Values&quot;&gt;Unicode Character Database&lt;/unlink&gt;.
 
 </description>
 <parameters>
@@ -3666,6 +3769,48 @@ Error codes returned by parsing text-format GVariants.
 </parameters>
 </enum>
 
+<enum name="GWin32OSType">
+<description>
+Type of Windows edition to check for at run-time.
+
+</description>
+<parameters>
+<parameter name="G_WIN32_OS_ANY">
+<parameter_description> The running system can be a workstation or a server edition of
+Windows.  The type of the running system is therefore not checked.
+</parameter_description>
+</parameter>
+<parameter name="G_WIN32_OS_WORKSTATION">
+<parameter_description> The running system is a workstation edition of Windows,
+such as Windows 7 Professional.
+</parameter_description>
+</parameter>
+<parameter name="G_WIN32_OS_SERVER">
+<parameter_description> The running system is a server edition of Windows, such as
+Windows Server 2008 R2.
+</parameter_description>
+</parameter>
+</parameters>
+</enum>
+
+<function name="g_abort">
+<description>
+A wrapper for the POSIX abort() function.
+
+On Windows it is a function that makes extra effort (including a call
+to abort()) to ensure that a debugger-catchable exception is thrown
+before the program terminates.
+
+See your C library manual for more details about abort().
+
+Since: 2.50
+
+</description>
+<parameters>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_access">
 <description>
 A wrapper for the POSIX access() function. This function is used to
@@ -3686,7 +3831,8 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -4280,7 +4426,8 @@ This function generates enough precision that converting
 the string back using g_ascii_strtod() gives the same machine-number
 (on machines with IEEE compatible 64bit doubles). It is
 guaranteed that the size of the resulting string will never
-be larger than @G_ASCII_DTOSTR_BUF_SIZE bytes.
+be larger than @G_ASCII_DTOSTR_BUF_SIZE bytes, including the terminating
+nul character, which is always added.
 
 
 </description>
@@ -4308,6 +4455,8 @@ Converts a #gdouble to a string, using the '.' as
 decimal point. To format the number you pass in
 a printf()-style format string. Allowed conversion
 specifiers are 'e', 'E', 'f', 'F', 'g' and 'G'.
+
+The returned buffer is guaranteed to be nul-terminated.
 
 If you just want to want to serialize the value into a
 string, use g_ascii_dtostr().
@@ -4710,8 +4859,8 @@ you can reliably detect overflow and underflow.
 </parameter_description>
 </parameter>
 <parameter name="endptr">
-<parameter_description>  if non-%NULL, it returns the character after
-the last character used in the conversion.
+<parameter_description> if non-%NULL, it returns the
+character after the last character used in the conversion.
 </parameter_description>
 </parameter>
 </parameters>
@@ -4748,8 +4897,8 @@ Since: 2.12
 </parameter_description>
 </parameter>
 <parameter name="endptr">
-<parameter_description>  if non-%NULL, it returns the character after
-the last character used in the conversion.
+<parameter_description> if non-%NULL, it returns the
+character after the last character used in the conversion.
 </parameter_description>
 </parameter>
 <parameter name="base">
@@ -4791,8 +4940,8 @@ Since: 2.2
 </parameter_description>
 </parameter>
 <parameter name="endptr">
-<parameter_description>  if non-%NULL, it returns the character after
-the last character used in the conversion.
+<parameter_description> if non-%NULL, it returns the
+character after the last character used in the conversion.
 </parameter_description>
 </parameter>
 <parameter name="base">
@@ -4999,6 +5148,45 @@ One of ==, !=, &lt;, &gt;, &lt;=, &gt;=.
 </parameter>
 <parameter name="n2">
 <parameter_description> another integer
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_assert_cmpmem">
+<description>
+Debugging macro to compare memory regions. If the comparison fails,
+an error message is logged and the application is either terminated
+or the testcase marked as failed.
+
+The effect of `g_assert_cmpmem (m1, l1, m2, l2)` is
+the same as `g_assert_true (l1 == l2 &amp;&amp; memcmp (m1, m2, l1) == 0)`.
+The advantage of this macro is that it can produce a message that
+includes the actual values of @l1 and @l2.
+
+|[&lt;!-- language=&quot;C&quot; --&gt;
+g_assert_cmpmem (buf-&gt;data, buf-&gt;len, expected, sizeof (expected));
+]|
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="m1">
+<parameter_description> pointer to a buffer
+</parameter_description>
+</parameter>
+<parameter name="l1">
+<parameter_description> length of @m1
+</parameter_description>
+</parameter>
+<parameter name="m2">
+<parameter_description> pointer to another buffer
+</parameter_description>
+</parameter>
+<parameter name="l2">
+<parameter_description> length of @m2
 </parameter_description>
 </parameter>
 </parameters>
@@ -5231,6 +5419,35 @@ Since: 2.38
 <return></return>
 </function>
 
+<function name="g_assertion_message_expr">
+<description>
+
+</description>
+<parameters>
+<parameter name="domain">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="file">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="line">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="func">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="expr">
+<parameter_description>
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_async_queue_length">
 <description>
 Returns the length of the queue.
@@ -5387,6 +5604,54 @@ Pushes the @data into the @queue. @data must not be %NULL.
 <return></return>
 </function>
 
+<function name="g_async_queue_push_front">
+<description>
+Pushes the @item into the @queue. @item must not be %NULL.
+In contrast to g_async_queue_push(), this function
+pushes the new item ahead of the items already in the queue,
+so that it will be the next one to be popped off the queue.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="queue">
+<parameter_description> a #GAsyncQueue
+</parameter_description>
+</parameter>
+<parameter name="item">
+<parameter_description> data to push into the @queue
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_async_queue_push_front_unlocked">
+<description>
+Pushes the @item into the @queue. @item must not be %NULL.
+In contrast to g_async_queue_push_unlocked(), this function
+pushes the new item ahead of the items already in the queue,
+so that it will be the next one to be popped off the queue.
+
+This function must be called while holding the @queue's lock.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="queue">
+<parameter_description> a #GAsyncQueue
+</parameter_description>
+</parameter>
+<parameter name="item">
+<parameter_description> data to push into the @queue
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_async_queue_push_sorted">
 <description>
 Inserts @data into @queue using @func to determine the new
@@ -5519,6 +5784,52 @@ lock.
 </parameter>
 </parameters>
 <return></return>
+</function>
+
+<function name="g_async_queue_remove">
+<description>
+Remove an item from the queue.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="queue">
+<parameter_description> a #GAsyncQueue
+</parameter_description>
+</parameter>
+<parameter name="item">
+<parameter_description> the data to remove from the @queue
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the item was removed
+
+</return>
+</function>
+
+<function name="g_async_queue_remove_unlocked">
+<description>
+Remove an item from the queue.
+
+This function must be called while holding the @queue's lock.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="queue">
+<parameter_description> a #GAsyncQueue
+</parameter_description>
+</parameter>
+<parameter name="item">
+<parameter_description> the data to remove from the @queue
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the item was removed
+
+</return>
 </function>
 
 <function name="g_async_queue_sort">
@@ -6297,6 +6608,171 @@ Since: 2.30
 </return>
 </function>
 
+<function name="g_auto">
+<description>
+Helper to declare a variable with automatic cleanup.
+
+The variable is cleaned up in a way appropriate to its type when the
+variable goes out of scope.  The type must support this.
+
+This feature is only supported on GCC and clang.  This macro is not
+defined on other compilers and should not be used in programs that
+are intended to be portable to those compilers.
+
+This is meant to be used with stack-allocated structures and
+non-pointer types.  For the (more commonly used) pointer version, see
+g_autoptr().
+
+This macro can be used to avoid having to do explicit cleanups of
+local variables when exiting functions.  It often vastly simplifies
+handling of error conditions, removing the need for various tricks
+such as 'goto out' or repeating of cleanup code.  It is also helpful
+for non-error cases.
+
+Consider the following example:
+
+|[
+GVariant *
+my_func(void)
+{
+g_auto(GQueue) queue = G_QUEUE_INIT;
+g_auto(GVariantBuilder) builder;
+g_auto(GStrv) strv;
+
+g_variant_builder_init (&amp;builder, G_VARIANT_TYPE_VARDICT);
+strv = g_strsplit(&quot;a:b:c&quot;, &quot;:&quot;, -1);
+
+...
+
+if (error_condition)
+return NULL;
+
+...
+
+return g_variant_builder_end (&amp;builder);
+}
+]|
+
+You must initialize the variable in some way -- either by use of an
+initialiser or by ensuring that an _init function will be called on
+it unconditionally before it goes out of scope.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="TypeName">
+<parameter_description> a supported variable type
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_autofree">
+<description>
+Macro to add an attribute to pointer variable to ensure automatic
+cleanup using g_free().
+
+This macro differs from g_autoptr() in that it is an attribute supplied
+before the type name, rather than wrapping the type definition.  Instead
+of using a type-specific lookup, this macro always calls g_free() directly.
+
+This means it's useful for any type that is returned from
+g_malloc().
+
+Otherwise, this macro has similar constraints as g_autoptr() - only
+supported on GCC and clang, the variable must be initialized, etc.
+
+|[
+gboolean
+operate_on_malloc_buf (void)
+{
+g_autofree guint8* membuf = NULL;
+
+membuf = g_malloc (8192);
+
+/&lt;!-- --&gt;* Some computation on membuf *&lt;!-- --&gt;/
+
+/&lt;!-- --&gt;* membuf will be automatically freed here *&lt;!-- --&gt;/
+return TRUE;
+}
+]|
+
+Since: 2.44
+
+</description>
+<parameters>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_autoptr">
+<description>
+Helper to declare a pointer variable with automatic cleanup.
+
+The variable is cleaned up in a way appropriate to its type when the
+variable goes out of scope.  The type must support this.
+
+This feature is only supported on GCC and clang.  This macro is not
+defined on other compilers and should not be used in programs that
+are intended to be portable to those compilers.
+
+This is meant to be used to declare pointers to types with cleanup
+functions.  The type of the variable is a pointer to @TypeName.  You
+must not add your own '*'.
+
+This macro can be used to avoid having to do explicit cleanups of
+local variables when exiting functions.  It often vastly simplifies
+handling of error conditions, removing the need for various tricks
+such as 'goto out' or repeating of cleanup code.  It is also helpful
+for non-error cases.
+
+Consider the following example:
+
+|[
+gboolean
+check_exists(GVariant *dict)
+{
+g_autoptr(GVariant) dirname, basename = NULL;
+g_autofree gchar *path = NULL;
+
+dirname = g_variant_lookup_value (dict, &quot;dirname&quot;, G_VARIANT_TYPE_STRING);
+
+if (dirname == NULL)
+return FALSE;
+
+basename = g_variant_lookup_value (dict, &quot;basename&quot;, G_VARIANT_TYPE_STRING);
+
+if (basename == NULL)
+return FALSE;
+
+path = g_build_filename (g_variant_get_string (dirname, NULL),
+g_variant_get_string (basename, NULL),
+NULL);
+
+return g_access (path, R_OK) == 0;
+}
+]|
+
+You must initialise the variable in some way -- either by use of an
+initialiser or by ensuring that it is assigned to unconditionally
+before it goes out of scope.
+
+See also g_auto(), g_autofree() and g_steal_pointer().
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="TypeName">
+<parameter_description> a supported variable type
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_base64_decode">
 <description>
 Decode a sequence of Base-64 encoded text into binary data.  Note
@@ -6694,7 +7170,8 @@ usually). To start searching from the 0th bit, set @nth_bit to -1.
 </parameter_description>
 </parameter>
 </parameters>
-<return> the index of the first bit set which is higher than @nth_bit
+<return> the index of the first bit set which is higher than @nth_bit, or -1
+if no higher bits are set
 </return>
 </function>
 
@@ -6718,7 +7195,8 @@ usually). To start searching from the last bit, set @nth_bit to
 </parameter_description>
 </parameter>
 </parameters>
-<return> the index of the first bit set which is lower than @nth_bit
+<return> the index of the first bit set which is lower than @nth_bit, or -1
+if no lower bits are set
 </return>
 </function>
 
@@ -7453,8 +7931,8 @@ Since: 2.12
 </parameter_description>
 </parameter>
 <parameter name="full_path">
-<parameter_description> return location for a string containing the full path
-of the file, or %NULL
+<parameter_description> return location for a string
+containing the full path of the file, or %NULL
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -7482,7 +7960,8 @@ Since: 2.12
 </parameter_description>
 </parameter>
 <parameter name="filename">
-<parameter_description> the path of a filename to load, in the GLib file name encoding
+<parameter_description> the path of a filename to load, in the
+GLib file name encoding
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -8048,7 +8527,8 @@ Provide a copy of a boxed structure @src_boxed which is of type @boxed_type.
 </parameter_description>
 </parameter>
 </parameters>
-<return> The newly created copy of the boxed structure.
+<return> The newly created copy of the boxed
+structure.
 </return>
 </function>
 
@@ -8126,7 +8606,8 @@ be a relative path.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly-allocated string that must be freed with g_free().
+<return> a newly-allocated string that must be freed with
+g_free().
 </return>
 </function>
 
@@ -8141,11 +8622,13 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="args">
-<parameter_description> %NULL-terminated array of strings containing the path elements.
+<parameter_description> %NULL-terminated
+array of strings containing the path elements.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly-allocated string that must be freed with g_free().
+<return> a newly-allocated string that must be freed
+with g_free().
 
 </return>
 </function>
@@ -8195,7 +8678,8 @@ of the separator are ignored.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly-allocated string that must be freed with g_free().
+<return> a newly-allocated string that must be freed with
+g_free().
 </return>
 </function>
 
@@ -8214,11 +8698,13 @@ Since: 2.8
 </parameter_description>
 </parameter>
 <parameter name="args">
-<parameter_description> %NULL-terminated array of strings containing the path elements.
+<parameter_description> %NULL-terminated
+array of strings containing the path elements.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly-allocated string that must be freed with g_free().
+<return> a newly-allocated string that must be freed
+with g_free().
 
 </return>
 </function>
@@ -8630,8 +9116,8 @@ Since: 2.32
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the
-byte data, or %NULL
+<return>
+a pointer to the byte data, or %NULL
 
 </return>
 </function>
@@ -8809,7 +9295,8 @@ Since: 2.32
 </description>
 <parameters>
 <parameter name="data">
-<parameter_description> the data to be used for the bytes
+<parameter_description>
+          the data to be used for the bytes
 </parameter_description>
 </parameter>
 <parameter name="size">
@@ -8912,8 +9399,9 @@ Since: 2.32
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the same byte data, which should
-be freed with g_free()
+<return> (transfer full) (array length=size) (element-type guint8)
+(not nullable): a pointer to the same byte data, which should be
+freed with g_free()
 
 </return>
 </function>
@@ -9094,6 +9582,91 @@ data structures to @func; use g_cache_key_foreach() instead
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_BOOLEAN__BOXED_BOXED">
+<description>
+A #GClosureMarshal function for use with signals with handlers that
+take two boxed pointers as arguments and return a boolean.  If you
+have such a signal, you will probably also need to use an
+accumulator, such as g_signal_accumulator_true_handled().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> A #GClosure.
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> A #GValue to store the return value. May be %NULL
+if the callback of closure doesn't return a value.
+</parameter_description>
+</parameter>
+<parameter name="n_param_values">
+<parameter_description> The length of the @param_values array.
+</parameter_description>
+</parameter>
+<parameter name="param_values">
+<parameter_description> An array of #GValues holding the arguments
+on which to invoke the callback of closure.
+</parameter_description>
+</parameter>
+<parameter name="invocation_hint">
+<parameter_description> The invocation hint given as the last argument to
+g_closure_invoke().
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> Additional data specified when registering the
+marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_BOOLEAN__BOXED_BOXEDv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_BOOLEAN__BOXED_BOXED().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_BOOLEAN__FLAGS">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9125,6 +9698,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_BOOLEAN__FLAGSv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_BOOLEAN__FLAGS().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9163,6 +9779,45 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_BOOL__BOXED_BOXED">
+<description>
+An old alias for g_cclosure_marshal_BOOLEAN__BOXED_BOXED().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> A #GClosure.
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> A #GValue to store the return value. May be %NULL
+if the callback of closure doesn't return a value.
+</parameter_description>
+</parameter>
+<parameter name="n_param_values">
+<parameter_description> The length of the @param_values array.
+</parameter_description>
+</parameter>
+<parameter name="param_values">
+<parameter_description> An array of #GValues holding the arguments
+on which to invoke the callback of closure.
+</parameter_description>
+</parameter>
+<parameter name="invocation_hint">
+<parameter_description> The invocation hint given as the last argument to
+g_closure_invoke().
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> Additional data specified when registering the
+marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
 </parameter_description>
 </parameter>
 </parameters>
@@ -9215,6 +9870,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_STRING__OBJECT_POINTERv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_STRING__OBJECT_POINTER().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__BOOLEAN">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9245,6 +9943,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__BOOLEANv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__BOOLEAN().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9287,6 +10028,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__BOXEDv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__BOXED().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__CHAR">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9317,6 +10101,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__CHARv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__CHAR().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9359,6 +10186,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__DOUBLEv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__DOUBLE().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__ENUM">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9389,6 +10259,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__ENUMv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__ENUM().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9431,6 +10344,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__FLAGSv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__FLAGS().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__FLOAT">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9461,6 +10417,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__FLOATv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__FLOAT().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9503,6 +10502,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__INTv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__INT().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__LONG">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9533,6 +10575,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__LONGv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__LONG().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9575,6 +10660,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__OBJECTv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__OBJECT().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__PARAM">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9605,6 +10733,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__PARAMv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__PARAM().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9647,6 +10818,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__POINTERv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__POINTER().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__STRING">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9683,6 +10897,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__STRINGv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__STRING().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__UCHAR">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9713,6 +10970,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__UCHARv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__UCHAR().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9791,6 +11091,92 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__UINT_POINTERv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__UINT_POINTER().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__UINTv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__UINT().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__ULONG">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9821,6 +11207,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__ULONGv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__ULONG().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9865,6 +11294,49 @@ to g_closure_invoke()
 <return></return>
 </function>
 
+<function name="g_cclosure_marshal_VOID__VARIANTv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__VARIANT().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_cclosure_marshal_VOID__VOID">
 <description>
 A marshaller for a #GCClosure with a callback of type
@@ -9895,6 +11367,49 @@ to g_closure_invoke()
 </parameter>
 <parameter name="marshal_data">
 <parameter_description> additional data specified when registering the marshaller
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_VOID__VOIDv">
+<description>
+The #GVaClosureMarshal equivalent to g_cclosure_marshal_VOID__VOID().
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is invoked.
+</parameter_description>
+</parameter>
+<parameter name="args">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args.
 </parameter_description>
 </parameter>
 </parameters>
@@ -9940,6 +11455,53 @@ g_closure_invoke().
 <parameter_description> Additional data specified when registering the
 marshaller, see g_closure_set_marshal() and
 g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_cclosure_marshal_generic_va">
+<description>
+A generic #GVaClosureMarshal function implemented via
+[libffi](http://sourceware.org/libffi/).
+
+Since: 2.30
+
+</description>
+<parameters>
+<parameter name="closure">
+<parameter_description> the #GClosure to which the marshaller belongs
+</parameter_description>
+</parameter>
+<parameter name="return_value">
+<parameter_description> a #GValue to store the return
+value. May be %NULL if the callback of @closure doesn't return a
+value.
+</parameter_description>
+</parameter>
+<parameter name="instance">
+<parameter_description> the instance on which the closure is
+invoked.
+</parameter_description>
+</parameter>
+<parameter name="args_list">
+<parameter_description> va_list of arguments to be passed to the closure.
+</parameter_description>
+</parameter>
+<parameter name="marshal_data">
+<parameter_description> additional data specified when
+registering the marshaller, see g_closure_set_marshal() and
+g_closure_set_meta_marshal()
+</parameter_description>
+</parameter>
+<parameter name="n_params">
+<parameter_description> the length of the @param_types array
+</parameter_description>
+</parameter>
+<parameter name="param_types">
+<parameter_description> the #GType of each argument from
+@args_list.
 </parameter_description>
 </parameter>
 </parameters>
@@ -10056,7 +11618,8 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="path">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 </parameters>
@@ -10408,7 +11971,8 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -10423,7 +11987,7 @@ Since: 2.8
 
 <function name="g_clear_error">
 <description>
-If @err is %NULL, does nothing. If @err is non-%NULL,
+If @err or *@err is %NULL, does nothing. Otherwise,
 calls g_error_free() on *@err and sets *@err to %NULL.
 
 </description>
@@ -10479,7 +12043,8 @@ Since: 2.34
 </description>
 <parameters>
 <parameter name="pp">
-<parameter_description> a pointer to a variable, struct member etc. holding a pointer
+<parameter_description> a pointer to a variable, struct member etc. holding a
+pointer
 </parameter_description>
 </parameter>
 <parameter name="destroy">
@@ -10513,7 +12078,9 @@ Since: 2.36
 </parameter_description>
 </parameter>
 </parameters>
-<return></return>
+<return> %TRUE on success, %FALSE if there was an error.
+
+</return>
 </function>
 
 <function name="g_closure_add_finalize_notifier">
@@ -10582,7 +12149,8 @@ g_object_watch_closure() for an example of marshal guards.
 </parameter_description>
 </parameter>
 <parameter name="pre_marshal_data">
-<parameter_description> data to pass to @pre_marshal_notify
+<parameter_description> data to pass
+to @pre_marshal_notify
 </parameter_description>
 </parameter>
 <parameter name="pre_marshal_notify">
@@ -10590,7 +12158,8 @@ g_object_watch_closure() for an example of marshal guards.
 </parameter_description>
 </parameter>
 <parameter name="post_marshal_data">
-<parameter_description> data to pass to @post_marshal_notify
+<parameter_description> data to pass
+to @post_marshal_notify
 </parameter_description>
 </parameter>
 <parameter name="post_marshal_notify">
@@ -10856,7 +12425,8 @@ the right callback and passes it to the marshaller as the
 </parameter_description>
 </parameter>
 <parameter name="marshal_data">
-<parameter_description> context-dependent data to pass to @meta_marshal
+<parameter_description> context-dependent data to pass
+to @meta_marshal
 </parameter_description>
 </parameter>
 <parameter name="meta_marshal">
@@ -11207,6 +12777,37 @@ Since: 2.16
 </parameters>
 <return> the checksum as a hexadecimal string. The returned string
 should be freed with g_free() when done using it.
+
+</return>
+</function>
+
+<function name="g_compute_hmac_for_bytes">
+<description>
+Computes the HMAC for a binary @data. This is a
+convenience wrapper for g_hmac_new(), g_hmac_get_string()
+and g_hmac_unref().
+
+The hexadecimal string returned will be in lower case.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="digest_type">
+<parameter_description> a #GChecksumType to use for the HMAC
+</parameter_description>
+</parameter>
+<parameter name="key">
+<parameter_description> the key to use in the HMAC
+</parameter_description>
+</parameter>
+<parameter name="data">
+<parameter_description> binary blob to compute the HMAC of
+</parameter_description>
+</parameter>
+</parameters>
+<return> the HMAC of the binary data as a string in hexadecimal.
+The returned string should be freed with g_free() when done using it.
 
 </return>
 </function>
@@ -11773,7 +13374,8 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -11804,6 +13406,10 @@ setting the `G_DEBUG` environment variable (see
 If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
 
 </description>
 <parameters>
@@ -12800,8 +14406,8 @@ etc. The date must be valid.
 <function name="g_date_get_monday_week_of_year">
 <description>
 Returns the week of the year, where weeks are understood to start on
-Monday. If the date is before the first Monday of the year, return
-0. The date must be valid.
+Monday. If the date is before the first Monday of the year, return 0.
+The date must be valid.
 
 
 </description>
@@ -12855,9 +14461,9 @@ Returns the month of the year. The date must be valid.
 
 <function name="g_date_get_sunday_week_of_year">
 <description>
-Returns the week of the year during which this date falls, if weeks
-are understood to being on Sunday. The date must be valid. Can return
-0 if the day is before the first Sunday of the year.
+Returns the week of the year during which this date falls, if
+weeks are understood to begin on Sunday. The date must be valid.
+Can return 0 if the day is before the first Sunday of the year.
 
 
 </description>
@@ -13695,7 +15301,7 @@ The following format specifiers are supported:
 - \%A: the full weekday name according to the current locale
 - \%b: the abbreviated month name according to the current locale
 - \%B: the full month name according to the current locale
-- \%c: the  preferred date and time rpresentation for the current locale
+- \%c: the preferred date and time representation for the current locale
 - \%C: the century number (year/100) as a 2-digit integer (00-99)
 - \%d: the day of the month as a decimal number (range 01 to 31)
 - \%e: the day of the month as a decimal number (range  1 to 31)
@@ -14024,7 +15630,7 @@ this may mean that the week-numbering year is one greater than the
 calendar year (so that these days have the same week-numbering year
 as the Thursday occurring early in the next year).
 
-For Friday, Saturaday and Sunday occurring near the start of the year,
+For Friday, Saturday and Sunday occurring near the start of the year,
 this may mean that the week-numbering year is one less than the
 calendar year (so that these days have the same week-numbering year
 as the Thursday occurring late in the previous year).
@@ -14844,8 +16450,13 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
-Such messages are suppressed by the g_log_default_handler() unless
-the G_MESSAGES_DEBUG environment variable is set appropriately.
+Such messages are suppressed by the g_log_default_handler() and
+g_log_writer_default() unless the `G_MESSAGES_DEBUG` environment variable is
+set appropriately.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
 
 Since: 2.6
 
@@ -15419,8 +17030,7 @@ for an empty environment list
 </parameter_description>
 </parameter>
 <parameter name="variable">
-<parameter_description> the environment variable to get, in the GLib file name
-encoding
+<parameter_description> the environment variable to get
 </parameter_description>
 </parameter>
 </parameters>
@@ -15497,6 +17107,10 @@ updated environment list. Free it using g_strfreev().
 <description>
 A convenience function/macro to log an error message.
 
+This is not intended for end user error reporting. Use of #GError is
+preferred for that instead, as it allows calling functions to perform actions
+conditional on the type of error.
+
 Error messages are always fatal, resulting in a call to
 abort() to terminate the application. This function will
 result in a core dump; don't use it for errors you expect.
@@ -15507,6 +17121,9 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
 
 </description>
 <parameters>
@@ -15558,7 +17175,7 @@ be returned.
 If @domain contains a `FAILED` (or otherwise generic) error code,
 you should generally not check for it explicitly, but should
 instead treat any not-explicitly-recognized error code as being
-equilalent to the `FAILED` code. This way, if the domain is
+equivalent to the `FAILED` code. This way, if the domain is
 extended in the future to provide a more specific error code for
 a certain case, your code will still work.
 
@@ -15566,7 +17183,7 @@ a certain case, your code will still work.
 </description>
 <parameters>
 <parameter name="error">
-<parameter_description> a #GError or %NULL
+<parameter_description> a #GError
 </parameter_description>
 </parameter>
 <parameter name="domain">
@@ -15793,8 +17410,8 @@ Since: 2.4
 </parameter_description>
 </parameter>
 </parameters>
-<return> A newly-allocated string with the contents of the symbolic link, 
-or %NULL if an error occurred.
+<return> A newly-allocated string with the contents of
+the symbolic link, or %NULL if an error occurred.
 
 </return>
 </function>
@@ -15902,7 +17519,8 @@ extensions and those listed in the `PATHEXT` environment variable.
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a filename to test in the GLib file name encoding
+<parameter_description> a filename to test in the
+GLib file name encoding
 </parameter_description>
 </parameter>
 <parameter name="test">
@@ -15938,7 +17556,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> an absolute pathname in the GLib file name encoding
+<parameter_description> an absolute pathname in the
+GLib file name encoding
 </parameter_description>
 </parameter>
 </parameters>
@@ -15971,7 +17590,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname hopefully in the GLib file name encoding
+<parameter_description> a pathname hopefully in the
+GLib file name encoding
 </parameter_description>
 </parameter>
 </parameters>
@@ -15994,7 +17614,8 @@ encoding used for filenames.
 </parameter_description>
 </parameter>
 <parameter name="hostname">
-<parameter_description> Location to store hostname for the URI, or %NULL.
+<parameter_description> Location to store hostname for the
+URI.
 If there is no hostname in the URI, %NULL will be
 stored in this location.
 </parameter_description>
@@ -16065,9 +17686,9 @@ component following Section 3.3. of RFC 2396.
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> an absolute filename specified in the GLib file name encoding,
-which is the on-disk file name bytes on Unix, and UTF-8 on 
-Windows
+<parameter_description> an absolute filename specified in the GLib file
+name encoding, which is the on-disk file name bytes on Unix, and UTF-8
+on Windows
 </parameter_description>
 </parameter>
 <parameter name="hostname">
@@ -16096,7 +17717,7 @@ the [current locale][setlocale].
 </description>
 <parameters>
 <parameter name="opsysstring">
-<parameter_description>   a string in the encoding for filenames
+<parameter_description> a string in the encoding for filenames
 </parameter_description>
 </parameter>
 <parameter name="len">
@@ -16107,7 +17728,7 @@ for the @len parameter is unsafe)
 </parameter_description>
 </parameter>
 <parameter name="bytes_read">
-<parameter_description>    location to store the number of bytes in the
+<parameter_description> location to store the number of bytes in the
 input string that were successfully converted, or %NULL.
 Even if the conversion was successful, this may be 
 less than @len if there were partial characters
@@ -16118,8 +17739,8 @@ input sequence.
 </parameter_description>
 </parameter>
 <parameter name="bytes_written">
-<parameter_description> the number of bytes stored in the output buffer (not 
-including the terminating nul).
+<parameter_description> the number of bytes stored in the output
+buffer (not including the terminating nul).
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -16160,7 +17781,8 @@ including the type suffix.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly-allocated string with the absolute path, or %NULL
+<return> a newly-allocated string with the absolute path,
+or %NULL
 </return>
 </function>
 
@@ -16298,7 +17920,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -16428,7 +18051,9 @@ Since: 2.2
 <function name="g_free">
 <description>
 Frees the memory pointed to by @mem.
-If @mem is %NULL it simply returns.
+
+If @mem is %NULL it simply returns, so there is no need to check @mem
+against %NULL before calling this function.
 
 </description>
 <parameters>
@@ -16452,7 +18077,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -16513,7 +18139,8 @@ freed.
 </description>
 <parameters>
 <parameter name="charset">
-<parameter_description> return location for character set name
+<parameter_description> return location for character set
+name, or %NULL.
 </parameter_description>
 </parameter>
 </parameters>
@@ -16608,7 +18235,7 @@ On Windows, the character set used in the GLib API is always UTF-8
 and said environment variables have no effect.
 
 `G_FILENAME_ENCODING` may be set to a comma-separated list of
-character set names. The special token &quot;@locale&quot; is taken
+character set names. The special token &quot;\@locale&quot; is taken
 to  mean the character set for the [current locale][setlocale].
 If `G_FILENAME_ENCODING` is not set, but `G_BROKEN_FILENAMES` is,
 the character set of the current locale is taken as the filename
@@ -16864,8 +18491,10 @@ Since: 2.6
 </description>
 <parameters>
 </parameters>
-<return> a %NULL-terminated array of strings owned by GLib that must 
-not be modified or freed.
+<return>
+a %NULL-terminated array of strings owned by GLib that must not be
+modified or freed.
+
 </return>
 </function>
 
@@ -16906,8 +18535,10 @@ Since: 2.6
 </description>
 <parameters>
 </parameters>
-<return> a %NULL-terminated array of strings owned by GLib that must 
-not be modified or freed.
+<return>
+a %NULL-terminated array of strings owned by GLib that must not be
+modified or freed.
+
 </return>
 </function>
 
@@ -16956,7 +18587,7 @@ Since: 2.6
 </description>
 <parameters>
 </parameters>
-<return> a string owned by GLib that must not be modified 
+<return> a string owned by GLib that must not be modified
 or freed.
 </return>
 </function>
@@ -16981,7 +18612,7 @@ Since: 2.6
 </description>
 <parameters>
 </parameters>
-<return> a string owned by GLib that must not be modified 
+<return> a string owned by GLib that must not be modified
 or freed.
 </return>
 </function>
@@ -17006,7 +18637,7 @@ Since: 2.6
 </description>
 <parameters>
 </parameters>
-<return> a string owned by GLib that must not be modified 
+<return> a string owned by GLib that must not be modified
 or freed.
 </return>
 </function>
@@ -17036,8 +18667,8 @@ in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
 This is the directory
 specified in the `XDG_RUNTIME_DIR` environment variable.
-In the case that this variable is not set, GLib will issue a warning
-message to stderr and return the value of g_get_user_cache_dir().
+In the case that this variable is not set, we return the value of
+g_get_user_cache_dir(), after verifying that it exists.
 
 On Windows this is the folder to use for local (as opposed to
 roaming) application data. See documentation for
@@ -17049,7 +18680,8 @@ Since: 2.28
 </description>
 <parameters>
 </parameters>
-<return> a string owned by GLib that must not be modified or freed.
+<return> a string owned by GLib that must not be
+modified or freed.
 
 </return>
 </function>
@@ -17076,8 +18708,8 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> the path to the specified special directory, or %NULL
-if the logical id was not found. The returned string is owned by
+<return> the path to the specified special directory, or
+%NULL if the logical id was not found. The returned string is owned by
 GLib and should not be modified or freed.
 
 </return>
@@ -17087,9 +18719,9 @@ GLib and should not be modified or freed.
 <description>
 Returns the value of an environment variable.
 
-The name and value are in the GLib file name encoding. On UNIX,
-this means the actual bytes which might or might not be in some
-consistent character set and encoding. On Windows, it is in UTF-8.
+On UNIX, the name and value are byte strings which might or might not
+be in some consistent character set and encoding. On Windows, they are
+in UTF-8.
 On Windows, in case the environment variable's value contains
 references to other environment variables, they are expanded.
 
@@ -17097,8 +18729,7 @@ references to other environment variables, they are expanded.
 </description>
 <parameters>
 <parameter name="variable">
-<parameter_description> the environment variable to get, in the GLib file name
-encoding
+<parameter_description> the environment variable to get
 </parameter_description>
 </parameter>
 </parameters>
@@ -17154,7 +18785,9 @@ Since: 2.32
 </parameter_description>
 </parameter>
 </parameters>
-<return></return>
+<return> %TRUE if @key is in @hash_table, %FALSE otherwise.
+
+</return>
 </function>
 
 <function name="g_hash_table_destroy">
@@ -17327,6 +18960,10 @@ release of GLib. It does nothing.
 Retrieves every key inside @hash_table. The returned data is valid
 until changes to the hash release those keys.
 
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
 Since: 2.14
 
 </description>
@@ -17336,10 +18973,10 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> a #GList containing all the keys inside the hash
-table. The content of the list is owned by the hash table and
-should not be modified or freed. Use g_list_free() when done
-using the list.
+<return> a #GList containing all the keys
+inside the hash table. The content of the list is owned by the
+hash table and should not be modified or freed. Use g_list_free()
+when done using the list.
 
 </return>
 </function>
@@ -17353,7 +18990,11 @@ key.  Use @length to determine the true length if it's possible that
 %NULL was used as the value for a key.
 
 Note: in the common case of a string-keyed #GHashTable, the return
-value of this function can be conveniently cast to (gchar **).
+value of this function can be conveniently cast to (const gchar **).
+
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
 
 You should always free the return result with g_free().  In the
 above-mentioned case of a string-keyed hash table, it may be
@@ -17384,6 +19025,10 @@ Since: 2.40
 Retrieves every value inside @hash_table. The returned data
 is valid until @hash_table is modified.
 
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
 Since: 2.14
 
 </description>
@@ -17393,10 +19038,10 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> a #GList containing all the values inside the hash
-table. The content of the list is owned by the hash table and
-should not be modified or freed. Use g_list_free() when done
-using the list.
+<return> a #GList containing all the values
+inside the hash table. The content of the list is owned by the
+hash table and should not be modified or freed. Use g_list_free()
+when done using the list.
 
 </return>
 </function>
@@ -17497,11 +19142,11 @@ Since: 2.16
 </parameter_description>
 </parameter>
 <parameter name="key">
-<parameter_description> a location to store the key, or %NULL
+<parameter_description> a location to store the key
 </parameter_description>
 </parameter>
 <parameter name="value">
-<parameter_description> a location to store the value, or %NULL
+<parameter_description> a location to store the value
 </parameter_description>
 </parameter>
 </parameters>
@@ -17634,11 +19279,12 @@ of @hash_table are %NULL-safe.
 </parameter_description>
 </parameter>
 <parameter name="orig_key">
-<parameter_description> return location for the original key, or %NULL
+<parameter_description> return location for the original key
 </parameter_description>
 </parameter>
 <parameter name="value">
-<parameter_description> return location for the value associated with the key, or %NULL
+<parameter_description> return location for the value associated
+with the key
 </parameter_description>
 </parameter>
 </parameters>
@@ -17685,6 +19331,13 @@ Creates a new #GHashTable like g_hash_table_new() with a reference
 count of 1 and allows to specify functions to free the memory
 allocated for the key and value that get called when removing the
 entry from the #GHashTable.
+
+Since version 2.42 it is permissible for destroy notify functions to
+recursively remove further items from the hash table. This is only
+permissible if the application still holds a reference to the hash table.
+This means that you may need to ensure that the hash table is empty by
+calling g_hash_table_remove_all before releasing the last reference using
+g_hash_table_unref().
 
 
 </description>
@@ -17805,7 +19458,7 @@ If you supplied a @key_destroy_func when creating the
 </parameter_description>
 </parameter>
 </parameters>
-<return> %TRUE of the key did not exist yet
+<return> %TRUE if the key did not exist yet
 </return>
 </function>
 
@@ -18856,9 +20509,14 @@ default idle priority, #G_PRIORITY_DEFAULT_IDLE.  If the function
 returns %FALSE it is automatically removed from the list of event
 sources and will not be called again.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 This internally creates a main loop source using g_idle_source_new()
-and attaches it to the main loop context using g_source_attach(). 
-You can do these steps manually if you need greater control.
+and attaches it to the global #GMainContext using g_source_attach(), so
+the callback will be invoked in whichever thread is running that main
+context. You can do these steps manually if you need greater control or to
+use a custom main context.
 
 
 </description>
@@ -18882,9 +20540,14 @@ Adds a function to be called whenever there are no higher priority
 events pending.  If the function returns %FALSE it is automatically
 removed from the list of event sources and will not be called again.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 This internally creates a main loop source using g_idle_source_new()
-and attaches it to the main loop context using g_source_attach(). 
-You can do these steps manually if you need greater control.
+and attaches it to the global #GMainContext using g_source_attach(), so
+the callback will be invoked in whichever thread is running that main
+context. You can do these steps manually if you need greater control or to
+use a custom main context.
 
 
 </description>
@@ -18953,8 +20616,13 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
-Such messages are suppressed by the g_log_default_handler() unless
-the G_MESSAGES_DEBUG environment variable is set appropriately.
+Such messages are suppressed by the g_log_default_handler() and
+g_log_writer_default() unless the `G_MESSAGES_DEBUG` environment variable is
+set appropriately.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
 
 Since: 2.40
 
@@ -20283,9 +21951,11 @@ should be freed with g_free() when no longer needed.
 <function name="g_key_file_get_comment">
 <description>
 Retrieves a comment above @key from @group_name.
-If @key is %NULL then @comment will be read from above 
-@group_name. If both @key and @group_name are %NULL, then 
+If @key is %NULL then @comment will be read from above
+@group_name. If both @key and @group_name are %NULL, then
 @comment will be read from above the first group in the file.
+
+Note that the returned string includes the '#' comment markers.
 
 Since: 2.6
 
@@ -20885,6 +22555,37 @@ Since: 2.6
 </return>
 </function>
 
+<function name="g_key_file_load_from_bytes">
+<description>
+Loads a key file from the data in @bytes into an empty #GKeyFile structure.
+If the object cannot be created then %error is set to a #GKeyFileError.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="key_file">
+<parameter_description> an empty #GKeyFile struct
+</parameter_description>
+</parameter>
+<parameter name="bytes">
+<parameter_description> a #GBytes
+</parameter_description>
+</parameter>
+<parameter name="flags">
+<parameter_description> flags from #GKeyFileFlags
+</parameter_description>
+</parameter>
+<parameter name="error">
+<parameter_description> return location for a #GError, or %NULL
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if a key file could be loaded, %FALSE otherwise
+
+</return>
+</function>
+
 <function name="g_key_file_load_from_data">
 <description>
 Loads a key file from memory into an empty #GKeyFile structure.  
@@ -21254,9 +22955,13 @@ Since: 2.6
 <function name="g_key_file_set_comment">
 <description>
 Places a comment above @key from @group_name.
-If @key is %NULL then @comment will be written above @group_name.  
-If both @key and @group_name  are %NULL, then @comment will be 
+
+If @key is %NULL then @comment will be written above @group_name.
+If both @key and @group_name  are %NULL, then @comment will be
 written above the first group in the file.
+
+Note that this function prepends a '#' comment marker to
+each line of @comment.
 
 Since: 2.6
 
@@ -22002,7 +23707,10 @@ Another name for g_list_free_1().
 
 <function name="g_list_free_1">
 <description>
-Frees one #GList element.
+Frees one #GList element, but does not update links from the next and
+previous elements in the list, so you should not call this function on an
+element that is currently part of a list.
+
 It is usually used after g_list_remove_link().
 
 </description>
@@ -22204,7 +23912,8 @@ Gets the number of elements in a #GList.
 
 This function iterates over the whole list to count its elements.
 Use a #GQueue instead of a GList if you regularly need the number
-of items. 
+of items. To check whether the list is non-empty, it is faster to check
+@list against %NULL.
 
 
 </description>
@@ -22240,6 +23949,10 @@ Note that it is considered perfectly acceptable to access
 <description>
 Gets the element at the given position in a #GList.
 
+This iterates over the list until it reaches the @n-th position. If you
+intend to iterate over every element, it is better to use a for-loop as
+described in the #GList introduction.
+
 
 </description>
 <parameters>
@@ -22260,6 +23973,10 @@ the end of the #GList
 <function name="g_list_nth_data">
 <description>
 Gets the data of the element at the given position.
+
+This iterates over the list until it reaches the @n-th position. If you
+intend to iterate over every element, it is better to use a for-loop as
+described in the #GList introduction.
 
 
 </description>
@@ -22562,7 +24279,7 @@ for the @len parameter is unsafe)
 </parameter_description>
 </parameter>
 <parameter name="bytes_read">
-<parameter_description>    location to store the number of bytes in the
+<parameter_description> location to store the number of bytes in the
 input string that were successfully converted, or %NULL.
 Even if the conversion was successful, this may be 
 less than @len if there were partial characters
@@ -22573,8 +24290,8 @@ input sequence.
 </parameter_description>
 </parameter>
 <parameter name="bytes_written">
-<parameter_description> the number of bytes stored in the output buffer (not 
-including the terminating nul).
+<parameter_description> the number of bytes stored in the output
+buffer (not including the terminating nul).
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -22610,7 +24327,7 @@ for the @len parameter is unsafe)
 </parameter_description>
 </parameter>
 <parameter name="bytes_read">
-<parameter_description>    location to store the number of bytes in the
+<parameter_description> location to store the number of bytes in the
 input string that were successfully converted, or %NULL.
 Even if the conversion was successful, this may be 
 less than @len if there were partial characters
@@ -22621,8 +24338,8 @@ input sequence.
 </parameter_description>
 </parameter>
 <parameter name="bytes_written">
-<parameter_description> the number of bytes stored in the output buffer (not 
-including the terminating nul).
+<parameter_description> the number of bytes stored in the output
+buffer (not including the terminating nul).
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -22647,10 +24364,14 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
+If [structured logging is enabled][using-structured-logging] this will
+output via the structured log writer function (see g_log_set_writer_func()).
+
 </description>
 <parameters>
 <parameter name="log_domain">
-<parameter_description> the log domain, usually #G_LOG_DOMAIN
+<parameter_description> the log domain, usually #G_LOG_DOMAIN, or %NULL
+for the default
 </parameter_description>
 </parameter>
 <parameter name="log_level">
@@ -22695,10 +24416,14 @@ stderr is used for levels %G_LOG_LEVEL_ERROR, %G_LOG_LEVEL_CRITICAL,
 %G_LOG_LEVEL_WARNING and %G_LOG_LEVEL_MESSAGE. stdout is used for
 the rest.
 
+This has no effect if structured logging is enabled; see
+[Using Structured Logging][using-structured-logging].
+
 </description>
 <parameters>
 <parameter name="log_domain">
-<parameter_description> the log domain of the message
+<parameter_description> the log domain of the message, or %NULL for the
+default &quot;&quot; application domain
 </parameter_description>
 </parameter>
 <parameter name="log_level">
@@ -22720,6 +24445,9 @@ the rest.
 <function name="g_log_remove_handler">
 <description>
 Removes the log handler.
+
+This has no effect if structured logging is enabled; see
+[Using Structured Logging][using-structured-logging].
 
 </description>
 <parameters>
@@ -22747,6 +24475,14 @@ You can also make some message levels fatal at runtime by setting
 the `G_DEBUG` environment variable (see
 [Running GLib Applications](glib-running.html)).
 
+Libraries should not call this function, as it affects all messages logged
+by a process, including those from other libraries.
+
+Structured log messages (using g_log_structured() and
+g_log_structured_array()) are fatal only if the default log writer is used;
+otherwise it is up to the writer function to determine which log messages
+are fatal. See [Using Structured Logging][using-structured-logging].
+
 
 </description>
 <parameters>
@@ -22766,6 +24502,9 @@ Installs a default log handler which is used if no
 log handler has been set for the particular log domain
 and log level combination. By default, GLib uses
 g_log_default_handler() as default log handler.
+
+This has no effect if structured logging is enabled; see
+[Using Structured Logging][using-structured-logging].
 
 Since: 2.6
 
@@ -22789,6 +24528,12 @@ Since: 2.6
 <description>
 Sets the log levels which are fatal in the given domain.
 %G_LOG_LEVEL_ERROR is always fatal.
+
+This has no effect on structured log messages (using g_log_structured() or
+g_log_structured_array()). To change the fatal behaviour for specific log
+messages, programs must install a custom log writer function using
+g_log_set_writer_func(). See
+[Using Structured Logging][using-structured-logging].
 
 
 </description>
@@ -22816,6 +24561,9 @@ bit flags.
 Note that since the #G_LOG_LEVEL_ERROR log level is always fatal, if
 you want to set a handler for this log level you must combine it with
 #G_LOG_FLAG_FATAL.
+
+This has no effect if structured logging is enabled; see
+[Using Structured Logging][using-structured-logging].
 
 Here is an example for adding a log handler for all warning messages
 in the default domain:
@@ -22864,6 +24612,459 @@ the log levels with the #G_LOG_FLAG_FATAL and
 </return>
 </function>
 
+<function name="g_log_set_handler_full">
+<description>
+Like g_log_sets_handler(), but takes a destroy notify for the @user_data.
+
+This has no effect if structured logging is enabled; see
+[Using Structured Logging][using-structured-logging].
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="log_domain">
+<parameter_description> the log domain, or %NULL for the default &quot;&quot;
+application domain
+</parameter_description>
+</parameter>
+<parameter name="log_levels">
+<parameter_description> the log levels to apply the log handler for.
+To handle fatal and recursive messages as well, combine
+the log levels with the #G_LOG_FLAG_FATAL and
+#G_LOG_FLAG_RECURSION bit flags.
+</parameter_description>
+</parameter>
+<parameter name="log_func">
+<parameter_description> the log handler function
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> data passed to the log handler
+</parameter_description>
+</parameter>
+<parameter name="destroy">
+<parameter_description> destroy notify for @user_data, or %NULL
+</parameter_description>
+</parameter>
+</parameters>
+<return> the id of the new handler
+
+</return>
+</function>
+
+<function name="g_log_set_writer_func">
+<description>
+Set a writer function which will be called to format and write out each log
+message. Each program should set a writer function, or the default writer
+(g_log_writer_default()) will be used.
+
+Libraries **must not** call this function — only programs are allowed to
+install a writer function, as there must be a single, central point where
+log messages are formatted and outputted.
+
+There can only be one writer function. It is an error to set more than one.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="func">
+<parameter_description> log writer function, which must not be %NULL
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> user data to pass to @func
+</parameter_description>
+</parameter>
+<parameter name="user_data_free">
+<parameter_description> function to free @user_data once it’s
+finished with, if non-%NULL
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_log_structured">
+<description>
+Log a message with structured data. The message will be passed through to
+the log writer set by the application using g_log_set_writer_func(). If the
+message is fatal (i.e. its log level is %G_LOG_LEVEL_ERROR), the program will
+be aborted at the end of this function.
+
+The structured data is provided as key–value pairs, where keys are UTF-8
+strings, and values are arbitrary pointers — typically pointing to UTF-8
+strings, but that is not a requirement. To pass binary (non-nul-terminated)
+structured data, use g_log_structured_array(). The keys for structured data
+should follow the [systemd journal
+fields](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html)
+specification. It is suggested that custom keys are namespaced according to
+the code which sets them. For example, custom keys from GLib all have a
+`GLIB_` prefix.
+
+The @log_domain will be converted into a `GLIB_DOMAIN` field. @log_level will
+be converted into a
+[`PRIORITY`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#PRIORITY=)
+field. The format string will have its placeholders substituted for the provided
+values and be converted into a
+[`MESSAGE`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#MESSAGE=)
+field.
+
+Other fields you may commonly want to pass into this function:
+
+* [`MESSAGE_ID`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#MESSAGE_ID=)
+* [`CODE_FILE`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#CODE_FILE=)
+* [`CODE_LINE`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#CODE_LINE=)
+* [`CODE_FUNC`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#CODE_FUNC=)
+* [`ERRNO`](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#ERRNO=)
+
+Note that `CODE_FILE`, `CODE_LINE` and `CODE_FUNC` are automatically set by
+the logging macros, G_DEBUG_HERE(), g_message(), g_warning(), g_critical(),
+g_error(), etc, if the symbols `G_LOG_USE_STRUCTURED` is defined before including
+glib.h.
+
+For example:
+|[&lt;!-- language=&quot;C&quot; --&gt;
+g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
+&quot;MESSAGE_ID&quot;, &quot;06d4df59e6c24647bfe69d2c27ef0b4e&quot;,
+&quot;MY_APPLICATION_CUSTOM_FIELD&quot;, &quot;some debug string&quot;,
+&quot;MESSAGE&quot;, &quot;This is a debug message about pointer %p and integer %u.&quot;,
+some_pointer, some_integer);
+]|
+
+Note that each `MESSAGE_ID` must be [uniquely and randomly
+generated](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html#MESSAGE_ID=).
+If adding a `MESSAGE_ID`, consider shipping a [message
+catalog](https://www.freedesktop.org/wiki/Software/systemd/catalog/) with
+your software.
+
+To pass a user data pointer to the log writer function which is specific to
+this logging call, you must use g_log_structured_array() and pass the pointer
+as a field with #GLogField.length set to zero, otherwise it will be
+interpreted as a string.
+
+For example:
+|[&lt;!-- language=&quot;C&quot; --&gt;
+const GLogField fields[] = {
+{ &quot;MESSAGE&quot;, &quot;This is a debug message.&quot;, -1 },
+{ &quot;MESSAGE_ID&quot;, &quot;fcfb2e1e65c3494386b74878f1abf893&quot;, -1 },
+{ &quot;MY_APPLICATION_CUSTOM_FIELD&quot;, &quot;some debug string&quot;, -1 },
+{ &quot;MY_APPLICATION_STATE&quot;, state_object, 0 },
+};
+g_log_structured_array (G_LOG_LEVEL_DEBUG, fields, G_N_ELEMENTS (fields));
+]|
+
+Note also that, even if no other structured fields are specified, there
+must always be a &quot;MESSAGE&quot; key before the format string. The &quot;MESSAGE&quot;-format
+pair has to be the last of the key-value pairs, and &quot;MESSAGE&quot; is the only
+field for which printf()-style formatting is supported.
+
+The default writer function for `stdout` and `stderr` will automatically
+append a new-line character after the message, so you should not add one
+manually to the format string.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_domain">
+<parameter_description> log domain, usually %G_LOG_DOMAIN
+</parameter_description>
+</parameter>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="Varargs">
+<parameter_description> key-value pairs of structured data to add to the log entry, followed
+by the key &quot;MESSAGE&quot;, followed by a printf()-style message format,
+followed by parameters to insert in the format string
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_log_structured_array">
+<description>
+Log a message with structured data. The message will be passed through to the
+log writer set by the application using g_log_set_writer_func(). If the
+message is fatal (i.e. its log level is %G_LOG_LEVEL_ERROR), the program will
+be aborted at the end of this function.
+
+See g_log_structured() for more documentation.
+
+This assumes that @log_level is already present in @fields (typically as the
+`PRIORITY` field).
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> key–value pairs of structured data to add
+to the log message
+</parameter_description>
+</parameter>
+<parameter name="n_fields">
+<parameter_description> number of elements in the @fields array
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_log_variant">
+<description>
+Log a message with structured data, accepting the data within a #GVariant. This
+version is especially useful for use in other languages, via introspection.
+
+The only mandatory item in the @fields dictionary is the &quot;MESSAGE&quot; which must
+contain the text shown to the user.
+
+The values in the @fields dictionary are likely to be of type String
+(#G_VARIANT_TYPE_STRING). Array of bytes (#G_VARIANT_TYPE_BYTESTRING) is also
+supported. In this case the message is handled as binary and will be forwarded
+to the log writer as such. The size of the array should not be higher than
+%G_MAXSSIZE. Otherwise it will be truncated to this size. For other types
+g_variant_print() will be used to convert the value into a string.
+
+For more details on its usage and about the parameters, see g_log_structured().
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_domain">
+<parameter_description> log domain, usually %G_LOG_DOMAIN
+</parameter_description>
+</parameter>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> a dictionary (#GVariant of the type %G_VARIANT_TYPE_VARDICT)
+containing the key-value pairs of message data.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_log_writer_default">
+<description>
+Format a structured log message and output it to the default log destination
+for the platform. On Linux, this is typically the systemd journal, falling
+back to `stdout` or `stderr` if running from the terminal or if output is
+being redirected to a file.
+
+Support for other platform-specific logging mechanisms may be added in
+future. Distributors of GLib may modify this function to impose their own
+(documented) platform-specific log writing policies.
+
+This is suitable for use as a #GLogWriterFunc, and is the default writer used
+if no other is set using g_log_set_writer_func().
+
+As with g_log_default_handler(), this function drops debug and informational
+messages unless their log domain (or `all`) is listed in the space-separated
+`G_MESSAGES_DEBUG` environment variable.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> key–value pairs of structured data forming
+the log message
+</parameter_description>
+</parameter>
+<parameter name="n_fields">
+<parameter_description> number of elements in the @fields array
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> user data passed to g_log_set_writer_func()
+</parameter_description>
+</parameter>
+</parameters>
+<return> %G_LOG_WRITER_HANDLED on success, %G_LOG_WRITER_UNHANDLED otherwise
+</return>
+</function>
+
+<function name="g_log_writer_format_fields">
+<description>
+Format a structured log message as a string suitable for outputting to the
+terminal (or elsewhere). This will include the values of all fields it knows
+how to interpret, which includes `MESSAGE` and `GLIB_DOMAIN` (see the
+documentation for g_log_structured()). It does not include values from
+unknown fields.
+
+The returned string does **not** have a trailing new-line character. It is
+encoded in the character set of the current locale, which is not necessarily
+UTF-8.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> key–value pairs of structured data forming
+the log message
+</parameter_description>
+</parameter>
+<parameter name="n_fields">
+<parameter_description> number of elements in the @fields array
+</parameter_description>
+</parameter>
+<parameter name="use_color">
+<parameter_description> %TRUE to use ANSI color escape sequences when formatting the
+message, %FALSE to not
+</parameter_description>
+</parameter>
+</parameters>
+<return> string containing the formatted log message, in
+the character set of the current locale
+</return>
+</function>
+
+<function name="g_log_writer_is_journald">
+<description>
+Check whether the given @output_fd file descriptor is a connection to the
+systemd journal, or something else (like a log file or `stdout` or
+`stderr`).
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="output_fd">
+<parameter_description> output file descriptor to check
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if @output_fd points to the journal, %FALSE otherwise
+</return>
+</function>
+
+<function name="g_log_writer_journald">
+<description>
+Format a structured log message and send it to the systemd journal as a set
+of key–value pairs. All fields are sent to the journal, but if a field has
+length zero (indicating program-specific data) then only its key will be
+sent.
+
+This is suitable for use as a #GLogWriterFunc.
+
+If GLib has been compiled without systemd support, this function is still
+defined, but will always return %G_LOG_WRITER_UNHANDLED.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> key–value pairs of structured data forming
+the log message
+</parameter_description>
+</parameter>
+<parameter name="n_fields">
+<parameter_description> number of elements in the @fields array
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> user data passed to g_log_set_writer_func()
+</parameter_description>
+</parameter>
+</parameters>
+<return> %G_LOG_WRITER_HANDLED on success, %G_LOG_WRITER_UNHANDLED otherwise
+</return>
+</function>
+
+<function name="g_log_writer_standard_streams">
+<description>
+Format a structured log message and print it to either `stdout` or `stderr`,
+depending on its log level. %G_LOG_LEVEL_INFO and %G_LOG_LEVEL_DEBUG messages
+are sent to `stdout`; all other log levels are sent to `stderr`. Only fields
+which are understood by this function are included in the formatted string
+which is printed.
+
+If the output stream supports ANSI color escape sequences, they will be used
+in the output.
+
+A trailing new-line character is added to the log message when it is printed.
+
+This is suitable for use as a #GLogWriterFunc.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="log_level">
+<parameter_description> log level, either from #GLogLevelFlags, or a user-defined
+level
+</parameter_description>
+</parameter>
+<parameter name="fields">
+<parameter_description> key–value pairs of structured data forming
+the log message
+</parameter_description>
+</parameter>
+<parameter name="n_fields">
+<parameter_description> number of elements in the @fields array
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> user data passed to g_log_set_writer_func()
+</parameter_description>
+</parameter>
+</parameters>
+<return> %G_LOG_WRITER_HANDLED on success, %G_LOG_WRITER_UNHANDLED otherwise
+</return>
+</function>
+
+<function name="g_log_writer_supports_color">
+<description>
+Check whether the given @output_fd file descriptor supports ANSI color
+escape sequences. If so, they can safely be used when formatting log
+messages.
+
+Since: 2.50
+
+</description>
+<parameters>
+<parameter name="output_fd">
+<parameter_description> output file descriptor to check
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if ANSI color escapes are supported, %FALSE otherwise
+</return>
+</function>
+
 <function name="g_logv">
 <description>
 Logs an error or debugging message.
@@ -22875,10 +25076,14 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
+If [structured logging is enabled][using-structured-logging] this will
+output via the structured log writer function (see g_log_set_writer_func()).
+
 </description>
 <parameters>
 <parameter name="log_domain">
-<parameter_description> the log domain
+<parameter_description> the log domain, or %NULL for the default &quot;&quot;
+application domain
 </parameter_description>
 </parameter>
 <parameter name="log_level">
@@ -22912,7 +25117,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="buf">
@@ -23386,9 +25592,20 @@ the context used by functions like g_idle_add().
 Normally you would call this function shortly after creating a new
 thread, passing it a #GMainContext which will be run by a
 #GMainLoop in that thread, to set a new default context for all
-async operations in that thread. (In this case, you don't need to
-ever call g_main_context_pop_thread_default().) In some cases
-however, you may want to schedule a single operation in a
+async operations in that thread. In this case you may not need to
+ever call g_main_context_pop_thread_default(), assuming you want the
+new #GMainContext to be the default for the whole lifecycle of the
+thread.
+
+If you don't have control over how the new thread was created (e.g.
+in the new thread isn't newly created, or if the thread life
+cycle is managed by a #GThreadPool), it is always suggested to wrap
+the logic that needs to use the new #GMainContext inside a
+g_main_context_push_thread_default() / g_main_context_pop_thread_default()
+pair, otherwise threads that are re-used will end up never explicitly
+releasing the #GMainContext reference they hold.
+
+In some cases you may want to schedule a single operation in a
 non-default context, or temporarily use a non-default context in
 the main thread. In that case, you can wrap the call to the
 asynchronous operation inside a
@@ -24200,7 +26417,8 @@ Since: 2.8
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> The path of the file to load, in the GLib filename encoding
+<parameter_description> The path of the file to load, in the GLib
+filename encoding
 </parameter_description>
 </parameter>
 <parameter name="writable">
@@ -25339,28 +27557,24 @@ malloc() can be used interchangeable with memory allocated using g_malloc().
 This function is useful for avoiding an extra copy of allocated memory returned
 by a non-GLib-based API.
 
-A different allocator can be set using g_mem_set_vtable().
-
+Deprecated: 2.46: GLib always uses the system malloc, so this function always
+returns %TRUE.
 
 </description>
 <parameters>
 </parameters>
 <return> if %TRUE, malloc() and g_malloc() can be mixed.
+
 </return>
 </function>
 
 <function name="g_mem_profile">
 <description>
-Outputs a summary of memory usage.
+GLib used to support some tools for memory profiling, but this
+no longer works. There are many other useful tools for memory
+profiling these days which can be used instead.
 
-It outputs the frequency of allocations of different sizes,
-the total number of bytes which have been allocated,
-the total number of bytes which have been freed,
-and the difference between the previous two values, i.e. the number of bytes
-still in use.
-
-Note that this function will not output anything unless you have
-previously installed the #glib_mem_profiler_table with g_mem_set_vtable().
+Deprecated: 2.46: Use other memory profiling tools instead
 
 </description>
 <parameters>
@@ -25370,17 +27584,12 @@ previously installed the #glib_mem_profiler_table with g_mem_set_vtable().
 
 <function name="g_mem_set_vtable">
 <description>
-Sets the #GMemVTable to use for memory allocation. You can use this
-to provide custom memory allocation routines.
+This function used to let you override the memory allocation function.
+However, its use was incompatible with the use of global constructors
+in GLib and GIO, because those use the GLib allocators before main is
+reached. Therefore this function is now deprecated and is just a stub.
 
-The @vtable only needs to provide malloc(), realloc(), and free()
-functions; GLib can provide default implementations of the others.
-The malloc() and realloc() implementations should return %NULL on
-failure, GLib will handle error-checking for you. @vtable is copied,
-so need not persist after this function has been called.
-
-Note that this function must be called before using any other GLib
-functions.
+Deprecated: 2.46: Use other memory profiling tools instead
 
 </description>
 <parameters>
@@ -25447,6 +27656,10 @@ If g_log_default_handler() is used as the log handler function, a new-line
 character will automatically be appended to @..., and need not be entered
 manually.
 
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
+
 </description>
 <parameters>
 <parameter name="Varargs">
@@ -25471,7 +27684,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="mode">
@@ -25532,8 +27746,8 @@ Since: 2.30
 </parameter_description>
 </parameter>
 </parameters>
-<return> A pointer to @tmpl, which has been modified
-to hold the directory name.  In case of errors, %NULL is
+<return> A pointer to @tmpl, which has been
+modified to hold the directory name.  In case of errors, %NULL is
 returned and %errno will be set.
 
 </return>
@@ -25566,8 +27780,8 @@ Since: 2.30
 </parameter_description>
 </parameter>
 </parameters>
-<return> A pointer to @tmpl, which has been modified
-to hold the directory name. In case of errors, %NULL is
+<return> A pointer to @tmpl, which has been
+modified to hold the directory name. In case of errors, %NULL is
 returned, and %errno will be set.
 
 </return>
@@ -25908,6 +28122,70 @@ already been locked by the same thread results in undefined behaviour
 </parameter>
 </parameters>
 <return></return>
+</function>
+
+<function name="g_mutex_locker_free">
+<description>
+Unlock @locker's mutex. See g_mutex_locker_new() for details.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="locker">
+<parameter_description> a GMutexLocker
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_mutex_locker_new">
+<description>
+Lock @mutex and return a new #GMutexLocker. Unlock with
+g_mutex_locker_free(). Using g_mutex_unlock() on @mutex
+while a #GMutexLocker exists can lead to undefined behaviour.
+
+This is intended to be used with g_autoptr().  Note that g_autoptr()
+is only available when using GCC or clang, so the following example
+will only work with those compilers:
+|[
+typedef struct
+{
+...
+GMutex mutex;
+...
+} MyObject;
+
+static void
+my_object_do_stuff (MyObject *self)
+{
+g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&amp;self-&gt;mutex);
+
+// Code with mutex locked here
+
+if (cond)
+// No need to unlock
+return;
+
+// Optionally early unlock
+g_clear_pointer (&amp;locker, g_mutex_locker_free);
+
+// Code with mutex unlocked here
+}
+]|
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="mutex">
+<parameter_description> a mutex to lock
+</parameter_description>
+</parameter>
+</parameters>
+<return> a #GMutexLocker
+</return>
 </function>
 
 <function name="g_mutex_new">
@@ -26896,7 +29174,8 @@ thread. Use #GWeakRef if thread-safety is required.
 </parameter_description>
 </parameter>
 <parameter name="weak_pointer_location">
-<parameter_description> The memory address of a pointer.
+<parameter_description> The memory address
+of a pointer.
 </parameter_description>
 </parameter>
 </parameters>
@@ -27658,8 +29937,8 @@ Since: 2.4
 </description>
 <parameters>
 <parameter name="g_iface">
-<parameter_description> any interface vtable for the interface, or the default
-vtable for the interface
+<parameter_description> any interface vtable for the
+interface, or the default vtable for the interface
 </parameter_description>
 </parameter>
 <parameter name="property_name">
@@ -27695,7 +29974,8 @@ Since: 2.4
 </description>
 <parameters>
 <parameter name="g_iface">
-<parameter_description> any interface vtable for the interface, or the default
+<parameter_description> any interface vtable for the
+interface, or the default
 vtable for the interface.
 </parameter_description>
 </parameter>
@@ -27720,8 +30000,8 @@ Since: 2.4
 </description>
 <parameters>
 <parameter name="g_iface">
-<parameter_description> any interface vtable for the interface, or the default
-vtable for the interface
+<parameter_description> any interface vtable for the
+interface, or the default vtable for the interface
 </parameter_description>
 </parameter>
 <parameter name="n_properties_p">
@@ -27779,7 +30059,8 @@ name/value pairs, followed by %NULL
 </parameter_description>
 </parameter>
 </parameters>
-<return> a new instance of @object_type
+<return> a new instance of
+@object_type
 </return>
 </function>
 
@@ -28004,7 +30285,8 @@ to match the one used with g_object_add_weak_pointer().
 </parameter_description>
 </parameter>
 <parameter name="weak_pointer_location">
-<parameter_description> The memory address of a pointer.
+<parameter_description> The memory address
+of a pointer.
 </parameter_description>
 </parameter>
 </parameters>
@@ -28118,7 +30400,7 @@ by @newval, %FALSE otherwise.
 Releases all references to other objects. This can be used to break
 reference cycles.
 
-This functions should only be called from object system implementations.
+This function should only be called from object system implementations.
 
 </description>
 <parameters>
@@ -28420,6 +30702,11 @@ It is an error to call this function when the freeze count is zero.
 Decreases the reference count of @object. When its reference count
 drops to 0, the object is finalized (i.e. its memory is freed).
 
+If the pointer to the #GObject may be reused in future (for example, if it is
+an instance variable of another object), it is recommended to clear the
+pointer to %NULL rather than retain a dangling pointer to a potentially
+invalid #GObject instance. Use g_clear_object() for this.
+
 </description>
 <parameters>
 <parameter name="object">
@@ -28667,7 +30954,8 @@ Since: 2.14
 </description>
 <parameters>
 <parameter name="location">
-<parameter_description> location of a static initializable variable containing 0
+<parameter_description> location of a static initializable variable
+containing 0
 </parameter_description>
 </parameter>
 </parameters>
@@ -28690,7 +30978,8 @@ Since: 2.14
 </description>
 <parameters>
 <parameter name="location">
-<parameter_description> location of a static initializable variable containing 0
+<parameter_description> location of a static initializable variable
+containing 0
 </parameter_description>
 </parameter>
 <parameter name="result">
@@ -28727,7 +31016,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="flags">
@@ -28749,10 +31039,8 @@ from open().
 <function name="g_option_context_add_group">
 <description>
 Adds a #GOptionGroup to the @context, so that parsing with @context
-will recognize the options in the group. Note that the group will
-be freed together with the context when g_option_context_free() is
-called, so you must not free the group yourself after adding it
-to a context.
+will recognize the options in the group. Note that this will take
+ownership of the @group and thus the @group should not be freed.
 
 Since: 2.6
 
@@ -28918,9 +31206,29 @@ Since: 2.6
 </parameter_description>
 </parameter>
 </parameters>
-<return> the main group of @context, or %NULL if @context doesn't
-have a main group. Note that group belongs to @context and should
-not be modified or freed.
+<return> the main group of @context, or %NULL if
+@context doesn't have a main group. Note that group belongs to
+@context and should not be modified or freed.
+
+</return>
+</function>
+
+<function name="g_option_context_get_strict_posix">
+<description>
+Returns whether strict POSIX code is enabled.
+
+See g_option_context_set_strict_posix() for more information.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="context">
+<parameter_description> a #GoptionContext
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if strict POSIX is enabled, %FALSE otherwise.
 
 </return>
 </function>
@@ -29174,6 +31482,49 @@ Since: 2.6
 <return></return>
 </function>
 
+<function name="g_option_context_set_strict_posix">
+<description>
+Sets strict POSIX mode.
+
+By default, this mode is disabled.
+
+In strict POSIX mode, the first non-argument parameter encountered
+(eg: filename) terminates argument processing.  Remaining arguments
+are treated as non-options and are not attempted to be parsed.
+
+If strict POSIX mode is disabled then parsing is done in the GNU way
+where option arguments can be freely mixed with non-options.
+
+As an example, consider &quot;ls foo -l&quot;.  With GNU style parsing, this
+will list &quot;foo&quot; in long mode.  In strict POSIX style, this will list
+the files named &quot;foo&quot; and &quot;-l&quot;.
+
+It may be useful to force strict POSIX mode when creating &quot;verb
+style&quot; command line tools.  For example, the &quot;gsettings&quot; command line
+tool supports the global option &quot;--schemadir&quot; as well as many
+subcommands (&quot;get&quot;, &quot;set&quot;, etc.) which each have their own set of
+arguments.  Using strict POSIX mode will allow parsing the global
+options up to the verb name while leaving the remaining options to be
+parsed by the relevant subcommand (which can be determined by
+examining the verb name, which should be present in argv[1] after
+parsing).
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="context">
+<parameter_description> a #GoptionContext
+</parameter_description>
+</parameter>
+<parameter name="strict_posix">
+<parameter_description> the new value
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_option_context_set_summary">
 <description>
 Adds a string to be displayed in `--help` output before the list
@@ -29286,6 +31637,8 @@ which have been added to a #GOptionContext.
 
 Since: 2.6
 
+Deprecated: 2.44: Use g_option_group_unref() instead.
+
 </description>
 <parameters>
 <parameter name="group">
@@ -29332,7 +31685,25 @@ the error hook and to callbacks of %G_OPTION_ARG_CALLBACK options, or %NULL
 </parameter>
 </parameters>
 <return> a newly created option group. It should be added
-to a #GOptionContext or freed with g_option_group_free().
+to a #GOptionContext or freed with g_option_group_unref().
+
+</return>
+</function>
+
+<function name="g_option_group_ref">
+<description>
+Increments the reference count of @group by one.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="group">
+<parameter_description> a #GOptionGroup
+</parameter_description>
+</parameter>
+</parameters>
+<return> a #GoptionGroup
 
 </return>
 </function>
@@ -29445,30 +31816,31 @@ Since: 2.6
 <return></return>
 </function>
 
-<function name="g_param_get_default_value">
+<function name="g_option_group_unref">
 <description>
-Gets the default value of @param as a pointer to a #GValue.
+Decrements the reference count of @group by one.
+If the reference count drops to 0, the @group will be freed.
+and all memory allocated by the @group is released.
 
-The #GValue will remain value for the life of @param.
-
-Since: 2.38
+Since: 2.44
 
 </description>
 <parameters>
-<parameter name="param">
-<parameter_description> a #GParamSpec
+<parameter name="group">
+<parameter_description> a #GOptionGroup
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to a #GValue which must not be modified
-
-</return>
+<return></return>
 </function>
 
 <function name="g_param_spec_boolean">
 <description>
 Creates a new #GParamSpecBoolean instance specifying a %G_TYPE_BOOLEAN
-property.
+property. In many cases, it may be more appropriate to use an enum with
+g_param_spec_enum(), both to improve code clarity by using explicitly named
+values, and to allow for more values to be added in future without breaking
+API.
 
 See g_param_spec_internal() for details on property names.
 
@@ -29754,6 +32126,26 @@ Get the short description of a #GParamSpec.
 </return>
 </function>
 
+<function name="g_param_spec_get_default_value">
+<description>
+Gets the default value of @pspec as a pointer to a #GValue.
+
+The #GValue will remain value for the life of @pspec.
+
+Since: 2.38
+
+</description>
+<parameters>
+<parameter name="pspec">
+<parameter_description> a #GParamSpec
+</parameter_description>
+</parameter>
+</parameters>
+<return> a pointer to a #GValue which must not be modified
+
+</return>
+</function>
+
 <function name="g_param_spec_get_name">
 <description>
 Get the name of a #GParamSpec.
@@ -29770,6 +32162,24 @@ This allows for pointer-value comparisons.
 </parameter>
 </parameters>
 <return> the name of @pspec.
+</return>
+</function>
+
+<function name="g_param_spec_get_name_quark">
+<description>
+Gets the GQuark for the name.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="pspec">
+<parameter_description> a #GParamSpec
+</parameter_description>
+</parameter>
+</parameters>
+<return> the GQuark for @pspec-&gt;name.
+
 </return>
 </function>
 
@@ -30143,6 +32553,8 @@ See g_param_spec_internal() for details on property names.
 <function name="g_param_spec_pointer">
 <description>
 Creates a new #GParamSpecPointer instance specifying a pointer property.
+Where possible, it is better to use g_param_spec_object() or
+g_param_spec_boxed() to expose memory management information.
 
 See g_param_spec_internal() for details on property names.
 
@@ -31058,7 +33470,8 @@ is not an absolute path it returns %NULL.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer into @file_name after the root component
+<return> a pointer into @file_name after the
+root component
 </return>
 </function>
 
@@ -31353,7 +33766,7 @@ Since: 2.16
 </description>
 <parameters>
 <parameter name="err">
-<parameter_description> a return location for a #GError, or %NULL
+<parameter_description> a return location for a #GError
 </parameter_description>
 </parameter>
 <parameter name="format">
@@ -31378,8 +33791,8 @@ its own new-line character.
 g_print() should not be used from within libraries for debugging
 messages, since it may be redirected by applications to special
 purpose message windows or even files. Instead, libraries should
-use g_log(), or the convenience functions g_message(), g_warning()
-and g_error().
+use g_log(), g_log_structured(), or the convenience macros g_message(),
+g_warning() and g_error().
 
 </description>
 <parameters>
@@ -31403,8 +33816,8 @@ a trailing new-line character. Typically, @format should end with its own
 new-line character.
 
 g_printerr() should not be used from within libraries.
-Instead g_log() should be used, or the convenience functions
-g_message(), g_warning() and g_error().
+Instead g_log() or g_log_structured() should be used, or the convenience
+macros g_message(), g_warning() and g_error().
 
 </description>
 <parameters>
@@ -31559,6 +33972,12 @@ the #GDestroyNotify for @key is not called on the old value.
 <description>
 If @dest is %NULL, free @src; otherwise, moves @src into *@dest.
 The error variable @dest points to must be %NULL.
+
+@src must be non-%NULL.
+
+Note that @src is no longer valid after this call. If you want
+to keep using the same GError*, you need to set it to %NULL
+after calling this function on it.
 
 </description>
 <parameters>
@@ -32429,9 +34848,10 @@ Since: 2.14
 
 <function name="g_queue_insert_after">
 <description>
-Inserts @data into @queue after @sibling
+Inserts @data into @queue after @sibling.
 
-@sibling must be part of @queue
+@sibling must be part of @queue. Since GLib 2.44 a %NULL sibling pushes the
+data at the head of the queue.
 
 Since: 2.4
 
@@ -32442,7 +34862,8 @@ Since: 2.4
 </parameter_description>
 </parameter>
 <parameter name="sibling">
-<parameter_description> a #GList link that must be part of @queue
+<parameter_description> a #GList link that must be part of @queue, or %NULL to
+push at the head of the queue.
 </parameter_description>
 </parameter>
 <parameter name="data">
@@ -32457,7 +34878,8 @@ Since: 2.4
 <description>
 Inserts @data into @queue before @sibling.
 
-@sibling must be part of @queue.
+@sibling must be part of @queue. Since GLib 2.44 a %NULL sibling pushes the
+data at the tail of the queue.
 
 Since: 2.4
 
@@ -32468,7 +34890,8 @@ Since: 2.4
 </parameter_description>
 </parameter>
 <parameter name="sibling">
-<parameter_description> a #GList link that must be part of @queue
+<parameter_description> a #GList link that must be part of @queue, or %NULL to
+push at the tail of the queue.
 </parameter_description>
 </parameter>
 <parameter name="data">
@@ -33642,6 +36065,10 @@ Since: 2.14
 <description>
 Returns the compile options that @regex was created with.
 
+Depending on the version of PCRE that is used, this may or may not
+include flags set by option expressions such as `(?i)` found at the
+top-level within the compiled pattern.
+
 Since: 2.26
 
 </description>
@@ -33942,7 +36369,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="match_options">
@@ -34033,7 +36460,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="match_options">
@@ -34120,8 +36547,8 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> a #GRegex structure. Call g_regex_unref() when you
-are done with it
+<return> a #GRegex structure or %NULL if an error occured. Call
+g_regex_unref() when you are done with it
 
 </return>
 </function>
@@ -34190,7 +36617,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="replacement">
@@ -34276,7 +36703,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="match_options">
@@ -34329,7 +36756,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="replacement">
@@ -34434,7 +36861,7 @@ Since: 2.14
 </parameter_description>
 </parameter>
 <parameter name="start_position">
-<parameter_description> starting index of the string to match
+<parameter_description> starting index of the string to match, in bytes
 </parameter_description>
 </parameter>
 <parameter name="match_options">
@@ -34786,7 +37213,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 </parameters>
@@ -34810,7 +37238,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="oldfilename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="newfilename">
@@ -34872,6 +37301,27 @@ should therefore not depend on any side effects of @expr.
 <parameters>
 <parameter name="expr">
 <parameter_description> the expression to check
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
+<function name="g_return_if_fail_warning">
+<description>
+
+</description>
+<parameters>
+<parameter name="log_domain">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="pretty_function">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="expression">
+<parameter_description>
 </parameter_description>
 </parameter>
 </parameters>
@@ -34949,7 +37399,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 </parameters>
@@ -35879,7 +38330,9 @@ Since: 2.14
 
 <function name="g_sequence_get_length">
 <description>
-Returns the length of @seq
+Returns the length of @seq. Note that this method is O(h) where `h' is the
+height of the tree. It is thus more efficient to use g_sequence_is_empty()
+when comparing the length to zero.
 
 Since: 2.14
 
@@ -35992,6 +38445,28 @@ Since: 2.14
 </parameter>
 </parameters>
 <return> a #GSequenceIter pointing to the new item
+
+</return>
+</function>
+
+<function name="g_sequence_is_empty">
+<description>
+Returns %TRUE if the sequence contains zero items.
+
+This function is functionally identical to checking the result of
+g_sequence_get_length() being equal to zero. However this function is
+implemented in O(1) running time.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="seq">
+<parameter_description> a #GSequence
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the sequence is empty, otherwise %FALSE.
 
 </return>
 </function>
@@ -36710,7 +39185,7 @@ must be %NULL. A new #GError is created and assigned to *@err.
 </description>
 <parameters>
 <parameter name="err">
-<parameter_description> a return location for a #GError, or %NULL
+<parameter_description> a return location for a #GError
 </parameter_description>
 </parameter>
 <parameter name="domain">
@@ -36746,7 +39221,7 @@ Since: 2.18
 </description>
 <parameters>
 <parameter name="err">
-<parameter_description> a return location for a #GError, or %NULL
+<parameter_description> a return location for a #GError
 </parameter_description>
 </parameter>
 <parameter name="domain">
@@ -36763,6 +39238,52 @@ Since: 2.18
 </parameter>
 </parameters>
 <return></return>
+</function>
+
+<function name="g_set_object">
+<description>
+Updates a #GObject pointer to refer to @new_object. It increments the
+reference count of @new_object (if non-%NULL), decrements the reference
+count of the current value of @object_ptr (if non-%NULL), and assigns
+@new_object to @object_ptr. The assignment is not atomic.
+
+@object_ptr must not be %NULL.
+
+A macro is also included that allows this function to be used without
+pointer casts. The function itself is static inline, so its address may vary
+between compilation units.
+
+One convenient usage of this function is in implementing property setters:
+|[
+void
+foo_set_bar (Foo *foo,
+Bar *new_bar)
+{
+g_return_if_fail (IS_FOO (foo));
+g_return_if_fail (new_bar == NULL || IS_BAR (new_bar));
+
+if (g_set_object (&amp;foo-&gt;bar, new_bar))
+g_object_notify (foo, &quot;bar&quot;);
+}
+]|
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="object_ptr">
+<parameter_description> a pointer to a #GObject reference
+</parameter_description>
+</parameter>
+<parameter name="new_object">
+<parameter_description> a pointer to the new #GObject to
+assign to it, or %NULL to clear the pointer
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the value of @object_ptr changed, %FALSE otherwise
+
+</return>
 </function>
 
 <function name="g_set_prgname">
@@ -36828,10 +39349,9 @@ example.
 
 <function name="g_setenv">
 <description>
-Sets an environment variable. Both the variable's name and value
-should be in the GLib file name encoding. On UNIX, this means that
-they can be arbitrary byte strings. On Windows, they should be in
-UTF-8.
+Sets an environment variable. On UNIX, both the variable's name and
+value can be arbitrary byte strings, except that the variable's name
+cannot contain '='. On Windows, they should be in UTF-8.
 
 Note that on some systems, when variables are overwritten, the memory
 used for the previous variables and its value isn't reclaimed.
@@ -36891,16 +39411,16 @@ domain. Free the returned vector with g_strfreev().
 </parameter_description>
 </parameter>
 <parameter name="argcp">
-<parameter_description> return location for number of args, or %NULL
+<parameter_description> return location for number of args
 </parameter_description>
 </parameter>
 <parameter name="argvp">
 <parameter_description> return
-location for array of args, or %NULL
+location for array of args
 </parameter_description>
 </parameter>
 <parameter name="error">
-<parameter_description> return location for error, or %NULL
+<parameter_description> return location for error
 </parameter_description>
 </parameter>
 </parameters>
@@ -37113,7 +39633,8 @@ Since: 2.18
 </description>
 <parameters>
 <parameter name="instance">
-<parameter_description> the instance the signal is being emitted on.
+<parameter_description> the instance the signal is being
+emitted on.
 </parameter_description>
 </parameter>
 <parameter name="Varargs">
@@ -37131,6 +39652,9 @@ is #G_TYPE_NONE, the return value location can be omitted.
 Connects a #GCallback function to a signal for a particular object.
 
 The handler will be called before the default handler of the signal.
+
+See [memory management of signal handlers][signal-memory-management] for
+details on how to handle the return value and memory management of @data.
 
 
 </description>
@@ -37315,7 +39839,8 @@ is not safe).
 </parameter_description>
 </parameter>
 <parameter name="gobject">
-<parameter_description> the object to pass as data to @c_handler.
+<parameter_description> the object to pass as data
+to @c_handler.
 </parameter_description>
 </parameter>
 <parameter name="connect_flags">
@@ -37350,7 +39875,7 @@ button_clicked_cb (GtkButton *button, GtkWidget *other_widget)
 gtk_widget_hide (other_widget);
 }
 
-…
+...
 
 g_signal_connect (button, &quot;clicked&quot;,
 (GCallback) button_clicked_cb, other_widget);
@@ -37448,7 +39973,8 @@ if no handlers are connected, in contrast to g_signal_emitv().
 </description>
 <parameters>
 <parameter name="instance">
-<parameter_description> the instance the signal is being emitted on.
+<parameter_description> the instance the signal is being
+emitted on.
 </parameter_description>
 </parameter>
 <parameter name="signal_id">
@@ -37493,7 +40019,9 @@ is being emitted on. The rest are any arguments to be passed to the signal.
 </parameter_description>
 </parameter>
 <parameter name="return_value">
-<parameter_description> Location to store the return value of the signal emission.
+<parameter_description> Location to
+store the return value of the signal emission. This must be provided if the
+specified signal returns a value, but may be ignored otherwise.
 </parameter_description>
 </parameter>
 </parameters>
@@ -37916,6 +40444,15 @@ and/or @data the handlers have to match.
 <description>
 Returns whether there are any handlers connected to @instance for the
 given signal id and detail.
+
+If @detail is 0 then it will only match handlers that were connected
+without detail.  If @detail is non-zero then it will match handlers
+connected both without detail and with the given detail.  This is
+consistent with how a signal emitted with @detail would be delivered
+to those handlers.
+
+Since 2.46 this also checks for a non-default class closure being
+installed, as this is basically always what you want.
 
 One example of when you might use this is when the arguments to the
 signal are difficult to compute. A class implementor may opt to not
@@ -38427,6 +40964,33 @@ g_signal_add_emission_hook()
 <return></return>
 </function>
 
+<function name="g_signal_set_va_marshaller">
+<description>
+Change the #GSignalCVaMarshaller used for a given signal.  This is a
+specialised form of the marshaller that can often be used for the
+common case of a single connected signal handler and avoids the
+overhead of #GValue.  Its use is optional.
+
+Since: 2.32
+
+</description>
+<parameters>
+<parameter name="signal_id">
+<parameter_description> the signal id
+</parameter_description>
+</parameter>
+<parameter name="instance_type">
+<parameter_description> the instance type on which to set the marshaller.
+</parameter_description>
+</parameter>
+<parameter name="va_marshaller">
+<parameter_description> the marshaller to set.
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_signal_stop_emission">
 <description>
 Stops a signal's current emission.
@@ -38499,6 +41063,66 @@ structure which is to be invoked by the new closure
 </return>
 </function>
 
+<function name="g_size_checked_add">
+<description>
+Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #gsize destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #gsize left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #gsize right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
+</return>
+</function>
+
+<function name="g_size_checked_mul">
+<description>
+Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #gsize destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #gsize left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #gsize right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
+</return>
+</function>
+
 <function name="g_slice_alloc">
 <description>
 Allocates a block of memory from the slice allocator.
@@ -38520,7 +41144,8 @@ Since: 2.10
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the allocated memory block
+<return> a pointer to the allocated memory block, which will be %NULL if and
+only if @mem_size is 0
 
 </return>
 </function>
@@ -38541,7 +41166,8 @@ Since: 2.10
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the allocated block
+<return> a pointer to the allocated block, which will be %NULL if and only
+if @mem_size is 0
 
 </return>
 </function>
@@ -38550,6 +41176,8 @@ Since: 2.10
 <description>
 Allocates a block of memory from the slice allocator
 and copies @block_size bytes into it from @mem_block.
+
+@mem_block must be non-%NULL if @block_size is non-zero.
 
 Since: 2.14
 
@@ -38564,7 +41192,8 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the allocated memory block
+<return> a pointer to the allocated memory block, which will be %NULL if and
+only if @mem_size is 0
 
 </return>
 </function>
@@ -38581,6 +41210,8 @@ Note that the underlying slice allocation mechanism can
 be changed with the [`G_SLICE=always-malloc`][G_SLICE]
 environment variable.
 
+This can never return %NULL.
+
 Since: 2.14
 
 </description>
@@ -38594,7 +41225,8 @@ Since: 2.14
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the allocated block, cast to a pointer to @type
+<return> a pointer to the allocated block, cast to a pointer
+to @type
 
 </return>
 </function>
@@ -38609,6 +41241,8 @@ as the block size.
 Note that the exact release behaviour can be changed with the
 [`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
 [`G_SLICE`][G_SLICE] for related debugging options.
+
+If @mem is %NULL, this macro does nothing.
 
 Since: 2.10
 
@@ -38636,6 +41270,8 @@ specified upon allocation. Note that the exact release behaviour
 can be changed with the [`G_DEBUG=gc-friendly`][G_DEBUG] environment
 variable, also see [`G_SLICE`][G_SLICE] for related debugging options.
 
+If @mem_block is %NULL, this function does nothing.
+
 Since: 2.10
 
 </description>
@@ -38662,6 +41298,8 @@ a @next pointer (similar to #GSList). The name of the
 Note that the exact release behaviour can be changed with the
 [`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
 [`G_SLICE`][G_SLICE] for related debugging options.
+
+If @mem_chain is %NULL, this function does nothing.
 
 Since: 2.10
 
@@ -38695,6 +41333,8 @@ Note that the exact release behaviour can be changed with the
 [`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
 [`G_SLICE`][G_SLICE] for related debugging options.
 
+If @mem_chain is %NULL, this function does nothing.
+
 Since: 2.10
 
 </description>
@@ -38726,6 +41366,9 @@ cast in the source code. Note that the underlying slice allocation
 mechanism can be changed with the [`G_SLICE=always-malloc`][G_SLICE]
 environment variable.
 
+This can never return %NULL as the minimum allocation size from
+`sizeof (@type)` is 1 byte.
+
 Since: 2.10
 
 </description>
@@ -38735,7 +41378,8 @@ Since: 2.10
 </parameter_description>
 </parameter>
 </parameters>
-<return> a pointer to the allocated block, cast to a pointer to @type
+<return> a pointer to the allocated block, cast to a pointer
+to @type
 
 </return>
 </function>
@@ -38752,6 +41396,9 @@ Note that the underlying slice allocation mechanism can
 be changed with the [`G_SLICE=always-malloc`][G_SLICE]
 environment variable.
 
+This can never return %NULL as the minimum allocation size from
+`sizeof (@type)` is 1 byte.
+
 Since: 2.10
 
 </description>
@@ -38761,7 +41408,10 @@ Since: 2.10
 </parameter_description>
 </parameter>
 </parameters>
-<return></return>
+<return> a pointer to the allocated block, cast to a pointer
+to @type
+
+</return>
 </function>
 
 <function name="g_slist_alloc">
@@ -39231,7 +41881,8 @@ or %NULL if the #GSList has no elements
 Gets the number of elements in a #GSList.
 
 This function iterates over the whole list to
-count its elements.
+count its elements. To check whether the list is non-empty, it is faster to
+check @list against %NULL.
 
 
 </description>
@@ -40190,6 +42841,9 @@ The exact type of @func depends on the type of source; ie. you
 should not count on @func being called with @data as its first
 parameter.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle memory management of @data.
+
 Typically, you won't use this function. Instead use functions specific
 to the type of source you are using.
 
@@ -40591,13 +43245,8 @@ tools it is enough to make the program have a wmain() instead of
 main(). wmain() has a wide character argument vector as parameter.
 
 At least currently, mingw doesn't support wmain(), so if you use
-mingw to develop the spawned program, it will have to call the
-undocumented function __wgetmainargs() to get the wide character
-argument vector and environment. See gspawn-win32-helper.c in the
-GLib sources or init.c in the mingw runtime sources for a prototype
-for that function. Alternatively, you can retrieve the Win32 system
-level wide character command line passed to the spawned program
-using the GetCommandLineW() function.
+mingw to develop the spawned program, it should call
+g_win32_get_command_line() to get arguments in UTF-8.
 
 On Windows the low-level child process creation API CreateProcess()
 doesn't use argument vectors, but a command line. The C runtime
@@ -41056,7 +43705,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="buf">
@@ -41582,6 +44232,69 @@ Deprectated: 2.32: Use g_rw_lock_writer_unlock() instead
 <return></return>
 </function>
 
+<function name="g_steal_pointer">
+<description>
+Sets @pp to %NULL, returning the value that was there before.
+
+Conceptually, this transfers the ownership of the pointer from the
+referenced variable to the &quot;caller&quot; of the macro (ie: &quot;steals&quot; the
+reference).
+
+The return value will be properly typed, according to the type of
+@pp.
+
+This can be very useful when combined with g_autoptr() to prevent the
+return value of a function from being automatically freed.  Consider
+the following example (which only works on GCC and clang):
+
+|[
+GObject *
+create_object (void)
+{
+g_autoptr(GObject) obj = g_object_new (G_TYPE_OBJECT, NULL);
+
+if (early_error_case)
+return NULL;
+
+return g_steal_pointer (&amp;obj);
+}
+]|
+
+It can also be used in similar ways for 'out' parameters and is
+particularly useful for dealing with optional out parameters:
+
+|[
+gboolean
+get_object (GObject **obj_out)
+{
+g_autoptr(GObject) obj = g_object_new (G_TYPE_OBJECT, NULL);
+
+if (early_error_case)
+return FALSE;
+
+if (obj_out)
+*obj_out = g_steal_pointer (&amp;obj);
+
+return TRUE;
+}
+]|
+
+In the above example, the object will be automatically freed in the
+early error case and also in the case that %NULL was given for
+@obj_out.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="pp">
+<parameter_description> a pointer to a pointer
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_stpcpy">
 <description>
 Copies a nul-terminated string into the dest buffer, include the
@@ -41689,6 +44402,10 @@ uses the signed value of each byte.
 It can be passed to g_hash_table_new() as the @hash_func parameter,
 when using non-%NULL strings as keys in a #GHashTable.
 
+Note that this function may not be a perfect fit for all use cases.
+For example, it produces some hash collisions with strings as short
+as 2.
+
 
 </description>
 <parameters>
@@ -41788,6 +44505,7 @@ If you want to do translation for no specific locale, and you want it
 to be done independently of the currently locale, specify &quot;C&quot; for
 @from_locale.
 
+Since: 2.40
 
 </description>
 <parameters>
@@ -41801,6 +44519,7 @@ to be done independently of the currently locale, specify &quot;C&quot; for
 </parameter>
 </parameters>
 <return> a string in plain ASCII
+
 </return>
 </function>
 
@@ -42182,10 +44901,14 @@ on a %NULL value, g_strdupv() simply returns %NULL.
 
 <function name="g_strerror">
 <description>
-Returns a string corresponding to the given error code, e.g.
-&quot;no such process&quot;. You should use this function in preference to
-strerror(), because it returns a string in UTF-8 encoding, and since
-not all platforms support the strerror() function.
+Returns a string corresponding to the given error code, e.g. &quot;no
+such process&quot;. Unlike strerror(), this always returns a string in
+UTF-8 encoding, and the pointer is guaranteed to remain valid for
+the lifetime of the process.
+
+Note that the string may be translated according to the current locale.
+
+The value of %errno will not be changed by this function.
 
 
 </description>
@@ -42197,7 +44920,7 @@ documentation
 </parameter>
 </parameters>
 <return> a UTF-8 string describing the error code. If the error code
-is unknown, it returns &quot;unknown error (&lt;code&gt;)&quot;.
+is unknown, it returns a string like &quot;unknown error (&lt;code&gt;)&quot;.
 </return>
 </function>
 
@@ -42231,8 +44954,10 @@ characters escaped. See above.
 
 <function name="g_strfreev">
 <description>
-Frees a %NULL-terminated array of strings, and the array itself.
-If called on a %NULL value, g_strfreev() simply returns.
+Frees a %NULL-terminated array of strings, as well as each
+string it contains.
+
+If @str_array is %NULL, this function simply returns.
 
 </description>
 <parameters>
@@ -42884,7 +45609,7 @@ Creates a new #GString, initialized with the given string.
 <parameters>
 <parameter name="init">
 <parameter_description> the initial text to copy into the string, or %NULL to
-start with an empty string.
+start with an empty string
 </parameter_description>
 </parameter>
 </parameters>
@@ -43311,6 +46036,10 @@ together, with @separator between them
 Joins a number of strings together to form one long string, with the
 optional @separator inserted between each of them. The returned string
 should be freed with g_free().
+
+If @str_array has no items, the return value will be an
+empty string. If @str_array contains a single item, @separator will not
+appear in the resulting string.
 
 
 </description>
@@ -43746,8 +46475,8 @@ point in some locales, causing unexpected results.
 </parameter_description>
 </parameter>
 <parameter name="endptr">
-<parameter_description>  if non-%NULL, it returns the character after
-the last character used in the conversion.
+<parameter_description> if non-%NULL, it returns the
+character after the last character used in the conversion.
 </parameter_description>
 </parameter>
 </parameters>
@@ -43775,6 +46504,28 @@ or g_utf8_strup() instead.
 </return>
 </function>
 
+<function name="g_strv_contains">
+<description>
+Checks if @strv contains @str. @strv must not be %NULL.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="strv">
+<parameter_description> a %NULL-terminated array of strings
+</parameter_description>
+</parameter>
+<parameter name="str">
+<parameter_description> a string
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if @str is an element of @strv, according to g_str_equal().
+
+</return>
+</function>
+
 <function name="g_strv_length">
 <description>
 Returns the length of the given %NULL-terminated
@@ -43797,11 +46548,12 @@ Since: 2.6
 <function name="g_test_add">
 <description>
 Hook up a new test case at @testpath, similar to g_test_add_func().
-A fixture data structure with setup and teardown function may be provided
-though, similar to g_test_create_case().
+A fixture data structure with setup and teardown functions may be provided,
+similar to g_test_create_case().
+
 g_test_add() is implemented as a macro, so that the fsetup(), ftest() and
-fteardown() callbacks can expect a @Fixture pointer as first argument in
-a type safe manner.
+fteardown() callbacks can expect a @Fixture pointer as their first argument
+in a type safe manner. They otherwise have type #GTestFixtureFunc.
 
 Since: 2.16
 
@@ -43852,15 +46604,15 @@ Since: 2.16
 </description>
 <parameters>
 <parameter name="testpath">
-<parameter_description>   /-separated test case path name for the test.
+<parameter_description>  /-separated test case path name for the test.
 </parameter_description>
 </parameter>
 <parameter name="test_data">
-<parameter_description>  Test data argument for the test function.
+<parameter_description> Test data argument for the test function.
 </parameter_description>
 </parameter>
 <parameter name="test_func">
-<parameter_description>  The test function to invoke for this test.
+<parameter_description> The test function to invoke for this test.
 </parameter_description>
 </parameter>
 </parameters>
@@ -43912,7 +46664,7 @@ Since: 2.16
 </description>
 <parameters>
 <parameter name="testpath">
-<parameter_description>   /-separated test case path name for the test.
+<parameter_description>  /-separated test case path name for the test.
 </parameter_description>
 </parameter>
 <parameter name="test_func">
@@ -43927,6 +46679,10 @@ Since: 2.16
 <description>
 Asserts that all messages previously indicated via
 g_test_expect_message() have been seen and suppressed.
+
+This API may only be used with the old logging API (g_log() without
+%G_LOG_USE_STRUCTURED defined). It will not work with the structured logging
+API. See [Testing for Messages][testing-for-messages].
 
 If messages at %G_LOG_LEVEL_DEBUG are emitted, but not explicitly
 expected via g_test_expect_message() then they will be ignored.
@@ -44036,14 +46792,14 @@ Since: 2.38
 Create a new #GTestCase, named @test_name, this API is fairly
 low level, calling g_test_add() or g_test_add_func() is preferable.
 When this test is executed, a fixture structure of size @data_size
-will be allocated and filled with 0s. Then @data_setup is called
-to initialize the fixture. After fixture setup, the actual test
-function @data_test is called. Once the test run completed, the
-fixture structure is torn down  by calling @data_teardown and
-after that the memory is released.
+will be automatically allocated and filled with zeros. Then @data_setup is
+called to initialize the fixture. After fixture setup, the actual test
+function @data_test is called. Once the test run completes, the
+fixture structure is torn down by calling @data_teardown and
+after that the memory is automatically released by the test framework.
 
 Splitting up a test run into fixture setup, test function and
-fixture teardown is most usful if the same fixture is used for
+fixture teardown is most useful if the same fixture is used for
 multiple tests. In this cases, g_test_create_case() will be
 called with the same fixture, but varying @test_name and
 @data_test arguments.
@@ -44065,11 +46821,11 @@ Since: 2.16
 </parameter_description>
 </parameter>
 <parameter name="data_setup">
-<parameter_description>    the function to set up the fixture data
+<parameter_description> the function to set up the fixture data
 </parameter_description>
 </parameter>
 <parameter name="data_test">
-<parameter_description>     the actual test function
+<parameter_description> the actual test function
 </parameter_description>
 </parameter>
 <parameter name="data_teardown">
@@ -44106,6 +46862,10 @@ Indicates that a message with the given @log_domain and @log_level,
 with text matching @pattern, is expected to be logged. When this
 message is logged, it will not be printed, and the test case will
 not abort.
+
+This API may only be used with the old logging API (g_log() without
+%G_LOG_USE_STRUCTURED defined). It will not work with the structured logging
+API. See [Testing for Messages][testing-for-messages].
 
 Use g_test_assert_expected_messages() to assert that all
 previously-expected messages have been seen and suppressed.
@@ -44323,7 +47083,7 @@ be skipped (ie, a test whose name contains &quot;/subprocess&quot;).
 `quick`: Quick tests, should run really quickly and give good coverage.
 
 `undefined`: Tests for undefined behaviour, may provoke programming errors
-under g_test_trap_subprocess() or g_test_expect_messages() to check
+under g_test_trap_subprocess() or g_test_expect_message() to check
 that appropriate assertions or warnings are given
 
 `no-undefined`: Avoid tests for undefined behaviour
@@ -44435,6 +47195,12 @@ any test case, so you have to set it inside each test
 function which needs the special behavior.
 
 This handler has no effect on g_error messages.
+
+This handler also has no effect on structured log messages (using
+g_log_structured() or g_log_structured_array()). To change the fatal
+behaviour for specific log messages, programs must install a custom log
+writer function using g_log_set_writer_func().See
+[Using Structured Logging][using-structured-logging].
 
 Since: 2.22
 
@@ -45191,7 +47957,7 @@ message.
 
 |[&lt;!-- language=&quot;C&quot; --&gt; 
 static void
-test_create_large_object_subprocess (void)
+test_create_large_object (void)
 {
 if (g_test_subprocess ())
 {
@@ -45504,6 +48270,10 @@ Some systems restrict the length of @name to 16 bytes.
 If the thread can not be created the program aborts. See
 g_thread_try_new() if you want to attempt to deal with failures.
 
+If you are using threads to offload (potentially many) short-lived tasks,
+#GThreadPool may be more appropriate than manually spawning and tracking
+multiple #GThreads.
+
 To free the struct returned by this function, use g_thread_unref().
 Note that g_thread_join() implicitly unrefs the #GThread as well.
 
@@ -45641,6 +48411,29 @@ Returns the number of currently unused threads.
 </return>
 </function>
 
+<function name="g_thread_pool_move_to_front">
+<description>
+Moves the item to the front of the queue of unprocessed
+items, so that it will be processed next.
+
+Since: 2.46
+
+</description>
+<parameters>
+<parameter name="pool">
+<parameter_description> a #GThreadPool
+</parameter_description>
+</parameter>
+<parameter name="data">
+<parameter_description> an unprocessed item in the pool
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the item was found and moved
+
+</return>
+</function>
+
 <function name="g_thread_pool_new">
 <description>
 This function creates a new thread pool.
@@ -45668,7 +48461,7 @@ global pool.
 @error can be %NULL to ignore errors, or non-%NULL to report
 errors. An error can only occur when @exclusive is set to %TRUE
 and not all @max_threads threads could be created.
-See #GThreadError for possible errors that may occurr.
+See #GThreadError for possible errors that may occur.
 Note, even in case of error a valid #GThreadPool is returned.
 
 
@@ -45910,7 +48703,7 @@ Since: 2.32
 
 <function name="g_thread_self">
 <description>
-This functions returns the #GThread corresponding to the
+This function returns the #GThread corresponding to the
 current thread. Note that this function does not increase
 the reference count of the returned struct.
 
@@ -46448,14 +49241,19 @@ After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 If you want to have a timer in the &quot;seconds&quot; range and do not care
 about the exact time of the first call of the timer, use the
 g_timeout_add_seconds() function; this function allows for more
 optimizations and more efficient system power usage.
 
 This internally creates a main loop source using g_timeout_source_new()
-and attaches it to the main loop context using g_source_attach(). You can
-do these steps manually if you need greater control.
+and attaches it to the global #GMainContext using g_source_attach(), so
+the callback will be invoked in whichever thread is running that main
+context. You can do these steps manually if you need greater control or to
+use a custom main context.
 
 The interval given is in terms of monotonic time, not wall clock
 time.  See g_get_monotonic_time().
@@ -46496,9 +49294,14 @@ After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 This internally creates a main loop source using g_timeout_source_new()
-and attaches it to the main loop context using g_source_attach(). You can
-do these steps manually if you need greater control.
+and attaches it to the global #GMainContext using g_source_attach(), so
+the callback will be invoked in whichever thread is running that main
+context. You can do these steps manually if you need greater control or to
+use a custom main context.
 
 The interval given in terms of monotonic time, not wall clock time.
 See g_get_monotonic_time().
@@ -46549,6 +49352,9 @@ Note that the first call of the timer may not be precise for timeouts
 of one second. If you need finer precision and have such a timeout,
 you may want to use g_timeout_add() instead.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 The interval given is in terms of monotonic time, not wall clock
 time.  See g_get_monotonic_time().
 
@@ -46593,6 +49399,9 @@ Note that timeout functions may be delayed, due to the processing of other
 event sources. Thus they should not be relied on for precise timing.
 After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given @interval
+
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
 
 If you want timing more precise than whole seconds, use g_timeout_add()
 instead.
@@ -46820,6 +49629,7 @@ Returns the height of a #GTrashStack.
 Note that execution of this function is of O(N) complexity
 where N denotes the number of items on the stack.
 
+Deprecated: 2.48: #GTrashStack is deprecated without replacement
 
 </description>
 <parameters>
@@ -46837,6 +49647,7 @@ where N denotes the number of items on the stack.
 Returns the element at the top of a #GTrashStack
 which may be %NULL.
 
+Deprecated: 2.48: #GTrashStack is deprecated without replacement
 
 </description>
 <parameters>
@@ -46853,6 +49664,7 @@ which may be %NULL.
 <description>
 Pops a piece of memory off a #GTrashStack.
 
+Deprecated: 2.48: #GTrashStack is deprecated without replacement
 
 </description>
 <parameters>
@@ -46868,6 +49680,7 @@ Pops a piece of memory off a #GTrashStack.
 <function name="g_trash_stack_push">
 <description>
 Pushes a piece of memory onto a #GTrashStack.
+Deprecated: 2.48: #GTrashStack is deprecated without replacement
 
 </description>
 <parameters>
@@ -47424,7 +50237,7 @@ Attempts to allocate @n_structs elements of type @struct_type, initialized
 to 0's, and returns %NULL on failure. Contrast with g_new0(), which aborts
 the program on failure.
 The returned pointer is cast to a pointer to the given type.
-The function returns %NULL when @n_structs is 0 of if an overflow occurs.
+The function returns %NULL when @n_structs is 0 or if an overflow occurs.
 
 Since: 2.8
 
@@ -47447,7 +50260,9 @@ Since: 2.8
 <description>
 Attempts to realloc @mem to a new size, @n_bytes, and returns %NULL
 on failure. Contrast with g_realloc(), which aborts the program
-on failure. If @mem is %NULL, behaves the same as g_try_malloc().
+on failure.
+
+If @mem is %NULL, behaves the same as g_try_malloc().
 
 
 </description>
@@ -47808,7 +50623,8 @@ Since: 2.4
 </description>
 <parameters>
 <parameter name="g_class">
-<parameter_description> class structure for an instantiatable type
+<parameter_description> class structure for an instantiatable
+type
 </parameter_description>
 </parameter>
 <parameter name="private_size">
@@ -48179,6 +50995,28 @@ fundamental type identifier.
 </parameters>
 <return> the next available fundamental type ID to be registered,
 or 0 if the type system ran out of fundamental type IDs
+</return>
+</function>
+
+<function name="g_type_get_instance_count">
+<description>
+Returns the number of instances allocated of the particular type;
+this is only available if GLib is built with debugging support and
+the instance_count debug flag is set (by setting the GOBJECT_DEBUG
+variable to include instance-count).
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="type">
+<parameter_description> a #GType
+</parameter_description>
+</parameter>
+</parameters>
+<return> the number of instances allocated of the given type;
+if instance counts are not available, returns 0.
+
 </return>
 </function>
 
@@ -49080,15 +51918,15 @@ If @len &lt; 0, then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of bytes read,
-or %NULL. If an error occurs then the index of the invalid input
-is stored here.
+<parameter_description> location to store number of
+bytes read, or %NULL. If an error occurs then the index of the invalid
+input is stored here.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of #gunichar2 
-written, or %NULL. The value stored here does not include the
-trailing 0.
+<parameter_description> location to store number
+of #gunichar2  written, or %NULL. The value stored here does not include
+the trailing 0.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -49122,14 +51960,14 @@ If @len &lt; 0, then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of characters
-read, or %NULL.
+<parameter_description> location to store number of
+characters read, or %NULL.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of bytes
-written or %NULL. The value here stored does not include the
-trailing 0 byte. 
+<parameter_description> location to store number
+of bytes written or %NULL. The value here stored does not include the
+trailing 0 byte.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -49143,6 +51981,126 @@ errors. Any of the errors in #GConvertError other than
 This value must be freed with g_free(). If an error occurs,
 %NULL will be returned and @error set. In that case, @items_read
 will be set to the position of the first invalid input character.
+</return>
+</function>
+
+<function name="g_uint64_checked_add">
+<description>
+Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #guint64 destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #guint64 left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #guint64 right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
+</return>
+</function>
+
+<function name="g_uint64_checked_mul">
+<description>
+Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #guint64 destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #guint64 left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #guint64 right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
+</return>
+</function>
+
+<function name="g_uint_checked_add">
+<description>
+Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #guint destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #guint left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #guint right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
+</return>
+</function>
+
+<function name="g_uint_checked_mul">
+<description>
+Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.
+
+Since: 2.48
+
+</description>
+<parameters>
+<parameter name="dest">
+<parameter_description> a pointer to the #guint destination
+</parameter_description>
+</parameter>
+<parameter name="a">
+<parameter_description> the #guint left operand
+</parameter_description>
+</parameter>
+<parameter name="b">
+<parameter_description> the #guint right operand
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if there was no overflow
 </return>
 </function>
 
@@ -49741,9 +52699,9 @@ Converts a single character to UTF-8.
 </parameter_description>
 </parameter>
 <parameter name="outbuf">
-<parameter_description> output buffer, must have at least 6 bytes of space.
-If %NULL, the length will be computed and returned
-and nothing will be written to @outbuf.
+<parameter_description> output buffer, must have at
+least 6 bytes of space. If %NULL, the length will be computed and
+returned and nothing will be written to @outbuf.
 </parameter_description>
 </parameter>
 </parameters>
@@ -50250,7 +53208,8 @@ Since: 2.6
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 </parameters>
@@ -50474,16 +53433,16 @@ If @len &lt; 0, then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of words read,
-or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
-returned in case @str contains a trailing partial character. If
+<parameter_description> location to store number of
+words read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
+be returned in case @str contains a trailing partial character. If
 an error occurs then the index of the invalid input is stored here.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of characters
-written, or %NULL. The value stored here does not include the trailing
-0 character.
+<parameter_description> location to store number
+of characters written, or %NULL. The value stored here does not include
+the trailing 0 character.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -50528,15 +53487,16 @@ If @len &lt; 0, then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of words read,
-or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
-returned in case @str contains a trailing partial character. If
+<parameter_description> location to store number of
+words read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
+be returned in case @str contains a trailing partial character. If
 an error occurs then the index of the invalid input is stored here.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of bytes written,
-or %NULL. The value stored here does not include the trailing 0 byte.
+<parameter_description> location to store number
+of bytes written, or %NULL. The value stored here does not include the
+trailing 0 byte.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -51157,7 +54117,8 @@ then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of bytes read, or %NULL.
+<parameter_description> location to store number of
+bytes read, or %NULL.
 If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
 returned in case @str contains a trailing partial
 character. If an error occurs then the index of the
@@ -51165,9 +54126,9 @@ invalid input is stored here.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of characters
-written or %NULL. The value here stored does not include the
-trailing 0 character. 
+<parameter_description> location to store number
+of characters written or %NULL. The value here stored does not include
+the trailing 0 character.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -51204,8 +54165,8 @@ then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store the number of
-characters in the result, or %NULL.
+<parameter_description> location to store the
+number of characters in the result, or %NULL.
 </parameter_description>
 </parameter>
 </parameters>
@@ -51232,16 +54193,16 @@ If @len &lt; 0, then the string is nul-terminated.
 </parameter_description>
 </parameter>
 <parameter name="items_read">
-<parameter_description> location to store number of bytes read,
-or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
-returned in case @str contains a trailing partial character. If
+<parameter_description> location to store number of
+bytes read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
+be returned in case @str contains a trailing partial character. If
 an error occurs then the index of the invalid input is stored here.
 </parameter_description>
 </parameter>
 <parameter name="items_written">
-<parameter_description> location to store number of #gunichar2
-written, or %NULL. The value stored here does not include the
-trailing 0.
+<parameter_description> location to store number
+of #gunichar2 written, or %NULL. The value stored here does not include
+the trailing 0.
 </parameter_description>
 </parameter>
 <parameter name="error">
@@ -51303,7 +54264,8 @@ Since: 2.18
 </description>
 <parameters>
 <parameter name="filename">
-<parameter_description> a pathname in the GLib file name encoding (UTF-8 on Windows)
+<parameter_description> a pathname in the GLib file name encoding
+(UTF-8 on Windows)
 </parameter_description>
 </parameter>
 <parameter name="utb">
@@ -51410,7 +54372,7 @@ Deprecated: 2.32: Use #GArray and g_array_insert_val() instead.
 </parameter_description>
 </parameter>
 <parameter name="index_">
-<parameter_description> insertion position, must be &lt;= value_array-&gt;n_values
+<parameter_description> insertion position, must be &lt;= value_array-&gt;;n_values
 </parameter_description>
 </parameter>
 <parameter name="value">
@@ -52831,8 +55793,8 @@ a #GValue of type @dest_type.
 <description>
 Check whether g_value_transform() is able to transform values
 of type @src_type into values of type @dest_type. Note that for
-the types to be transformable, they must be compatible and a
-transform function must be registered.
+the types to be transformable, they must be compatible or a
+transformation function must be registered.
 
 
 </description>
@@ -52852,10 +55814,10 @@ transform function must be registered.
 
 <function name="g_value_unset">
 <description>
-Clears the current value in @value and &quot;unsets&quot; the type,
-this releases all resources associated with this GValue.
-An unset value is the same as an uninitialized (zero-filled)
-#GValue structure.
+Clears the current value in @value (if any) and &quot;unsets&quot; the type,
+this releases all resources associated with this GValue. An unset
+value is the same as an uninitialized (zero-filled) #GValue
+structure.
 
 </description>
 <parameters>
@@ -53055,7 +56017,10 @@ Ends the builder process and returns the constructed value.
 It is not permissible to use @builder in any way after this call
 except for reference counting operations (in the case of a
 heap-allocated #GVariantBuilder) or by reinitialising it with
-g_variant_builder_init() (in the case of stack-allocated).
+g_variant_builder_init() (in the case of stack-allocated). This
+means that for the stack-allocated builders there is no need to
+call g_variant_builder_clear() after the call to
+g_variant_builder_end().
 
 It is an error to call this function in any way that would create an
 inconsistent value to be constructed (ie: insufficient number of
@@ -53777,7 +56742,7 @@ Since: 2.30
 Similar to g_variant_get_string() except that instead of returning
 a constant string, the string is duplicated.
 
-The string will always be utf8 encoded.
+The string will always be UTF-8 encoded.
 
 The return value must be freed using g_free().
 
@@ -53794,7 +56759,7 @@ Since: 2.24
 </parameter_description>
 </parameter>
 </parameters>
-<return> a newly allocated string, utf8 encoded
+<return> a newly allocated string, UTF-8 encoded
 
 </return>
 </function>
@@ -53948,6 +56913,9 @@ non-%NULL nul-terminated string will be returned by this function.
 If the array contains a nul terminator character somewhere other than
 the last byte then the returned string is the string, up to the first
 such nul character.
+
+g_variant_get_fixed_array() should be used instead if the array contains
+arbitrary data that could not be nul-terminated or could contain nul bytes.
 
 It is an error to call this function with a @value that is not an
 array of bytes.
@@ -54205,17 +57173,6 @@ the fixed array
 </return>
 </function>
 
-<function name="g_variant_get_gtype">
-<description>
-Since: 2.24
-Deprecated: 2.26
-
-</description>
-<parameters>
-</parameters>
-<return></return>
-</function>
-
 <function name="g_variant_get_handle">
 <description>
 Returns the 32-bit signed integer value of @value.
@@ -54421,7 +57378,7 @@ Returns the string value of a #GVariant instance with a string
 type.  This includes the types %G_VARIANT_TYPE_STRING,
 %G_VARIANT_TYPE_OBJECT_PATH and %G_VARIANT_TYPE_SIGNATURE.
 
-The string will always be utf8 encoded.
+The string will always be UTF-8 encoded, and will never be %NULL.
 
 If @length is non-%NULL then the length of the string (in bytes) is
 returned there.  For trusted values, this information is already
@@ -54446,7 +57403,7 @@ to store the length
 </parameter_description>
 </parameter>
 </parameters>
-<return> the constant string, utf8 encoded
+<return> the constant string, UTF-8 encoded
 
 </return>
 </function>
@@ -55388,7 +58345,7 @@ Since: 2.24
 <description>
 Creates an array-of-bytes #GVariant with the contents of @string.
 This function is just like g_variant_new_string() except that the
-string need not be valid utf8.
+string need not be valid UTF-8.
 
 The nul terminator character at the end of the string is stored in
 the array.
@@ -55908,14 +58865,16 @@ Since: 2.24
 <description>
 Creates a string #GVariant with the contents of @string.
 
-@string must be valid utf8.
+@string must be valid UTF-8, and must not be %NULL. To encode
+potentially-%NULL strings, use g_variant_new() with `ms` as the
+[format string][gvariant-format-strings-maybe-types].
 
 Since: 2.24
 
 </description>
 <parameters>
 <parameter name="string">
-<parameter_description> a normal utf8 nul-terminated string
+<parameter_description> a normal UTF-8 nul-terminated string
 </parameter_description>
 </parameter>
 </parameters>
@@ -55953,7 +58912,8 @@ Since: 2.24
 <description>
 Creates a string #GVariant with the contents of @string.
 
-@string must be valid utf8.
+@string must be valid UTF-8, and must not be %NULL. To encode
+potentially-%NULL strings, use this with g_variant_new_maybe().
 
 This function consumes @string.  g_free() will be called on @string
 when it is no longer required.
@@ -55967,7 +58927,7 @@ Since: 2.38
 </description>
 <parameters>
 <parameter name="string">
-<parameter_description> a normal utf8 nul-terminated string
+<parameter_description> a normal UTF-8 nul-terminated string
 </parameter_description>
 </parameter>
 </parameters>
@@ -56169,7 +59129,8 @@ errors (in the case that the type would have been ambiguous, such as
 with empty arrays).
 
 In the event that the parsing is successful, the resulting #GVariant
-is returned.
+is returned. It is never floating, and must be freed with
+g_variant_unref().
 
 In case of any error, %NULL will be returned.  If @error is non-%NULL
 then it will be set to reflect the error that occurred.
@@ -56201,7 +59162,7 @@ produced by g_variant_print()&quot;.
 </parameter_description>
 </parameter>
 </parameters>
-<return> a reference to a #GVariant, or %NULL
+<return> a non-floating reference to a #GVariant, or %NULL
 </return>
 </function>
 
@@ -57444,7 +60405,7 @@ Since: 2.16
 
 <function name="g_warn_if_reached">
 <description>
-Logs a critical warning.
+Logs a warning.
 
 Since: 2.16
 
@@ -57454,9 +60415,42 @@ Since: 2.16
 <return></return>
 </function>
 
+<function name="g_warn_message">
+<description>
+
+</description>
+<parameters>
+<parameter name="domain">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="file">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="line">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="func">
+<parameter_description>
+</parameter_description>
+</parameter>
+<parameter name="warnexpr">
+<parameter_description>
+</parameter_description>
+</parameter>
+</parameters>
+<return></return>
+</function>
+
 <function name="g_warning">
 <description>
 A convenience function/macro to log a warning message.
+
+This is not intended for end user error reporting. Use of #GError is
+preferred for that instead, as it allows calling functions to perform actions
+conditional on the type of error.
 
 You can make warnings fatal at runtime by setting the `G_DEBUG`
 environment variable (see
@@ -57465,6 +60459,10 @@ environment variable (see
 If g_log_default_handler() is used as the log handler function,
 a newline character will automatically be appended to @..., and
 need not be entered manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].
 
 </description>
 <parameters>
@@ -57576,6 +60574,48 @@ Since: 2.32
 </parameter>
 </parameters>
 <return></return>
+</function>
+
+<function name="g_win32_check_windows_version">
+<description>
+Returns whether the version of the Windows operating system the
+code is running on is at least the specified major, minor and
+service pack versions.  See MSDN documentation for the Operating
+System Version.  Software that needs even more detailed version and
+feature information should use the Win32 API VerifyVersionInfo()
+directly.
+
+Successive calls of this function can be used for enabling or
+disabling features at run-time for a range of Windows versions,
+as per the VerifyVersionInfo() API documentation.
+
+Since: 2.44
+
+</description>
+<parameters>
+<parameter name="major">
+<parameter_description> major version of Windows
+</parameter_description>
+</parameter>
+<parameter name="minor">
+<parameter_description> minor version of Windows
+</parameter_description>
+</parameter>
+<parameter name="spver">
+<parameter_description> Windows Service Pack Level, 0 if none
+</parameter_description>
+</parameter>
+<parameter name="os_type">
+<parameter_description> Type of Windows OS
+</parameter_description>
+</parameter>
+</parameters>
+<return> %TRUE if the Windows Version is the same or greater than
+the specified major, minor and service pack versions, and
+whether the running Windows is a workstation or server edition
+of Windows, if specifically specified.
+
+</return>
 </function>
 
 <function name="g_win32_error_message">
@@ -57788,17 +60828,14 @@ freed with g_free() when no longer needed. If something goes wrong,
 
 <function name="g_win32_get_windows_version">
 <description>
-Returns version information for the Windows operating system the
-code is running on. See MSDN documentation for the GetVersion()
-function. To summarize, the most significant bit is one on Win9x,
-and zero on NT-based systems. Since version 2.14, GLib works only
-on NT-based systems, so checking whether your are running on Win9x
-in your own software is moot. The least significant byte is 4 on
-Windows NT 4, and 5 on Windows XP. Software that needs really
-detailed version and feature information should use Win32 API like
-GetVersionEx() and VerifyVersionInfo().
+This function is deprecated. Use
+g_win32_check_windows_version() instead.
 
-Since: 2.6
+Deprecated: 2.44: Be aware that for Windows 8.1 and Windows Server
+2012 R2 and later, this will return 62 unless the application is
+manifested for Windows 8.1/Windows Server 2012 R2, for example.
+MSDN stated that GetVersion(), which is used here, is subject to
+further change or removal after Windows 8.1.
 
 </description>
 <parameters>
@@ -58134,10 +61171,10 @@ against at application run time.
 
 <function name="glib_mem_profiler_table">
 <description>
-A #GMemVTable containing profiling variants of the memory
-allocation functions. Use them together with g_mem_profile()
-in order to get information about the memory allocation pattern
-of your program.
+Used to be a #GMemVTable containing profiling variants of the memory
+allocation functions, but this variable shouldn't be modified anymore.
+
+Deprecated: 2.46: Use other memory profiling tools instead
 
 </description>
 <parameters>
@@ -58274,7 +61311,7 @@ Values of this type can range from #G_MINSSIZE
 to #G_MAXSSIZE.
 
 To print or scan values of this type, use
-%G_GSIZE_MODIFIER and/or %G_GSSIZE_FORMAT.
+%G_GSSIZE_MODIFIER and/or %G_GSSIZE_FORMAT.
 
 </description>
 <parameters>

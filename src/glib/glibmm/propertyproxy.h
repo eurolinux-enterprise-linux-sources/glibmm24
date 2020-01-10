@@ -24,12 +24,12 @@
 #include <glibmmconfig.h>
 #include <glibmm/propertyproxy_base.h>
 
-
 namespace Glib
 {
 
 /** A PropertyProxy can be used to get and set the value of an object's property.
- * There are usually also get and set methods on the class itself, which you might find more convenient.
+ * There are usually also get and set methods on the class itself, which you might find more
+ * convenient.
  * With the PropertyProxy, you may use either get_value() and set_value(), or operator=() and
  * operator PropertyType(), like so:
  * @code
@@ -37,21 +37,16 @@ namespace Glib
  * cellrenderer.property_editable() = true;
  * @endcode
  *
- * You may also receive notification when a property's value changes, by connecting to signal_changed().
- *
- * You may register new properties for your class (actually for the underlying GType)
- * simply by adding a PropertyProxy instance as a class member.
- * However, your constructor must call the Glib::ObjectBase constructor with a new GType name,
- * in order to register a new GType.
+ * You may also receive notification when a property's value changes, by connecting to
+ * signal_changed().
  */
 template <class T>
 class PropertyProxy : public PropertyProxy_Base
 {
 public:
-  typedef T PropertyType;
+  using PropertyType = T;
 
-  PropertyProxy(ObjectBase* obj, const char* name)
-    : PropertyProxy_Base(obj, name) {}
+  PropertyProxy(ObjectBase* obj, const char* name) : PropertyProxy_Base(obj, name) {}
 
   /** Set the value of this property.
    * @param data The new value for the property.
@@ -65,16 +60,16 @@ public:
 
   /** Set the value of this property back to its default value
    */
-  void reset_value()
-    { reset_property_(); }
+  void reset_value() { reset_property_(); }
 
   PropertyProxy<T>& operator=(const PropertyType& data)
-    { this->set_value(data); return *this; }
+  {
+    this->set_value(data);
+    return *this;
+  }
 
-  operator PropertyType() const
-    { return this->get_value(); }
+  operator PropertyType() const { return this->get_value(); }
 };
-
 
 /** See PropertyProxy().
  * This property can be written, but not read, so there is no get_value() method.
@@ -83,10 +78,9 @@ template <class T>
 class PropertyProxy_WriteOnly : public PropertyProxy_Base
 {
 public:
-  typedef T PropertyType;
+  using PropertyType = T;
 
-  PropertyProxy_WriteOnly(ObjectBase* obj, const char* name)
-    : PropertyProxy_Base(obj, name) {}
+  PropertyProxy_WriteOnly(ObjectBase* obj, const char* name) : PropertyProxy_Base(obj, name) {}
 
   /** Set the value of this property.
    * @param data The new value for the property.
@@ -95,11 +89,13 @@ public:
 
   /** Set the value of this property back to its default value
    */
-  void reset_value()
-    { reset_property_(); }
+  void reset_value() { reset_property_(); }
 
   PropertyProxy_WriteOnly<T>& operator=(const PropertyType& data)
-    { this->set_value(data); return *this; }
+  {
+    this->set_value(data);
+    return *this;
+  }
 };
 
 /** See PropertyProxy().
@@ -109,28 +105,29 @@ template <class T>
 class PropertyProxy_ReadOnly : public PropertyProxy_Base
 {
 public:
-  typedef T PropertyType;
+  using PropertyType = T;
 
-  //obj is const, because this should be returned by const accessors.
+  // obj is const, because this should be returned by const accessors.
   PropertyProxy_ReadOnly(const ObjectBase* obj, const char* name)
-    : PropertyProxy_Base(const_cast<ObjectBase*>(obj), name) {}
+  : PropertyProxy_Base(const_cast<ObjectBase*>(obj), name)
+  {
+  }
 
   /** Get the value of this property.
    * @result The current value of the property.
    */
   PropertyType get_value() const;
 
-  operator PropertyType() const
-    { return this->get_value(); }
+  operator PropertyType() const { return this->get_value(); }
 };
-
 
 /**** Template Implementation **********************************************/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 template <class T>
-void PropertyProxy<T>::set_value(const T& data)
+void
+PropertyProxy<T>::set_value(const T& data)
 {
   Glib::Value<T> value;
   value.init(Glib::Value<T>::value_type());
@@ -140,7 +137,8 @@ void PropertyProxy<T>::set_value(const T& data)
 }
 
 template <class T>
-T PropertyProxy<T>::get_value() const
+T
+PropertyProxy<T>::get_value() const
 {
   Glib::Value<T> value;
   value.init(Glib::Value<T>::value_type());
@@ -149,11 +147,13 @@ T PropertyProxy<T>::get_value() const
   return value.get();
 }
 
-//We previously just static_cast<> PropertyProxy_WriteOnly<> to PropertyProxy<> to call its set_value(),
-//to avoid code duplication.
-//But the AIX compiler does not like that hack.
+// We previously just static_cast<> PropertyProxy_WriteOnly<> to PropertyProxy<> to call its
+// set_value(),
+// to avoid code duplication.
+// But the AIX compiler does not like that hack.
 template <class T>
-void PropertyProxy_WriteOnly<T>::set_value(const T& data)
+void
+PropertyProxy_WriteOnly<T>::set_value(const T& data)
 {
   Glib::Value<T> value;
   value.init(Glib::Value<T>::value_type());
@@ -162,11 +162,13 @@ void PropertyProxy_WriteOnly<T>::set_value(const T& data)
   set_property_(value);
 }
 
-//We previously just static_cast<> PropertyProxy_WriteOnly<> to PropertyProxy<> to call its set_value(),
-//to avoid code duplication.
-//But the AIX compiler does not like that hack.
+// We previously just static_cast<> PropertyProxy_WriteOnly<> to PropertyProxy<> to call its
+// set_value(),
+// to avoid code duplication.
+// But the AIX compiler does not like that hack.
 template <class T>
-T PropertyProxy_ReadOnly<T>::get_value() const
+T
+PropertyProxy_ReadOnly<T>::get_value() const
 {
   Glib::Value<T> value;
   value.init(Glib::Value<T>::value_type());
@@ -179,6 +181,4 @@ T PropertyProxy_ReadOnly<T>::get_value() const
 
 } // namespace Glib
 
-
 #endif /* _GLIBMM_PROPERTYPROXY_H */
-

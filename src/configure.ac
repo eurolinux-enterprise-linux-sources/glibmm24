@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([glibmm], [2.42.0],
+AC_INIT([glibmm], [2.50.0],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=glibmm],
         [glibmm], [http://www.gtkmm.org/])
 AC_PREREQ([2.59])
@@ -26,11 +26,11 @@ AC_CONFIG_MACRO_DIR([build])
 AC_CONFIG_HEADERS([config.h glib/glibmmconfig.h gio/giommconfig.h])
 
 AM_INIT_AUTOMAKE([1.9 -Wno-portability no-dist-gzip dist-xz tar-ustar no-define nostdinc])
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE
 AC_ARG_VAR([ACLOCAL_FLAGS], [aclocal flags, e.g. -I <macro dir>])
 
-MM_PREREQ([0.9.6])
+MM_PREREQ([0.9.10])
 MM_INIT_MODULE([glibmm-2.4])
 MM_INIT_MODULE([giomm-2.4])
 
@@ -43,6 +43,8 @@ MM_CONFIG_DOCTOOL_DIR([docs])
 AC_SUBST([LIBGLIBMM_SO_VERSION], [4:0:3])
 
 AC_PROG_CXX
+MM_AX_CXX_COMPILE_STDCXX([11], [noext],[mandatory])
+
 AC_DISABLE_STATIC
 LT_INIT([win32-dll])
 MM_PATH_PERL
@@ -60,9 +62,9 @@ AS_IF([test "x$enable_static" = xyes],
   AC_DEFINE([GIOMM_STATIC_LIB],  [1], [Define if giomm is built as a static library])
 ])
 
-glibreq='2.0 >= 2.42.0'
+glibreq='2.0 >= 2.50.0'
 
-GLIBMM_MODULES="sigc++-2.0 >= 2.2.10 glib-$glibreq gobject-$glibreq gmodule-$glibreq"
+GLIBMM_MODULES="sigc++-2.0 >= 2.9.1 glib-$glibreq gobject-$glibreq gmodule-$glibreq"
 GIOMM_MODULES="$GLIBMM_MODULES gio-$glibreq"
 test "x$glibmm_host_windows" = xyes || GIOMM_MODULES="$GIOMM_MODULES gio-unix-$glibreq"
 
@@ -102,6 +104,7 @@ GLIBMM_CXX_CAN_USE_DYNAMIC_CAST_IN_UNUSED_TEMPLATE_WITHOUT_DEFINITION
 GLIBMM_CXX_CAN_ASSIGN_NON_EXTERN_C_FUNCTIONS_TO_EXTERN_C_CALLBACKS
 GLIBMM_CXX_CAN_USE_NAMESPACES_INSIDE_EXTERNC
 GLIBMM_CXX_ALLOWS_STATIC_INLINE_NPOS
+GLIBMM_CXX_CAN_USE_THREAD_LOCAL
 GLIBMM_C_STD_TIME_T_IS_NOT_INT32
 
 MM_ARG_ENABLE_DOCUMENTATION
@@ -114,7 +117,7 @@ GLIBMM_ARG_ENABLE_DEBUG_REFCOUNTING
 # Evaluate the --enable-warnings=level option.
 MM_ARG_ENABLE_WARNINGS([GLIBMM_WXXFLAGS],
                        [-Wall],
-                       [-pedantic -Wall -Wextra -Wformat-security -Wno-long-long],
+                       [-pedantic -Wall -Wextra -Wformat-security -Wsuggest-override -Wshadow -Wno-long-long],
                        [G SIGCXX])
 
 # Offer the ability to omit some API from the library,
@@ -126,6 +129,9 @@ AC_DEFINE([GLIBMM_EXCEPTIONS_ENABLED],[1], [This is always set. This is only for
 AC_DEFINE([GLIBMM_PROPERTIES_ENABLED],[1], [This is always set. This is only for backwards compatibility.])
 AC_DEFINE([GLIBMM_VFUNCS_ENABLED],[1], [This is always set. This is only for backwards compatibility.])
 AC_DEFINE([GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED],[1], [This is always set. This is only for backwards compatibility.])
+
+AC_CHECK_PROGS([CLANG_FORMAT], [clang-format clang-format-3.9 clang-format-3.8 clang-format-3.7], [])
+AM_CONDITIONAL([HAVE_CLANG_FORMAT], test -n "$CLANG_FORMAT")
 
 AC_CONFIG_FILES([Makefile
                  tools/Makefile
@@ -143,24 +149,12 @@ AC_CONFIG_FILES([Makefile
                  examples/Makefile
                  docs/Makefile
                  docs/reference/Doxyfile
-                 MSVC_Net2005/glibmm/glibmm.rc
-                 MSVC_Net2005/giomm/giomm.rc
-                 MSVC_Net2008/glibmm/glibmm.rc
-                 MSVC_Net2008/giomm/giomm.rc
-                 MSVC_Net2010/glibmm/glibmm.rc
-                 MSVC_Net2010/giomm/giomm.rc])
+                 MSVC_Net2013/glibmm/glibmm.rc
+                 MSVC_Net2013/giomm/giomm.rc])
 
 # Copy the generated configuration headers into the MSVC project directories.
-AC_CONFIG_COMMANDS([MSVC_Net2005/glibmm/glibmmconfig.h],
-                   [cp -f glib/glibmmconfig.h MSVC_Net2005/glibmm/glibmmconfig.h])
-AC_CONFIG_COMMANDS([MSVC_Net2005/giomm/giommconfig.h],
-                   [cp -f gio/giommconfig.h MSVC_Net2005/giomm/giommconfig.h])
-AC_CONFIG_COMMANDS([MSVC_Net2008/glibmm/glibmmconfig.h],
-                   [cp -f glib/glibmmconfig.h MSVC_Net2008/glibmm/glibmmconfig.h])
-AC_CONFIG_COMMANDS([MSVC_Net2008/giomm/giommconfig.h],
-                   [cp -f gio/giommconfig.h MSVC_Net2008/giomm/giommconfig.h])
-AC_CONFIG_COMMANDS([MSVC_Net2010/glibmm/glibmmconfig.h],
-                   [cp -f glib/glibmmconfig.h MSVC_Net2010/glibmm/glibmmconfig.h])
-AC_CONFIG_COMMANDS([MSVC_Net2010/giomm/giommconfig.h],
-                   [cp -f gio/giommconfig.h MSVC_Net2010/giomm/giommconfig.h])
+AC_CONFIG_COMMANDS([MSVC_Net2013/glibmm/glibmmconfig.h],
+                   [cp -f glib/glibmmconfig.h MSVC_Net2013/glibmm/glibmmconfig.h])
+AC_CONFIG_COMMANDS([MSVC_Net2013/giomm/giommconfig.h],
+                   [cp -f gio/giommconfig.h MSVC_Net2013/giomm/giommconfig.h])
 AC_OUTPUT

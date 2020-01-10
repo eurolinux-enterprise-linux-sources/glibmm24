@@ -45,7 +45,7 @@ public:
    * is equivalent to:
    * @code
    * bool io_handler(Glib::IOCondition io_condition) { ... }
-   * const Glib::RefPtr<Gio::SocketSource> socket_source = Gio::SocketSource::create(socket, Glib::IO_IN | Glib::IO_OUT);
+   * const auto socket_source = Gio::SocketSource::create(socket, Glib::IO_IN | Glib::IO_OUT);
    * socket_source->connect(sigc::ptr_fun(&io_handler));
    * socket_source->attach(Glib::MainContext::get_default());
    * @endcode
@@ -55,7 +55,9 @@ public:
    * object's MainContext runs.
    *
    * @newin{2,42}
-   * @param slot A slot to call when polling @a socket results in an event that matches @a condition.
+   *
+   * @param slot A slot to call when polling @a socket results in an event that matches @a
+   * condition.
    * The event will be passed as a parameter to @a slot.
    * If <tt>io_handler()</tt> returns <tt>false</tt> the handler is disconnected.
    * @param socket The Socket object to watch.
@@ -79,7 +81,6 @@ private:
   SignalSocket& operator=(const SignalSocket&);
 };
 
-
 /** Convenience socket signal.
  * @param context The main context to which the signal shall be attached.
  * @return A signal proxy; you want to use SignalSocket::connect().
@@ -87,8 +88,8 @@ private:
  * @newin{2,42}
  * @ingroup NetworkIO
  */
-SignalSocket signal_socket(const Glib::RefPtr<Glib::MainContext>& context = Glib::RefPtr<Glib::MainContext>());
-
+SignalSocket signal_socket(
+  const Glib::RefPtr<Glib::MainContext>& context = Glib::RefPtr<Glib::MainContext>());
 
 /** An event source that can monitor a Gio::Socket.
  * @see Gio::Socket::create_source().
@@ -99,15 +100,16 @@ SignalSocket signal_socket(const Glib::RefPtr<Glib::MainContext>& context = Glib
 class SocketSource : public Glib::IOSource
 {
 public:
-  typedef Gio::SocketSource CppObjectType;
+  using CppObjectType = Gio::SocketSource;
 
-  static Glib::RefPtr<SocketSource> create(const Glib::RefPtr<Socket>& socket, Glib::IOCondition condition,
+  static Glib::RefPtr<SocketSource> create(const Glib::RefPtr<Socket>& socket,
+    Glib::IOCondition condition,
     const Glib::RefPtr<Cancellable>& cancellable = Glib::RefPtr<Cancellable>());
 
 protected:
   SocketSource(const Glib::RefPtr<Socket>& socket, Glib::IOCondition condition,
     const Glib::RefPtr<Cancellable>& cancellable);
-  virtual ~SocketSource();
+  ~SocketSource() noexcept override;
 };
 
 } // namespace Gio

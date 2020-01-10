@@ -1,5 +1,3 @@
-// -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-
 /* Copyright (C) 2010 The giomm Development Team
  *
  * This library is free software; you can redistribute it and/or
@@ -16,6 +14,8 @@
  * License along with this library; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+_CONFIGINCLUDE(giommconfig.h)
 
 #include <glibmm/interface.h>
 #include <glibmm/varianttype.h>
@@ -78,7 +78,7 @@ public:
 
   _WRAP_METHOD(Glib::VariantContainerBase get_action_state_hint(const Glib::ustring& action_name) const, g_action_group_get_action_state_hint, deprecated "Use the get_action_state() method that takes an output parameter instead.")
 
-  //TODO: How do we check for a NULL Variant?
+  //TODO: How do we check for a nullptr Variant?
   /**
    * Requests a hint about the valid range of values for the state of the
    * named action within the action group
@@ -107,7 +107,7 @@ public:
 
   _WRAP_METHOD(Glib::VariantBase get_action_state(const Glib::ustring& action_name) const, g_action_group_get_action_state, deprecated "Use the get_action_state() method that takes an output parameter instead.")
 
-  //TODO: How do we check for a NULL Variant?
+  //TODO: How do we check for a nullptr Variant?
   /** Queries the current state of the named action within the action group.
    *
    * If the action is not stateful then a null Variant will be returned.  If the
@@ -150,13 +150,12 @@ public:
 
   _WRAP_VFUNC(bool get_action_enabled(const Glib::ustring& name) const, "get_action_enabled")
 
-#m4 _CONVERSION(`Glib::VariantType',`const GVariantType*',`$3.gobj_copy()')
-  _WRAP_VFUNC(Glib::VariantType get_action_parameter_type(const Glib::ustring& name) const, "get_action_parameter_type")
-  _WRAP_VFUNC(Glib::VariantType get_action_state_type(const Glib::ustring& name) const, "get_action_state_type")
+#m4 _CONVERSION(`Glib::VariantType',`const GVariantType*',`$3.gobj()')
+  _WRAP_VFUNC(Glib::VariantType get_action_parameter_type(const Glib::ustring& name) const, "get_action_parameter_type", keep_return)
+  _WRAP_VFUNC(Glib::VariantType get_action_state_type(const Glib::ustring& name) const, "get_action_state_type", keep_return)
 
-#m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`$3.gobj_copy()')
-  _WRAP_VFUNC(Glib::VariantBase get_action_state_hint(const Glib::ustring& name) const, "get_action_state_hint")
-  _WRAP_VFUNC(Glib::VariantBase get_action_state(const Glib::ustring& name) const, "get_action_state")
+  _WRAP_VFUNC(Glib::VariantBase get_action_state_hint(const Glib::ustring& name) const, "get_action_state_hint", refreturn_ctype)
+  _WRAP_VFUNC(Glib::VariantBase get_action_state(const Glib::ustring& name) const, "get_action_state", refreturn_ctype)
 
   _WRAP_VFUNC(void change_action_state(const Glib::ustring& name, const Glib::VariantBase& value), "change_action_state")
   _WRAP_VFUNC(void activate_action(const Glib::ustring& name, const Glib::VariantBase& parameter), "activate_action")
@@ -167,15 +166,15 @@ void ActionGroup::get_action_state(const Glib::ustring& action_name, T_Value& va
 {
   value = T_Value(); //Make sure that it is initialized.
 
-  typedef Glib::Variant<T_Value> type_glib_variant;
+  using type_glib_variant = Glib::Variant<T_Value>;
 
   g_return_if_fail(
     g_variant_type_equal(g_action_group_get_action_state_type(const_cast<GActionGroup*>(gobj()), action_name.c_str()), type_glib_variant::variant_type().gobj()));
 
-  const Glib::VariantBase variantBase = get_action_state_variant(action_name);
+  const auto variantBase = get_action_state_variant(action_name);
 
   //TODO: Add a bool return instead of letting a std::bad_cast from the cast_dynamic() be thrown up to the caller?
-  const type_glib_variant variantDerived = variantBase.cast_dynamic<type_glib_variant>(variantBase);
+  const auto variantDerived = variantBase.cast_dynamic<type_glib_variant>(variantBase);
   value = variantDerived.get();
 }
 
@@ -184,15 +183,15 @@ void ActionGroup::get_action_state_hint(const Glib::ustring& action_name, T_Valu
 {
   value = T_Value(); //Make sure that it is initialized.
 
-  typedef Glib::Variant<T_Value> type_glib_variant;
+  using type_glib_variant = Glib::Variant<T_Value>;
 
-  const Glib::VariantBase variantBase = get_action_state_hint_variant(action_name);
+  const auto variantBase = get_action_state_hint_variant(action_name);
 
   // We can't check the type (a range) that will be returned before getting the range hint.
   g_return_if_fail(
     variantBase.is_of_type(type_glib_variant::variant_type()) );
 
-  const type_glib_variant variantDerived = variantBase.cast_dynamic<type_glib_variant>(variantBase);
+  const auto variantDerived = variantBase.cast_dynamic<type_glib_variant>(variantBase);
   value = variantDerived.get();
 }
 

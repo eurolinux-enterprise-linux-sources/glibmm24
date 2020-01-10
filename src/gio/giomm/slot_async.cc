@@ -31,10 +31,10 @@ SignalProxy_async_callback(GObject*, GAsyncResult* res, void* data)
 
   try
   {
-    Glib::RefPtr<Gio::AsyncResult> result = Glib::wrap(res, true /* take copy */);
+    auto result = Glib::wrap(res, true /* take copy */);
     (*the_slot)(result);
   }
-  catch(...)
+  catch (...)
   {
     Glib::exception_handlers_invoke();
   }
@@ -42,4 +42,4 @@ SignalProxy_async_callback(GObject*, GAsyncResult* res, void* data)
   delete the_slot;
 }
 
-} //namespace Gio
+} // namespace Gio

@@ -1,8 +1,5 @@
-// -*- c++ -*-
 #ifndef _GLIBMM_THREADPOOL_H
 #define _GLIBMM_THREADPOOL_H
-
-/* $Id$ */
 
 /* Copyright (C) 2002 The gtkmm Development Team
  *
@@ -21,20 +18,32 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <glibmmconfig.h>
+
+#ifndef GLIBMM_DISABLE_DEPRECATED
+
 #include <sigc++/sigc++.h>
 
-extern "C" { typedef struct _GThreadPool GThreadPool; }
-
+extern "C" {
+using GThreadPool = struct _GThreadPool;
+}
 
 namespace Glib
 {
 
 /** @defgroup ThreadPools Thread Pools
  * Pools of threads to execute work concurrently.
+ *
+ * @deprecated This is deprecated in favor of the standard C++ concurrency API in C++11 and C++14.
+ *
  * @{
  */
 
+// TODO: Is std::async() an appropriate replacement to mention for this deprecated API?
+
 /** A pool of threads to execute work concurrently.
+ *
+ * @deprecated This is deprecated in favor of the standard C++ concurrency API in C++11 and C++14.
  */
 class ThreadPool
 {
@@ -60,9 +69,9 @@ public:
    * set to <tt>true</tt> and not all @a max_threads threads could be created.
    */
   explicit ThreadPool(int max_threads = -1, bool exclusive = false);
-  virtual ~ThreadPool();
+  virtual ~ThreadPool() noexcept;
 
-  //See http://bugzilla.gnome.org/show_bug.cgi?id=512348 about the sigc::trackable issue.
+  // See http://bugzilla.gnome.org/show_bug.cgi?id=512348 about the sigc::trackable issue.
   // TODO: At the next ABI break, consider changing const sigc::slot<void>& slot
   // to const std::function<void()>& func, if it can be assumed that all supported
   // compilers understand the C++11 template class std::function<>.
@@ -157,7 +166,7 @@ public:
    */
   static void stop_unused_threads();
 
-  GThreadPool*       gobj()       { return gobject_; }
+  GThreadPool* gobj() { return gobject_; }
   const GThreadPool* gobj() const { return gobject_; }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -166,14 +175,13 @@ public:
 
 private:
   GThreadPool* gobject_;
-  SlotList*    slot_list_;
+  SlotList* slot_list_;
 
   ThreadPool(const ThreadPool&);
   ThreadPool& operator=(const ThreadPool&);
 };
 
 /** @} group ThreadPools */
-
 
 /***************************************************************************/
 /*  inline implementation                                                  */
@@ -183,11 +191,10 @@ private:
 
 /**** Glib::Private ********************************************************/
 
-
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 } // namespace Glib
 
+#endif // GLIBMM_DISABLE_DEPRECATED
 
 #endif /* _GLIBMM_THREADPOOL_H */
-

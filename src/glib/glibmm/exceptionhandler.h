@@ -24,7 +24,6 @@
 #include <glibmmconfig.h>
 #include <sigc++/sigc++.h>
 
-
 namespace Glib
 {
 
@@ -34,10 +33,9 @@ sigc::connection add_exception_handler(const sigc::slot<void>& slot);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // internal
-void exception_handlers_invoke() throw();
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+void exception_handlers_invoke() noexcept;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 } // namespace Glib
 
 #endif /* _GLIBMM_EXCEPTIONHANDLER_H */
-

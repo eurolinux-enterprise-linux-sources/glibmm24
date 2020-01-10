@@ -31,7 +31,7 @@ namespace Glib
 {
 
   /** A Glib::wrap() method for this object.
-   * 
+   *
    * @param object The C instance.
    * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
    * @result A C++ instance that wraps this C instance.
@@ -53,9 +53,8 @@ _SECTION(SECTION_SRC_GENERATED)
  * wrap it dynamically either.
  *
  * The cast works because __CPPNAME__ does not have any member data, and
- * it is impossible to derive from it.  This is ensured by not implementing
- * the (protected) default constructor.  The ctor is protected rather than
- * private just to avoid a compile warning.
+ * it is impossible to derive from it.  This is ensured by using final on the
+ * class and by using = delete on the default constructor.
  */
 
 namespace Glib
@@ -116,7 +115,7 @@ const __CNAME__* __CPPNAME__::gobj() const
 __CNAME__* __CPPNAME__::gobj_copy() const
 {
   // See the comment at the top of this file, if you want to know why the cast works.
-  __CNAME__ *const gobject = reinterpret_cast<__CNAME__*>(const_cast<__CPPNAME__*>(this));
+  const auto gobject = reinterpret_cast<__CNAME__*>(const_cast<__CPPNAME__*>(this));
   __OPAQUE_FUNC_REF`'(gobject);
   return gobject;
 }
@@ -138,8 +137,8 @@ dnl
 _IMPORT(SECTION_CLASS1)
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CNAME__ BaseObjectType;
+  using CppObjectType = __CPPNAME__;
+  using BaseObjectType = __CNAME__;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 ifelse(__OPAQUE_FUNC_NEW,NONE,`dnl
@@ -166,16 +165,18 @@ ifelse(__OPAQUE_FUNC_NEW,NONE,`dnl
   ///Provides access to the underlying C instance. The caller is responsible for unrefing it. Use when directly setting fields in structs.
   __CNAME__* gobj_copy() const;
 
+  __CPPNAME__`'() = delete;
+
+  // noncopyable
+  __CPPNAME__`'(const __CPPNAME__&) = delete;
+  __CPPNAME__& operator=(const __CPPNAME__&) = delete;
+
 protected:
   // Do not derive this.  __NAMESPACE__::__CPPNAME__ can neither be constructed nor deleted.
-  __CPPNAME__`'();
+
   void operator delete(void*, std::size_t);
 
 private:
-  // noncopyable
-  __CPPNAME__`'(const __CPPNAME__&);
-  __CPPNAME__& operator=(const __CPPNAME__&);
-
 _IMPORT(SECTION_CLASS2)
 ')
 

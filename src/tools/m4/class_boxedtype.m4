@@ -61,7 +61,7 @@ __NAMESPACE_BEGIN__
  * @param lhs The left-hand side
  * @param rhs The right-hand side
  */
-inline void swap(__CPPNAME__& lhs, __CPPNAME__& rhs)
+inline void swap(__CPPNAME__& lhs, __CPPNAME__& rhs) noexcept
   { lhs.swap(rhs); }
 
 __NAMESPACE_END__
@@ -72,7 +72,7 @@ ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
 ',`dnl else
 
 /** A Glib::wrap() method for this object.
- * 
+ *
  * @param object The C instance.
  * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
  * @result A C++ instance that wraps this C instance.
@@ -123,7 +123,7 @@ ifdef(`__BOOL_CUSTOM_DEFAULT_CTOR__',`dnl
 __CPPNAME__::__CPPNAME__`'()
 :
 ifelse(__BOXEDTYPE_FUNC_NEW,NONE,`dnl
-  gobject_ (0) // Allows creation of invalid wrapper, e.g. for output arguments to methods.
+  gobject_ (nullptr) // Allows creation of invalid wrapper, e.g. for output arguments to methods.
 ',`dnl else
   gobject_ (__BOXEDTYPE_FUNC_NEW`'())
 ')dnl
@@ -132,8 +132,22 @@ ifelse(__BOXEDTYPE_FUNC_NEW,NONE,`dnl
 
 __CPPNAME__::__CPPNAME__`'(const __CPPNAME__& other)
 :
-  gobject_ ((other.gobject_) ? __BOXEDTYPE_FUNC_COPY`'(other.gobject_) : 0)
+  gobject_ ((other.gobject_) ? __BOXEDTYPE_FUNC_COPY`'(other.gobject_) : nullptr)
 {}
+
+__CPPNAME__::__CPPNAME__`'(__CPPNAME__&& other) noexcept
+:
+  gobject_(other.gobject_)
+{
+  other.gobject_ = nullptr;
+}
+
+__CPPNAME__& __CPPNAME__::operator=(__CPPNAME__`'&& other) noexcept
+{
+  __CPPNAME__ temp (other);
+  swap(temp);
+  return *this;
+}
 
 ifdef(`__BOOL_CUSTOM_CTOR_CAST__',,`dnl else
 __CPPNAME__::__CPPNAME__`'(__CNAME__* gobject, bool make_a_copy)
@@ -152,18 +166,16 @@ __CPPNAME__& __CPPNAME__::operator=(const __CPPNAME__`'& other)
   return *this;
 }
 
-__CPPNAME__::~__CPPNAME__`'()
+__CPPNAME__::~__CPPNAME__`'() noexcept
 {
 dnl This could be a free or an unref, we do not need to know.
   if(gobject_)
     __BOXEDTYPE_FUNC_FREE`'(gobject_);
 }
 
-void __CPPNAME__::swap(__CPPNAME__& other)
+void __CPPNAME__::swap(__CPPNAME__& other) noexcept
 {
-  __CNAME__ *const temp = gobject_;
-  gobject_ = other.gobject_;
-  other.gobject_ = temp;
+  std::swap(gobject_, other.gobject_);
 }
 
 __CNAME__* __CPPNAME__::gobj_copy() const
@@ -188,8 +200,8 @@ dnl
 _IMPORT(SECTION_CLASS1)
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CNAME__ BaseObjectType;
+  using CppObjectType = __CPPNAME__;
+  using BaseObjectType = __CNAME__;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
   /** Get the GType for this class, for use with the underlying GObject type system.
@@ -208,10 +220,13 @@ ifdef(`__BOOL_CUSTOM_CTOR_CAST__',,`dnl else
   __CPPNAME__`'(const __CPPNAME__& other);
   __CPPNAME__& operator=(const __CPPNAME__& other);
 
-_IMPORT(SECTION_DTOR_DOCUMENTATION)
-  ~__CPPNAME__`'();
+  __CPPNAME__`'(__CPPNAME__&& other) noexcept;
+  __CPPNAME__& operator=(__CPPNAME__&& other) noexcept;
 
-  void swap(__CPPNAME__& other);
+_IMPORT(SECTION_DTOR_DOCUMENTATION)
+  ~__CPPNAME__`'() noexcept;
+
+  void swap(__CPPNAME__& other) noexcept;
 
   ///Provides access to the underlying C instance.
   __CNAME__*       gobj()       { return gobject_; }

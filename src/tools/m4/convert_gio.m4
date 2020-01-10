@@ -32,9 +32,13 @@ _CONV_ENUM(G,FileType)
 _CONV_ENUM(G,MountMountFlags)
 _CONV_ENUM(G,MountOperationResult)
 _CONV_ENUM(G,MountUnmountFlags)
+_CONV_ENUM(G,NetworkConnectivity)
+_CONV_ENUM(G,NotificationPriority)
 _CONV_ENUM(G,OutputStreamSpliceFlags)
 _CONV_ENUM(G,PasswordSave)
 _CONV_ENUM(G,ResolverRecordType)
+_CONV_ENUM(G,ResourceFlags)
+_CONV_ENUM(G,ResourceLookupFlags)
 _CONV_ENUM(G,SettingsBindFlags)
 _CONV_ENUM(G,SocketClientEvent)
 _CONV_ENUM(G,SocketFamily)
@@ -135,7 +139,7 @@ _CONVERSION(`const Glib::RefPtr<Gio::DBus::Object>&',`GDBusObject*',`Glib::unwra
 _CONVERSION(`Glib::RefPtr<Gio::DBus::Object>',`GDBusObject*',`Glib::unwrap($3)')
 
 # DBusProxy
-_CONVERSION(`GDBusProxy*',`Glib::RefPtr<Proxy>',`Glib::wrap($3)')
+_CONVERSION(`GDBusProxy*',`Glib::RefPtr<Gio::DBus::Proxy>',`Glib::wrap($3)')
 
 # DesktopAppInfo
 _CONVERSION(`GDesktopAppInfo*', `Glib::RefPtr<DesktopAppInfo>', `Glib::wrap($3)')
@@ -238,6 +242,10 @@ _CONVERSION(`PasswordSave',`GPasswordSave',`($2)$3')
 #MountOperation
 #_CONVERSION(`GAskPasswordFlags',`AskPasswordFlags',`($2)$3')
 
+# NetworkMonitor
+_CONVERSION(`GNetworkMonitor*',`Glib::RefPtr<NetworkMonitor>',`Glib::wrap($3)')
+
+
 # Notification
 _CONVERSION(`GNotification*',`Glib::RefPtr<Notification>',`Glib::wrap($3)')
 _CONVERSION(`const Glib::RefPtr<Notification>&',`GNotification*',__CONVERT_CONST_REFPTR_TO_P)
@@ -252,10 +260,21 @@ _CONVERSION(`GProxy*',`Glib::RefPtr<Proxy>',`Glib::wrap($3)')
 
 _CONVERSION(`const Glib::RefPtr<const ProxyAddress>&',`GProxyAddress*',__CONVERT_CONST_REFPTR_TO_P)
 
+#Resource
+_CONVERSION(`GResource*',`Glib::RefPtr<Resource>',`Glib::wrap($3)')
+
 #Settings
 _CONVERSION(`GSettings*',`Glib::RefPtr<Settings>',`Glib::wrap($3)')
 _CONVERSION(`const Glib::StringArrayHandle&',`const gchar*-const*',`($3).data()')
 _CONVERSION(`const Glib::RefPtr<SettingsBackend>&',`GSettingsBackend*',__CONVERT_REFPTR_TO_P)
+
+_CONVERSION(`GSettingsSchemaKey*',`Glib::RefPtr<SettingsSchemaKey>',`Glib::wrap($3)')
+_CONVERSION(`GSettingsSchemaKey*',`Glib::RefPtr<const SettingsSchemaKey>',`Glib::wrap($3)')
+
+_CONVERSION(`GSettingsSchema*',`Glib::RefPtr<SettingsSchema>',`Glib::wrap($3)')
+_CONVERSION(`GSettingsSchema*',`Glib::RefPtr<const SettingsSchema>',`Glib::wrap($3)')
+
+_CONVERSION(`GSettingsSchemaSource*',`Glib::RefPtr<SettingsSchemaSource>',`Glib::wrap($3)')
 
 
 #Socket
@@ -290,6 +309,9 @@ _CONVERSION(`const Glib::RefPtr<TlsCertificate>&',`GTlsCertificate*',`Glib::unwr
 
 #TlsConnection:
 _CONVERSION(`const Glib::RefPtr<TlsConnection>&',`GTlsConnection*',`Glib::unwrap($3)')
+
+#TlsClientConnection:
+_CONVERSION(`const Glib::RefPtr<TlsClientConnection>&',`GTlsClientConnection*',__CONVERT_REFPTR_TO_P)
 
 #TlsDatabase
 _CONVERSION(`GTlsDatabase*',`Glib::RefPtr<TlsDatabase>',`Glib::wrap($3)')

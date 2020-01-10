@@ -1,6 +1,3 @@
-// -*- c++ -*-
-/* $Id$ */
-
 /* Copyright (C) 2002 The gtkmm Development Team
  *
  * This library is free software; you can redistribute it and/or
@@ -18,48 +15,47 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <glibmm/threads.h> // Needed until the next ABI break.
 #include <glibmm/interface.h>
 #include <glibmm/private/interface_p.h>
-
 
 namespace Glib
 {
 
 /**** Glib::Interface_Class ************************************************/
 
-void Interface_Class::add_interface(GType instance_type) const
+void
+Interface_Class::add_interface(GType instance_type) const
 {
-  //This check is disabled, because it checks whether any of the types's bases implement the interface, not just the specific type.
-  //if( !g_type_is_a(instance_type, gtype_) ) //For convenience, don't complain about calling this twice.
+  // This check is disabled, because it checks whether any of the types's bases implement the
+  // interface, not just the specific type.
+  // if( !g_type_is_a(instance_type, gtype_) ) //For convenience, don't complain about calling this
+  // twice.
   //{
-    const GInterfaceInfo interface_info =
-    {
-      class_init_func_,
-      0, // interface_finalize
-      0, // interface_data
-    };
+  const GInterfaceInfo interface_info = {
+    class_init_func_,
+    nullptr, // interface_finalize
+    nullptr, // interface_data
+  };
 
-    g_type_add_interface_static(instance_type, gtype_, &interface_info);
+  g_type_add_interface_static(instance_type, gtype_, &interface_info);
   //}
 }
-
 
 /**** Interface Glib::Interface ********************************************/
 
 Interface::Interface(const Interface_Class& interface_class)
 {
-  //gobject_ will be set in the Object constructor.
-  //Any instantiable class that derives from Interface should also inherit from Object.
+  // gobject_ will be set in the Object constructor.
+  // Any instantiable class that derives from Interface should also inherit from Object.
 
-  if(custom_type_name_ && !is_anonymous_custom_())
+  if (custom_type_name_ && !is_anonymous_custom_())
   {
     if (gobject_)
     {
-      GObjectClass *const instance_class = G_OBJECT_GET_CLASS(gobject_);
+      GObjectClass* const instance_class = G_OBJECT_GET_CLASS(gobject_);
       const GType iface_type = interface_class.get_type();
 
-      if(!g_type_interface_peek(instance_class, iface_type))
+      if (!g_type_interface_peek(instance_class, iface_type))
       {
         void* const g_iface = g_type_default_interface_ref(iface_type);
 
@@ -69,7 +65,7 @@ Interface::Interface(const Interface_Class& interface_class)
         Class::iface_properties_type* props = static_cast<Class::iface_properties_type*>(
           g_type_get_qdata(custom_type, Class::iface_properties_quark));
 
-        if(!props)
+        if (!props)
         {
           props = new Class::iface_properties_type();
           g_type_set_qdata(custom_type, Class::iface_properties_quark, props);
@@ -80,12 +76,12 @@ Interface::Interface(const Interface_Class& interface_class)
         guint n_iface_props = 0;
         GParamSpec** iface_props = g_object_interface_list_properties(g_iface, &n_iface_props);
 
-        for(guint p = 0; p < n_iface_props; p++)
+        for (guint p = 0; p < n_iface_props; p++)
         {
           GValue* g_value = g_new0(GValue, 1);
           g_value_init(g_value, iface_props[p]->value_type);
           g_param_value_set_default(iface_props[p], g_value);
-          props->push_back(g_value);
+          props->emplace_back(g_value);
 
           const gchar* prop_name = g_param_spec_get_name(iface_props[p]);
           GParamSpec* new_spec = g_param_spec_override(prop_name, iface_props[p]);
@@ -98,12 +94,12 @@ Interface::Interface(const Interface_Class& interface_class)
         g_free(iface_props);
       }
     }
-    else // gobject_ == 0
+    else // gobject_ == nullptr
     {
       // The GObject is not instantiated yet. Add to the custom_interface_classes
       // and add the interface in the Glib::Object constructor.
-      Threads::Mutex::Lock lock(*extra_object_base_data_mutex);
-      extra_object_base_data[this].custom_interface_classes.push_back(&interface_class);
+      std::lock_guard<std::mutex> lock(extra_object_base_data_mutex);
+      extra_object_base_data[this].custom_interface_classes.emplace_back(&interface_class);
     }
   }
 }
@@ -115,25 +111,53 @@ Interface::Interface(GObject* castitem)
 }
 
 Interface::Interface()
-{}
+{
+}
 
-Interface::~Interface()
-{}
+Interface::Interface(Interface&& src) noexcept
+  : sigc::trackable(std::move(src)), // not actually called because it's a virtual base
+    ObjectBase(std::move(src)) // not actually called because it's a virtual base
+{
+  // We don't call initialize_move() because we
+  // want the derived move constructor to only cause it
+  // to be called once, so we just let it be called
+  // by the implementing class, such as Gtk::Entry (implementing Gtk::Editable
+  // and Gtk::CellEditable), via the call to Object::Object(Object&& src).
+  // ObjectBase::initialize_move(src.gobject_, &src);
+}
 
-GType Interface::get_type()
+Interface&
+Interface::operator=(Interface&& /* src */) noexcept
+{
+  // We don't call ObjectBase::operator=(ObjectBase&& src) because we
+  // want the derived move assignment operator to only cause it
+  // to be called once, so we just let it be called
+  // by the implementing class, such as Gtk::Entry (implementing Gtk::Editable
+  // and Gtk::CellEditable), via the call to Object::operator=(Object&& src).
+  // ObjectBase::operator=(std::move(src));
+  return *this;
+}
+
+Interface::~Interface() noexcept
+{
+}
+
+GType
+Interface::get_type()
 {
   return G_TYPE_INTERFACE;
 }
 
-GType Interface::get_base_type()
+GType
+Interface::get_base_type()
 {
   return G_TYPE_INTERFACE;
 }
 
-RefPtr<ObjectBase> wrap_interface(GObject* object, bool take_copy)
+RefPtr<ObjectBase>
+wrap_interface(GObject* object, bool take_copy)
 {
-  return Glib::RefPtr<ObjectBase>( wrap_auto(object, take_copy) );
+  return Glib::RefPtr<ObjectBase>(wrap_auto(object, take_copy));
 }
 
 } // namespace Glib
-

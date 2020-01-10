@@ -20,28 +20,30 @@ _POP()')
 
 dnl              $1      $2       $3        $4
 dnl _VFUNC_PCC(cppname,gtkname,cpprettype,crettype,
-dnl                         $5               $6           $7            $8         $9           $10      $11
-dnl                  `<cargs and names>',`<cnames>',`<cpparg names>',firstarg, refreturn_ctype, ifdef, errthrow,
-dnl                     $12           $13            $14             $15
-dnl                  slot_type, c_data_param_name, return_value, exception_handler)
+dnl                   $5               $6           $7            $8
+dnl            `<cargs and names>',`<cnames>',`<cpparg names>',firstarg,
+dnl                $9               $10        $11     $12
+dnl             refreturn_ctype, keep_return, ifdef, errthrow,
+dnl               $13           $14            $15             $16               $17
+dnl            slot_type, c_data_param_name, return_value, err_return_value, exception_handler)
 dnl
 dnl Note: _get_current_wrapper_inline() could be used throughout for performance instead of _get_current_wrapper(),
 dnl and is_derived_() instead of is_derived_(),
 dnl but it is not yet clear whether that would be a worthwhile performance optimization.
 define(`_VFUNC_PCC',`dnl
 _PUSH(SECTION_PCC_VFUNCS)
-ifelse(`$10',,,`#ifdef $10'
+ifelse(`$11',,,`#ifdef $11'
 )dnl
 $4 __CPPNAME__`'_Class::$2_vfunc_callback`'($5)
 {
-ifelse(`$13',,,dnl
-`  const $12* slot = static_cast<$12*>($13);
+ifelse(`$14',,,dnl
+`  const auto slot = static_cast<$13*>($14);
 
 ')dnl
 dnl  First, do a simple cast to ObjectBase. We will have to do a dynamic_cast
 dnl  eventually, but it is not necessary to check whether we need to call
 dnl  the vfunc.
-  Glib::ObjectBase *const obj_base = static_cast<Glib::ObjectBase*>(
+  const auto obj_base = static_cast<Glib::ObjectBase*>(
       Glib::ObjectBase::_get_current_wrapper`'((GObject*)$8));
 
 _IMPORT(SECTION_CHECK)
@@ -54,46 +56,74 @@ _IMPORT(SECTION_CHECK)
   {
 dnl  We need to do a dynamic cast to get the real object type, to call the
 dnl  C++ vfunc on it.
-    CppObjectType *const obj = dynamic_cast<CppObjectType* const>(obj_base);
+    const auto obj = dynamic_cast<CppObjectType* const>(obj_base);
     if(obj) // This can be NULL during destruction.
     {
-      #ifdef GLIBMM_EXCEPTIONS_ENABLED
       try // Trap C++ exceptions which would normally be lost because this is a C callback.
       {
-      #endif //GLIBMM_EXCEPTIONS_ENABLED
         // Call the virtual member method, which derived classes might override.
 ifelse($4,void,`dnl
         obj->$1`'($7);
         return;
-',`dnl
+',`dnl not void
 ifelse($9,refreturn_ctype,`dnl Assume Glib::unwrap_copy() is correct if refreturn_ctype is requested.
         return Glib::unwrap_copy`'(`obj->$1'($7));
-',`dnl
+',`dnl not refreturn_ctype
+ifelse($10,keep_return,`dnl
+        static auto quark_return_value = g_quark_from_static_string("__NAMESPACE__::__CPPNAME__::$1");
+
+        auto return_value = static_cast<$3*>(g_object_get_qdata(obj_base->gobj(), quark_return_value));
+        if (!return_value)
+        {
+          return_value = new $3`'();
+          g_object_set_qdata_full(obj_base->gobj(), quark_return_value, return_value,
+          &Glib::destroy_notify_delete<$3>);
+        }
+        // Keep a copy of the return value. The caller is not expected
+        // to free the object that the returned pointer points to.
+        *return_value = obj->$1`'($7);
+        return _CONVERT($3,$4,`(*return_value)');
+',`dnl not keep_return
         return _CONVERT($3,$4,`obj->$1`'($7)');
-')dnl
-')dnl
-      #ifdef GLIBMM_EXCEPTIONS_ENABLED
+')dnl end keep_return
+')dnl end refreturn_ctype
+')dnl end void
       }
+ifelse($17,,,`dnl if (exception_handler)
       catch(...)
       {
-ifelse($15, `', `dnl
-        Glib::exception_handlers_invoke`'();
-', `dnl
         try
         {
 ifelse($9,refreturn_ctype,`dnl
-          return Glib::unwrap_copy`'(obj->$15`'());
+          return Glib::unwrap_copy`'(obj->$17`'());
 ', `dnl
-          return _CONVERT($3, $4, `obj->$15`'()');
+          return _CONVERT($3, $4, `obj->$17`'()');
 ')dnl
         }
-        catch(...)
-        {
-          Glib::exception_handlers_invoke`'();
-        }
+')dnl end exception_handler
+ifelse($12,errthrow,`dnl
+      catch(Glib::Error& errormm)
+      {
+        errormm.propagate(error);
+ifelse($4,void,`dnl
+        return;
+',`dnl
+ifelse(`$16', `',`dnl
+        using RType = $4;
+        return RType`'();
+',`dnl
+        return _CONVERT($3,$4,`$16');
+')dnl
 ')dnl
       }
-      #endif //GLIBMM_EXCEPTIONS_ENABLED
+')dnl end errthrow
+      catch(...)
+      {
+        Glib::exception_handlers_invoke`'();
+      }
+ifelse($17,,,`dnl if (exception_handler)
+      }
+')dnl
     }
   }
 
@@ -103,30 +133,22 @@ ifdef(`__BOOL_IS_INTERFACE__',`dnl
 ',`dnl
       _PARENT_GCLASS_FROM_OBJECT($8)dnl
 ')  );
-dnl  g_assert(base != 0);
+dnl  g_assert(base != nullptr);
 
   // Call the original underlying C function:
   if(base && base->$2)
-  {
-    ifelse($4,void,,`$4 retval = ')(*base->$2)`'($6);
-ifelse($11,errthrow,`dnl
-    if(*error)
-      ::Glib::Error::throw_exception(*error);
-')dnl
-ifelse($4,void,,`    return retval;
-')dnl
-  }
-
+    ifelse($4,void,,`return ')(*base->$2)`'($6);
 ifelse($4,void,,`dnl
-ifelse(`$14', `',`dnl
-  typedef $4 RType;
+
+ifelse(`$15', `',`dnl
+  using RType = $4;
   return RType`'();
 ',`dnl
-  return _CONVERT($3,$4,`$14');
+  return _CONVERT($3,$4,`$15');
 ')dnl
 ')dnl
 }
-ifelse(`$10',,,`#endif // $10
+ifelse(`$11',,,`#endif // $11
 ')dnl
 _POP()')
 
@@ -144,24 +166,24 @@ ifelse(`$11',,,dnl
 dnl See if the slot should or should not be copied
 `ifelse(`$13',,dnl
 `  // Create a copy of the slot.
-  $11* slot_copy = new $11($12); ',dnl
+  auto slot_copy = new $11($12); ',dnl
 dnl
 `  // Use the original slot (not a copy).
-  $11* slot_copy = const_cast<$11*>(&$12);')
+  auto slot_copy = const_cast<$11*>(&$12);')
 
 ')dnl
-  BaseClassType *const base = static_cast<BaseClassType*>(
+  const auto base = static_cast<BaseClassType*>(
 ifdef(`__BOOL_IS_INTERFACE__',`dnl
       _IFACE_PARENT_FROM_OBJECT(gobject_)dnl
 ',`dnl
       _PARENT_GCLASS_FROM_OBJECT(gobject_)dnl
 ')  );
-dnl  g_assert(base != 0);
+dnl  g_assert(base != nullptr);
 
   if(base && base->$2)
   {
 ifelse($10,errthrow,`dnl
-    GError* gerror = 0;
+    GError* gerror = nullptr;
 ')dnl
 ifelse($3,void,`dnl
     (*base->$2)`'(ifelse(`$7',1,const_cast<__CNAME__*>(gobj()),gobj())`'_COMMA_PREFIX($6));
@@ -180,7 +202,7 @@ ifelse($10,errthrow,`dnl
   }
 
 ifelse(`$14', `',`dnl
-  typedef $3 RType;
+  using RType = $3;
   return RType`'();
 ',`dnl
   return $14;
@@ -208,5 +230,4 @@ virtual $2 $1`'($3);
 ifelse(`$5',,,`#endif // $5
 ')dnl
 _POP()')
-
 

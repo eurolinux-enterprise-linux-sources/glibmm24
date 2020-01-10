@@ -99,6 +99,33 @@ dnl
 dnl The implementation:
 dnl
 
+__CPPNAME__::__CPPNAME__`'(const __CPPNAME__& other) noexcept
+:
+  gobject_(other.gobject_)
+{
+}
+
+__CPPNAME__& __CPPNAME__::operator=(const __CPPNAME__`'& other) noexcept
+{
+  gobject_ = other.gobject_;
+  return *this;
+}
+
+__CPPNAME__::__CPPNAME__`'(__CPPNAME__&& other) noexcept
+:
+  gobject_(std::move(other.gobject_))
+{
+  //We could wipe other.gobject_ via memset,
+  //but that is not really necessary:
+  //other.gobject_ = nullptr;
+}
+
+__CPPNAME__& __CPPNAME__::operator=(__CPPNAME__`'&& other) noexcept
+{
+  gobject_ = std::move(other.gobject_);
+  return *this;
+}
+
 dnl // static
 dnl const __CNAME__ __CPPNAME__::gobject_initializer_ = { 0, };
 dnl
@@ -141,9 +168,15 @@ dnl
 _IMPORT(SECTION_CLASS1)
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CNAME__ BaseObjectType;
+  using CppObjectType = __CPPNAME__;
+  using BaseObjectType = __CNAME__;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+  __CPPNAME__`'(const __CPPNAME__& other) noexcept;
+  __CPPNAME__& operator=(const __CPPNAME__& other) noexcept;
+
+  __CPPNAME__`'(__CPPNAME__&& other) noexcept;
+  __CPPNAME__& operator=(__CPPNAME__&& other) noexcept;
 
   /** Get the GType for this class, for use with the underlying GObject type system.
    */

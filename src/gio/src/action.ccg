@@ -24,9 +24,10 @@
 namespace Gio
 {
 
-void Action::activate()
+void
+Action::activate()
 {
-  g_action_activate(gobj(), 0);
+  g_action_activate(gobj(), nullptr);
 }
 
 } // namespace Gio

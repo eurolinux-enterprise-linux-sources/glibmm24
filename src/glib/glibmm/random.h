@@ -25,8 +25,9 @@
 
 #include <glib.h>
 
-extern "C" { typedef struct _GRand GRand; }
-
+extern "C" {
+using GRand = struct _GRand;
+}
 
 namespace Glib
 {
@@ -41,33 +42,31 @@ class Rand
 public:
   Rand();
   explicit Rand(guint32 seed);
-  ~Rand();
+  ~Rand() noexcept;
+
+  // noncopyable
+  Rand(const Rand&) = delete;
+  Rand& operator=(const Rand&) = delete;
 
   void set_seed(guint32 seed);
 
   bool get_bool();
 
   guint32 get_int();
-  gint32  get_int_range(gint32 begin, gint32 end);
+  gint32 get_int_range(gint32 begin, gint32 end);
 
   double get_double();
   double get_double_range(double begin, double end);
 
-  GRand*       gobj()       { return gobject_; }
+  GRand* gobj() { return gobject_; }
   const GRand* gobj() const { return gobject_; }
 
 private:
   GRand* gobject_;
-
-  // noncopyable
-  Rand(const Rand&);
-  Rand& operator=(const Rand&);
 };
 
 /** @} group Random */
 
 } // namespace Glib
 
-
 #endif /* _GLIBMM_RANDOM_H */
-

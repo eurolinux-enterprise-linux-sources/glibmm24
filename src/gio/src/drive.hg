@@ -1,5 +1,3 @@
-// -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-
 /* Copyright (C) 2007 The gtkmm Development Team
  *
  * This library is free software; you can redistribute it and/or
@@ -68,6 +66,7 @@ public:
   _WRAP_METHOD(Glib::ListHandle< Glib::RefPtr<Volume> > get_volumes(), g_drive_get_volumes)
 
   _WRAP_METHOD(bool is_media_removable() const, g_drive_is_media_removable)
+  _WRAP_METHOD(bool is_removable() const,  g_drive_is_removable)
   _WRAP_METHOD(bool has_media() const, g_drive_has_media)
   _WRAP_METHOD(bool is_media_check_automatic() const, g_drive_is_media_check_automatic)
   _WRAP_METHOD(bool can_poll_for_media() const, g_drive_can_poll_for_media)
@@ -191,9 +190,9 @@ namespace Container_Helpers
 template <>
 struct TypeTraits< Glib::RefPtr<Gio::Drive> >
 {
-  typedef Glib::RefPtr<Gio::Drive> CppType;
-  typedef GDrive* CType;
-  typedef GDrive* CTypeNonConst;
+  using CppType = Glib::RefPtr<Gio::Drive>;
+  using CType = GDrive*;
+  using CTypeNonConst = GDrive*;
 
   static CType   to_c_type      (const CppType& item)
   { return Glib::unwrap (item); }
@@ -207,7 +206,7 @@ struct TypeTraits< Glib::RefPtr<Gio::Drive> >
 
   static void    release_c_type (CType item)
   {
-    GLIBMM_DEBUG_UNREFERENCE(0, item);
+    GLIBMM_DEBUG_UNREFERENCE(nullptr, item);
     g_object_unref(item);
   }
 };

@@ -45,10 +45,10 @@ define(`_PH_CLASS_DECLARATION_INTERFACE',`dnl
 class __CPPNAME__`'_Class : public __CPPPARENT__`'_Class
 {
 public:
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CNAME__ BaseObjectType;
-  typedef __CCLASS__ BaseClassType;
-  typedef __CPPPARENT__`'_Class CppClassParent;
+  using CppObjectType = __CPPNAME__;
+  using BaseObjectType = __CNAME__;
+  using BaseClassType = __CCLASS__;
+  using CppClassParent = __CPPPARENT__`'_Class;
 
   friend class __CPPNAME__;
 
@@ -92,11 +92,11 @@ const Glib::Interface_Class& __CPPNAME__`'_Class::init()
 
 void __CPPNAME__`'_Class::iface_init_function(void* g_iface, void*)
 {
-  BaseClassType *const klass = static_cast<BaseClassType*>(g_iface);
+  const auto klass = static_cast<BaseClassType*>(g_iface);
 
   //This is just to avoid an "unused variable" warning when there are no vfuncs or signal handlers to connect.
   //This is a temporary fix until I find out why I can not seem to derive a GtkFileChooser interface. murrayc
-  g_assert(klass != 0); 
+  g_assert(klass != nullptr);
 
 _IMPORT(SECTION_PCC_CLASS_INIT_VFUNCS)
 
@@ -117,7 +117,10 @@ define(`_END_CLASS_INTERFACE',`
 _SECTION(SECTION_HEADER1)
 _STRUCT_PROTOTYPE()
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 __NAMESPACE_BEGIN__ class __CPPNAME__`'_Class; __NAMESPACE_END__
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 _SECTION(SECTION_HEADER3)
 
 ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
@@ -125,7 +128,7 @@ ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
 namespace Glib
 {
   /** A Glib::wrap() method for this object.
-   * 
+   *
    * @param object The C instance.
    * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
    * @result A C++ instance that wraps this C instance.
@@ -199,7 +202,17 @@ __CPPNAME__::__CPPNAME__`'(const Glib::Interface_Class& interface_class)
 {
 }
 
-__CPPNAME__::~__CPPNAME__`'()
+__CPPNAME__::__CPPNAME__`'(__CPPNAME__&& src) noexcept
+: __CPPPARENT__`'(std::move(src))
+{}
+
+__CPPNAME__& __CPPNAME__::operator=(__CPPNAME__&& src) noexcept
+{
+  __CPPPARENT__::operator=`'(std::move(src));
+  return *this;
+}
+
+__CPPNAME__::~__CPPNAME__`'() noexcept
 {}
 
 // static
@@ -226,18 +239,18 @@ _IMPORT(SECTION_CLASS1)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 public:
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CPPNAME__`'_Class CppClassType;
-  typedef __CNAME__ BaseObjectType;
-  typedef __CCLASS__ BaseClassType;
+  using CppObjectType = __CPPNAME__;
+  using CppClassType = __CPPNAME__`'_Class;
+  using BaseObjectType = __CNAME__;
+  using BaseClassType = __CCLASS__;
+
+  // noncopyable
+  __CPPNAME__`'(const __CPPNAME__&) = delete;
+  __CPPNAME__& operator=(const __CPPNAME__&) = delete;
 
 private:
   friend class __CPPNAME__`'_Class;
   static CppClassType `'__BASE__`'_class_;
-
-  // noncopyable
-  __CPPNAME__`'(const __CPPNAME__&);
-  __CPPNAME__& operator=(const __CPPNAME__&);
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 protected:
@@ -247,10 +260,10 @@ protected:
   __CPPNAME__`'();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  /** Called by constructors of derived classes. Provide the result of 
-   * the Class init() function to ensure that it is properly 
+  /** Called by constructors of derived classes. Provide the result of
+   * the Class init() function to ensure that it is properly
    * initialized.
-   * 
+   *
    * @param interface_class The Class object for the derived type.
    */
   explicit __CPPNAME__`'(const Glib::Interface_Class& interface_class);
@@ -258,15 +271,19 @@ protected:
 public:
   // This is public so that C++ wrapper instances can be
   // created for C instances of unwrapped types.
-  // For instance, if an unexpected C type implements the C interface. 
+  // For instance, if an unexpected C type implements the C interface.
   explicit __CPPNAME__`'(__CNAME__* castitem);
 
 protected:
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 public:
+
+  __CPPNAME__`'(__CPPNAME__&& src) noexcept;
+  __CPPNAME__& operator=(__CPPNAME__&& src) noexcept;
+
 _IMPORT(SECTION_DTOR_DOCUMENTATION)
-  virtual ~__CPPNAME__`'();
+  ~__CPPNAME__`'() noexcept override;
 
   static void add_interface(GType gtype_implementer);
 

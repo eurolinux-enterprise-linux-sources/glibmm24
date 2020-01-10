@@ -62,7 +62,7 @@
 #include <giomm/dbusutils.h>
 #include <giomm/dbuswatchname.h>
 #ifndef G_OS_WIN32
-# include <giomm/desktopappinfo.h>
+#include <giomm/desktopappinfo.h>
 #endif
 #include <giomm/drive.h>
 #include <giomm/emblem.h>
@@ -89,6 +89,8 @@
 #include <giomm/initable.h>
 #include <giomm/inputstream.h>
 #include <giomm/iostream.h>
+#include <giomm/listmodel.h>
+#include <giomm/liststore.h>
 #include <giomm/loadableicon.h>
 #include <giomm/memoryinputstream.h>
 #include <giomm/memoryoutputstream.h>
@@ -114,8 +116,12 @@
 #include <giomm/resource.h>
 #include <giomm/seekable.h>
 #include <giomm/settings.h>
+#include <giomm/settingsschema.h>
+#include <giomm/settingsschemakey.h>
+#include <giomm/settingsschemasource.h>
 #include <giomm/simpleaction.h>
 #include <giomm/simpleactiongroup.h>
+#include <giomm/simpleiostream.h>
 #include <giomm/simplepermission.h>
 #include <giomm/socket.h>
 #include <giomm/socketaddress.h>
@@ -129,6 +135,7 @@
 #include <giomm/socketsource.h>
 #include <giomm/srvtarget.h>
 #include <giomm/tcpconnection.h>
+#include <giomm/tcpwrapperconnection.h>
 #include <giomm/themedicon.h>
 #include <giomm/threadedsocketservice.h>
 #include <giomm/tlscertificate.h>
@@ -139,13 +146,13 @@
 #include <giomm/tlspassword.h>
 #include <giomm/tlsserverconnection.h>
 #ifndef G_OS_WIN32
-# include <giomm/unixconnection.h>
-# include <giomm/unixcredentialsmessage.h>
-# include <giomm/unixfdlist.h>
-# include <giomm/unixfdmessage.h>
-# include <giomm/unixinputstream.h>
-# include <giomm/unixoutputstream.h>
-# include <giomm/unixsocketaddress.h>
+#include <giomm/unixconnection.h>
+#include <giomm/unixcredentialsmessage.h>
+#include <giomm/unixfdlist.h>
+#include <giomm/unixfdmessage.h>
+#include <giomm/unixinputstream.h>
+#include <giomm/unixoutputstream.h>
+#include <giomm/unixsocketaddress.h>
 #endif
 #include <giomm/volume.h>
 #include <giomm/volumemonitor.h>

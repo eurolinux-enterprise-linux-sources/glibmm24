@@ -17,7 +17,7 @@ template <>
 class Variant<bool> : public VariantBase
 {
 public:
-  typedef gboolean CType;
+  using CType = gboolean;
 
   /// Default constructor.
   Variant<bool>()
@@ -60,7 +60,7 @@ template <>
 class Variant<unsigned char> : public VariantBase
 {
 public:
-  typedef guchar CType;
+  using CType = guchar;
 
   /// Default constructor.
   Variant<unsigned char>()
@@ -103,7 +103,7 @@ template <>
 class Variant<gint16> : public VariantBase
 {
 public:
-  typedef gint16 CType;
+  using CType = gint16;
 
   /// Default constructor.
   Variant<gint16>()
@@ -146,7 +146,7 @@ template <>
 class Variant<guint16> : public VariantBase
 {
 public:
-  typedef guint16 CType;
+  using CType = guint16;
 
   /// Default constructor.
   Variant<guint16>()
@@ -189,7 +189,7 @@ template <>
 class Variant<gint32> : public VariantBase
 {
 public:
-  typedef gint32 CType;
+  using CType = gint32;
 
   /// Default constructor.
   Variant<gint32>()
@@ -217,6 +217,12 @@ public:
    */
   static Variant<gint32> create(gint32 data);
 
+  /** Creates a new Glib::Variant<gint32> of type VARIANT_TYPE_HANDLE.
+   * @param data The value of the new Glib::Variant<gint32>.
+   * @return The new Glib::Variant<gint32>.
+   */
+  static Variant<gint32> create_handle(gint32 data);
+
   /** Gets the value of the Glib::Variant<gint32>.
    * @return The gint32 value of the Glib::Variant<gint32>.
    */
@@ -232,7 +238,7 @@ template <>
 class Variant<guint32> : public VariantBase
 {
 public:
-  typedef guint32 CType;
+  using CType = guint32;
 
   /// Default constructor.
   Variant<guint32>()
@@ -275,7 +281,7 @@ template <>
 class Variant<gint64> : public VariantBase
 {
 public:
-  typedef gint64 CType;
+  using CType = gint64;
 
   /// Default constructor.
   Variant<gint64>()
@@ -318,7 +324,7 @@ template <>
 class Variant<guint64> : public VariantBase
 {
 public:
-  typedef guint64 CType;
+  using CType = guint64;
 
   /// Default constructor.
   Variant<guint64>()
@@ -361,7 +367,7 @@ template <>
 class Variant<double> : public VariantBase
 {
 public:
-  typedef gdouble CType;
+  using CType = gdouble;
 
   /// Default constructor.
   Variant<double>()

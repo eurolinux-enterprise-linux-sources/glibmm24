@@ -1,3 +1,2995 @@
+2016-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.7
+
+2016-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.7
+
+2016-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Settings: set_uiint(): Deprecate for set_uint().
+
+	This was a typo.
+
+2016-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Settings: Add get/set_uint64().
+
+2016-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Settings: Add get/set_int64().
+
+2016-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Drive: Add is_removable().
+
+2016-09-11  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::AppInfo: Add launch_default_for_uri_async().
+
+	Using the fairly new, and nifty, slot/slot_callback arguments for
+	_WRAP_METHOD().
+
+2016-09-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application::get_busy(): return the bool.
+
+	This should not break ABI and this could not have been used anyway.
+	Bug #770304
+
+2016-09-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate *docs.xml files.
+
+2016-09-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate glib .defs.
+
+2016-09-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio .defs.
+
+2016-09-01  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::OptionGroup: Improve the documentation of add_entry()
+
+2016-08-26  Murray Cumming  <murrayc@murrayc.com>
+
+	giomm: Add include for settingsschemasource.h
+
+2016-08-19  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.5
+
+2016-08-14  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::OptionContext: Wrap g_option_context_parse_strv()
+
+	* gio/src/applicationcommandline.hg: Fix the documentation of get_arguments(),
+	now that g_option_context_parse_strv() has been wrapped.
+	* glib/src/optioncontext.hg: Wrap g_option_context_parse_strv() as
+	parse(char**& argv). Fix the documentation of get_help(bool).
+
+2016-08-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add DocsParser::remove_c_memory_handling_info()
+
+	When C documentation is converted to C++ documentation, remove sentences
+	that contain g_free, g_strfreev, g_list_free or g_slist_free.
+	https://mail.gnome.org/archives/gtkmm-list/2016-August/msg00017.html
+
+2016-08-09  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add missing objects to glib/gio_extra_objects.defs
+
+	Doesn't change the generated code, but some gmmproc warnings are avoided.
+
+2016-08-09  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Remove DocsParser::non_object_method_name()
+
+	This function was superseded by gtk_extra_objects.defs 6 years ago.
+	The substitution gtk_drag_source => Gtk::DragSource is lost with this
+	patch, but that substitution was wrong. There is no Gtk::DragSource
+	class or namespace.
+
+2016-08-06  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::SocketService: Update the class documentation
+
+	* gio/src/socketservice.hg: The documentation of GSocketService has been
+	slightly modified. Modify the documentation of Gio::SocketService accordingly.
+	Fix the indentation.
+	Noticed in connection with bug #766151, but not a bug fix.
+
+2016-07-28  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: swap() implementations: Use std::swap().
+
+	Because this simplifies the code.
+
+2016-07-21  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.4
+
+2016-07-17  Sebastian Geiger  <sbastig@gmx.net>
+
+	docs: Make Doxygen silent
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=768797
+
+2016-07-14  Sebastian Geiger  <sbastig@gmx.net>
+
+	Build: Fix silent builds
+
+	Silent builds were introduced in commit
+	fa03634b5963af18340258a67063f3a527c4e471
+	but they were not really enabled. Passing
+	yes to AM_SILENT_RULES fixes this issue.
+
+	See https://wiki.gnome.org/Initiatives/GnomeGoals/NicerBuilds
+	for more information.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=768797
+
+2016-07-05  Murray Cumming  <murrayc@murrayc.com>
+
+	connection_add_exception_handler(): Use list<slot> instead of signal.
+
+	Because libsigc++ 2.10 deprecates signal::slots() and libsigc++ 3.0
+	now has no signal<>::slots() method. Using a signal for the list of
+	slots seems rather non-obvious anyway.
+
+2016-06-27  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.2
+
+2016-06-17  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Visual Studio build files: Update projects
+
+	Make sure the added sources are included in the builds, and in the list of
+	headers to be installed.
+
+2016-06-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Make h2def.py recognize some GDK_PIXBUF macros
+
+	gdk-pixbuf has added macros such as GDK_PIXBUF_DEPRECATED* and
+	GDK_PIXBUF_AVAILABLE* in the header files. h2def.py must recognize those
+	macros in order to successfully decode the function declarations.
+
+2016-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::InputStream, OutputStream: Make some of the new methods const
+
+	* gio/src/inputstream.hg: is_closed() and has_pending() shall be const.
+	* gio/src/outputstream.hg: is_closed(), is_closing() and has_pending()
+	shall be const. Bug #572471
+
+2016-06-02  Krzysztof Kosiński  <tweenk.pl@gmail.com>
+
+	Gio::FilterOutputStream: Fix property_base_stream()
+
+	Change return type from RefPtr<InputStream> to the correct RefPtr<OutputStream>.
+	This change does not break ABI, but it breaks API. That should be acceptable.
+	The property has probably been useless with the wrong declared return type.
+	Part of a large patch, split by Kjell Ahlstedt. Bug #572471
+
+2016-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Wrap some constructors and methods in giomm streams
+
+	Also, add TODO comments about adding vfuncs at ABI break.
+	* gio/src/bufferedinputstream.hg: TODO: Add fill_vfunc().
+	* gio/src/filterinputstream.[hg|ccg]: Add ctor.
+	* gio/src/filteroutputstream.[hg|ccg]: Add ctor.
+	* gio/src/inputstream.hg: Add ctor, is_closed(), has_pending(),
+	set_pending(), clear_pending(). TODO: Add read_vfunc(), skip_vfunc(),
+	close_vfunc().
+	* gio/src/memoryoutputstream.[hg|ccg]: Add ctor and create().
+	* gio/src/outputstream.hg: Add ctor, is_closed(), is_closing(), has_pending(),
+	set_pending(), clear_pending(). TODO: Add write_vfunc(), splice_vfunc(),
+	flush_vfunc(), close_vfunc().
+	An updated version of a patch by Krzysztof Kosiński <tweenk.pl@gmail.com>
+	Bug #572471
+
+2016-06-02  Krzysztof Kosiński  <tweenk.pl@gmail.com>
+
+	Update gio_vfuncs.defs
+
+	Add vfuncs for GFileInputStream, GFileOutputStream, GInputStream,
+	GOutputStream. Move the vfuncs for GPermission and GListModel to their correct
+	position in alphabetic order.
+	Part of a large patch, split by Kjell Ahlstedt. Bug #572471
+
+2016-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Pollable[Input|Output]Stream: Return -1 on error in vfuncs
+
+	* gio/src/pollableinputstream.hg: read_nonblocking_vfunc_callback():
+	Return -1 if the C++ vfunc throws an exception.
+	* gio/src/pollableoutputstream.hg: write_nonblocking_vfunc_callback():
+	Return -1 if the C++ vfunc throws an exception.
+	This is what the glib/gio functions expect, and the behaviour suggested in
+	bug 572471 for similar vfuncs in other stream classes.
+
+2016-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add optional argument err_return_value in _WRAP_VFUNC
+
+	* tools/m4/vfunc.m4:
+	* tools/pm/Output.pm:
+	* tools/pm/WrapParser.pm: Add the optional argument err_return_value in
+	_WRAP_VFUNC. This return value, if specified, applies only when the C++ vfunc
+	throws an exception, which is propagated to the C callback function.
+
+2016-05-29  Murray Cumming  <murrayc@murrayc.com>
+
+	2.49.1
+
+2016-05-25  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Discard unused m4 sections
+
+	tools/m4/base.m4: At the end of the _END macro, discard all remaining sections.
+	m4_divert(-1) + m4_undivert() was probably meant to do just that, but it does
+	nothing. m4_divert(-1) + m4_undivert, without parentheses, discards all
+	remaining sections. Bug #756593
+
+2016-05-16  Murray Cumming  <murrayc@murrayc.com>
+
+	Remove trailing whitespace.
+
+2016-05-09  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::SocketAddress: Hand-code create() because the C func does lots.
+
+	We can only genereate constructors (that are then called by generated
+	create() methods) when the C function just sets its properties, as per
+	the convention with GObject APIs. This C function does far more.
+
+	Bug #766150 (Vladimir)
+
+2016-04-27  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add tests/giomm_listmodel
+
+	Similar to glib/gio/tests/glistmodel.c
+	Bug #755307
+
+2016-04-27  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Gio::ListModel, ListStoreBase and ListStore<>
+
+	Based on work by Murray Cumming <murrayc@murrayc.com>
+	and Marcin Kolny <marcin.kolny@gmail.com>
+	Bug #755307
+
+2016-04-14  Murray Cumming  <murrayc@murrayc.com>
+
+	ustring: Add {} with a while().
+
+	To make this code slightly clearer.
+
+2016-04-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Use _DEPRECATE_IFDEF_START/END in .hg/ccg files.
+
+2016-04-10  Murray Cumming  <murrayc@murrayc.com>
+
+	VariantBase: Add explicit operator bool().
+
+	Deprecating the operator const void*, which is no longer necessary
+	with C++11.
+
+	There doesn't seem to be any ambiguity, but let's see.
+
+2016-04-10  Murray Cumming  <murrayc@murrayc.com>
+
+	FileAtrributeInfoList, Checksum, Module: Make operator bool explicit.
+
+2016-04-10  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: Make operator bool() explicit.
+
+	As in shared_ptr<>, for instance.
+
+	See https://bugzilla.gnome.org/show_bug.cgi?id=626858#c4
+
+2016-04-05  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Gio::DBus::Proxy: allow using GDBusProxy* conversion outside DBus namespace
+
+	* gio/src/dbusproxy.hg: fix _WRAP_METHOD usage
+	* tools/m4/convert_gio.m4: update converstion definition - use
+	Gio::DBus::Proxy instead of Proxy.
+
+2016-04-05  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	h2def.py: strip G_DECLARE_FINAL_TYPE macro call
+
+2016-04-03  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add 'deprecated' option in _WRAP_ENUM and _WRAP_GERROR
+
+	* tools/m4/enum.m4:
+	* tools/m4/gerror.m4: Surround code and documentation by #ifndef
+	xxx_DISABLE_DEPRECATED, if it's deprecated.
+	* tools/pm/DocsParser.pm: lookup_enum_documentation(): Move the parsing of
+	options to WrapParser. Add deprecation docs, if any.
+	* tools/pm/Enum.pm: build_element_list(): Move the parsing of options to
+	WrapParser.
+	* tools/pm/Output.pm: output_wrap_enum(), output_wrap_enum_docs_only(),
+	output_wrap_gerror(): Handle deprecation docs.
+	* tools/pm/WrapParser.pm: Parse options in the new on_wrap_any_enum() function.
+
+2016-04-03  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix some Doxygen warnings
+
+	* glib/glibmm/property.h: More code within #ifndef DOXYGEN_SHOULD_SKIP_THIS.
+	* glib/src/bytearray.hg: Change parameter name index_ to index.
+	* tools/pm/DocsParser.pm: When the C parameter name does not coincide with
+	the C++ name, change to the C++ name in the documentation also when the C
+	name ends with an underscore.
+
+2016-04-01  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	gmmproc: _CLASS_GOBJECT(): allow provide custom move  operations.
+
+	If class contains movable fields, custom move constructor and move
+	assignment operator should be provided. Use macro _CUSTOM_MOVE_OPERATIONS
+	for NOT generating default move operations.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=756593
+
+2016-04-01  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Glib::Property: allow to set property nick, blurb and flags.
+
+	* .gitignore: add paramflags generated files to ignore list.
+	* glib/glibmm.h: add paramflags header to include list.
+	* glib/glibmm/property.{cc|}h: add constructors allowing set nick,
+	blurb. Add getters for this values.
+	and flags of property.
+	* glib/glibmm/value.{cc|h}:
+	* glib/src/filelist.am: add paramflags to a build.
+	* glib/src/enums.{ccg|hg}: add GParamFlags enum wrapper.
+	* glib/glibmm/value_basictypes.{cc|h}.m4: add
+	overloaded create_param_spec() for setting additional property
+	parameters.
+
+	This patch fixes bug #755256
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: .hg\.ccg files: Replace more typedefs with using.
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	Examples: Use libsigc++ 2.9/10 and its slot/signal<R(Args...)> syntax.
+
+	The older libsigc++ syntax is deprecated.
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	2.48.1
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: gmmproc: Use using instead of typedef.
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: .h/.cc files: Replace typedefs with using.
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: .hg/.ccg files: Replace typedefs with using.
+
+2016-03-31  Murray Cumming  <murrayc@murrayc.com>
+
+	NEWS: Actually mention 2.48.0
+
+2016-03-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Move thread_local check into a GLIBMM_CXX_* macro, like other checks.
+
+	Bug #759791
+
+2016-03-28  Tom Schoonjans  <Tom.Schoonjans@diamond.ac.uk>
+
+	Build: Use Threads::Private hen thread_local keyword is not supported.
+
+	This fix is necessary for compilation of glibmm on OS X, as the clang
+	compiler that currently ships with XCode currently does not support this
+	keyword. Bug #759791
+
+2016-03-28  Murray Cumming  <murrayc@murrayc.com>
+
+	2.48.0
+
+2016-03-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate docs.xml files.
+
+2016-03-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio .defs.
+
+2016-03-18  Murray Cumming  <murrayc@murrayc.com>
+
+	2.47.92
+
+2016-03-11  Murray Cumming  <murrayc@murrayc.com>
+
+	Require the latest libsigc++-2.0.
+
+	In case we really need the std::ref() support in libsigc++ 2.7.2.
+
+2016-03-10  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix "make check" after sigc::mem_fun(pointer,func) was deprecated
+
+2016-03-10  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	generate_extra_defs: Check for deprecated signals and properties
+
+	tools/extra_defs_gen/generate_extra_defs.cc: Mark deprecated signals and
+	properties as such in the generated .defs file.
+
+2016-03-10  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Check if signals and properties are deprecated appropriately
+
+	* tools/pm/GtkDefs.pm:
+	* tools/pm/Property.pm: Search for (deprecated #t) in the *_signals.defs file.
+	* tools/pm/Output.pm:
+	* tools/pm/WrapParser.pm: Warn if a signal, property or child property is
+	deprecated in the .defs file, but not in the _WRAP_* macro, and the whole
+	file is not deprecated (no _IS_DEPRECATED).
+
+2016-03-08  Murray Cumming  <murrayc@murrayc.com>
+
+	Use std::ref instead of sigc::ref.
+
+	As required by the latest (not yet released) libsigc++.
+
+2016-03-08  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix a tiny typo in a comment.
+
+2016-03-08  Murray Cumming  <murrayc@murrayc.com>
+
+	Correct bad uses of sigc::bind<1>.
+
+	sigc::bind<1>() is meant to bind a value for the second argument,
+	which makes no sense for a method with 1 parameter.
+	sigc::bind() seems fine.
+
+	I found this while working in the sigc3 branch, using libsigc++-3.0,
+	which is less forgiving of this error.
+
+2016-03-07  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC builds: Look for includes in include/gio-win32-2.0
+
+	At some point gio.h is going to include headers from this location, so
+	make sure we look for headers from here.
+
+2016-03-01  Murray Cumming  <murrayc@murrayc.com>
+
+	2.47.6
+
+2016-02-29  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate docs.xml files.
+
+2016-02-29  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio .defs.
+
+2016-02-27  Murray Cumming  <murrayc@murrayc.com>
+
+	manual refactor target: Error if clang-format is not available.
+
+2016-02-27  Murray Cumming  <murrayc@murrayc.com>
+
+	Rearrange some multiline comments.
+
+	Putting the comment before the code, instead of to the right,
+	because clang-format can not (and could not) know which comments
+	are meant to be aligned. I prefer this anyway.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on the .ccg files.
+
+	This seems to work.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on the include-all headers.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Re-run clang-format on some files.
+
+	I need to make a subsequent commit to fix the now-unaligned
+	trailing comments.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	clang-format: unset AlignTrailingComments.
+
+	Because it sometimes wrongly things that comments on two lines
+	are related.
+
+	This now wrongly unaligns some blocks of trailing comments,
+	but I would rather just not have them.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on glib .cc files.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on glib .h files.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on gio .cc files.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on gio .h files.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	clang-format: Disable SortIncludes.
+
+	Because this can break builds.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on gendef.cc
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on tools/
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on tests.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on the examples.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Run clang-format on the *_p.h files.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Makefile.am: Added a manual reformat target, to use clang-format.
+
+2016-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Added a format file for clang-format.
+
+	For automatic reformatting of the source code.
+
+2016-02-25  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Fix errthrow in _WRAP_VFUNC
+
+	* tools/m4/vfunc.m4: Propagate a Glib::Error exception to GError** error.
+	Don't throw an exception in the callback function, called from C code.
+	Bug #762437
+
+2016-02-18  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::SocketConnectable: Add to_string()
+
+2016-02-18  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Icon: Add serialize(), deserialize() and documentation of create()
+
+2016-02-11  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _MEMBER_GET: Remove extra spaces, indenting and trailing.
+
+	By changing
+	) dnl
+	to
+	)dnl
+
+2016-02-10  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::FileInfo::list_attributes(): Make name_space optional.
+
+	Because I noticed that this has just been documented as being allowed
+	to be null:
+	https://git.gnome.org/browse/glib/commit/?id=a4ed89bf75190631087596be22f9eb10dc6e53ef
+
+2016-02-06  Murray Cumming  <murrayc@murrayc.com>
+
+	Use MM_AX_CXX_COMPILE_STDCXX() instead of MM_AX_CXX_COMPILE_STDCXX_11().
+
+	This makes it easier to try C++14 sometimes and eventually really switch
+	to it.
+
+2016-02-05  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use emplace_back() instead of push_back().
+
+2016-02-05  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use initializer list instead of push_back() for initial single item.
+
+2016-02-04  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	DBus::Connection: Pass an empty bus name as nullptr
+
+	* gio/src/dbusconnection.[hg|ccg]: Some string parameters in some C functions
+	accept nullptr, others don't.
+	call(), call_sync(): bus_name: Pass nullptr for an empty string.
+	emit_signal(): Only destination_bus_name can be nullptr.
+	Other string parameters: Pass c_str().
+	The bug in call() and call_sync() was noticed by Gerlof Fokkema on gtkmm-list.
+	The bug in emit_signal() is an overreaction to bug 645072. All string
+	parameters were changed to pass nullptr, but only destination_bus_name
+	should have been changed.
+
+2016-02-04  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add NULL option to _WRAP_METHOD
+
+	* tools/pm/Function.pm:
+	* tools/pm/Output.pm: Accept {NULL} or {!NULL} after the name of a string
+	parameter in _WRAP_METHOD. It specifies how to translate an empty string to
+	a C string. {NULL}: nullptr, {!NULL}: pointer to an empty string.
+	Both {NULL} and {!NULL} can be useful, because the default translation is
+	different for mandatory and optional ({?}) parameters.
+
+2016-02-01  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add some connect() overloads that move the sigc::slot
+
+	* glib/glibmm/dispatcher.[cc|h]: Add Dispatcher::connect(&&).
+	* glib/glibmm/objectbase.[cc|h]: Add ObjectBase::connect_property_changed(&&)
+	and ObjectBase::connect_property_changed_with_return(&&).
+	* glib/glibmm/propertyproxy_base.[cc|h]: Add PropertyProxyConnectionNode(&&)
+	ctor, PropertyProxyConnectionNode::connect_changed() and
+	SignalProxyProperty::connect(&&).
+	* glib/glibmm/signalproxy.[cc|h]: Add SignalProxyNormal::connect_impl_(&&),
+	SignalProxy::connect(&&), SignalProxy::connect_notify(&&),
+	SignalProxyDetailed::connect_impl_(&&), SignalProxyDetailedAnyType::connect(&&)
+	and SignalProxyDetailedAnyType::connect_notify(&&).
+	* glib/glibmm/signalproxy_connectionnode.[cc|h]:
+	Add SignalProxyConnectionNode(&&) ctor
+
+2016-01-26  Aurelien Jacobs  <aurel@gnuage.org>
+
+	Fix definition of VARIANT_TYPE_DICT_ENTRY to match header declaration
+
+	Bug #761046
+
+2016-01-25  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::PropertyBase: Make custom properties more flexible
+
+	* glib/glibmm/property.[h|cc]: Relax the requirements on Property<>.
+	Now custom properties don't have to be direct data menbers of the containing
+	type. Instead, all objects of a class must instantiate the same properties
+	in the same order. This patch is an improved version of a patch supplied by
+	Povilas Kanapickas <povilas@radix.lt>. Bug #731484.
+
+2016-01-21  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Glib::SignalProxy: use variadic templates
+
+	* .gitignore: signalproxy.h file is no more generated, so it has been
+	removed from ignored list.
+	* gio/src/application.{ccg|hg}: don't use old-style SignalProxy class.
+	* glib/glibmm/filelist.am: add signalproxy.h file to distributed files
+	list.
+	* gio/glibmm/signalproxy.h: add implementation of SignalProxy and
+	SignalProxyDetailedAnyType.
+	* glib/src/filelist.am:
+	* glib/src/signalproxy.h.m4: signalproxy.h is not generated, thus
+	remove m4 file.
+	* tools/m4/signal.m4: use new SignalProxy class instead of
+	SignalProxy*.
+
+2016-01-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Use Glib::c_str_or_nullptr()
+
+	Use Glib::c_str_or_nullptr(s) instead of s.empty() ? nullptr : s.c_str().
+
+2016-01-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::c_str_or_nullptr()
+
+	* glib/glibmm/utility.h: Add Glib::c_str_or_nullptr().
+	Code such as "s.empty() ? nullptr : s.c_str()" can be replaced by
+	Glib::c_str_or_nullptr(s) when C functions are called, where s is
+	a std::string or a Glib::ustring.
+	A very small part of a fix of bug #755245.
+
+2016-01-20  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Threads example: Fix build on Visual Studio
+
+	We need to include <memory> for unique_* on Visual Studio, and for Visual
+	Studio 2013 builds, we need to ensure that glibmmconfig.h is included so
+	that noexcept is supported.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=760612
+
+2016-01-20  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	glibmmconfig.h.in: Fix Visual Studio 2013 builds
+
+	The thread_local keyword is only supported natively on Visual Studio 2015,
+	so we need to use the Microsoft-specific extension __declspec(thread) for
+	supporting thread_local in Visual Studio 2013 builds.
+
+	Also re-organize the Visual Studio 2013-specific parts a bit so that it is
+	clearer to people.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=760612
+
+2016-01-18  Murray Cumming  <murrayc@murrayc.com>
+
+	utility: Correct the deprecation ifndef.
+
+	And correct the documentation.
+
+2016-01-18  Aurelien Jacobs  <aurel@gnuage.org>
+
+	Glib::ustring fix gcc 6 warning in public header
+
+	Avoid a warning when compiling with gcc 6 with -Wmisleading-indentation.
+	Bug #760641.
+
+2016-01-18  Murray Cumming  <murrayc@murrayc.com>
+
+	fix the build
+
+	I was editing the generated files. Silly me.
+
+2016-01-18  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .docs.xml files.
+
+2016-01-18  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs files.
+
+2016-01-18  Murray Cumming  <murrayc@murrayc.com>
+
+	Replace ScopedPtr with make_unique_ptr_gfree().
+
+	Using std::unique_ptr. ScopedPtr is now deprecated.
+	Bug #760223
+
+2016-01-14  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::ustring: Add move operators
+
+	Bug #760282
+
+2016-01-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	h2def.py: Accept parameter names beginning with const
+
+	h2def.py misunderstood function declarations where the name of a parameter
+	begins with const, e.g. ClutterBindConstraint *constraint.
+	https://mail.gnome.org/archives/gtkmm-list/2016-January/msg00004.html
+
+2016-01-07  Murray Cumming  <murrayc@murrayc.com>
+
+	Put deprecation ifdefs around GLIBMM_INITIALIZE_STRUCT.
+
+	It is already deprecated.
+
+2015-12-24  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Replace virtual keyword with override keyword on destructors.
+
+	This ensures that the base class is really virtual.
+
+2015-12-24  Murray Cumming  <murrayc@murrayc.com>
+
+	example: Remove unnecessary virtual keywords on destructors.
+
+2015-12-24  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: gmmproc: GObject/GInterface: Use override on destructor.
+
+	Don't repeat the virtual declaration from Glib::ObjectBase's destructor.
+	Instead use override to show that we expect the base destructor to
+	be virtual.
+
+2015-12-18  Murray Cumming  <murrayc@murrayc.com>
+
+	2.47.4
+
+2015-12-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::ustring: Don't allow comparison to 0
+
+	* glib/glibmm/ustring.h: Don't allow comparison of a ustring to an integer.
+	Bug #572978.
+
+2015-12-06  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	examples/network: Improve the time-out functionality
+
+	* examples/network/socket-client.cc:
+	* examples/network/socket-server.cc: Store the thread pointer in a
+	std::unique_ptr. Then the thread is always joined and deleted. Stop the thread
+	immediately in case of error, or if the user requests end of transmission.
+
+2015-12-05  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the build with --disable-deprecated-api
+
+	* examples/thread/threadpool.cc: If --disable-deprecated-api, just print a
+	message and exit.
+	* gio/src/<several>.hg: Add _CONFIGINCLUDE(giommconfig.h).
+	* gio/src/menuitem.ccg: Add a missing _DEPRECATE_IFDEF_START/_END pair.
+	* glib/glibmm/sarray.h:
+	* glib/glibmm/threadpool.[cc|h]: #include <glibmmconfig.h> before
+	ifndef GLIBMM_DISABLE_DEPRECATED.
+	* glib/src/filelist.am: Remove glibmm_files_deprecated_hg. List deprecated
+	files in glibmm_files_any_hg.
+
+	The config file must be included before #ifndef xxx_DISABLE_DEPRECATED both
+	in the .h file and in the .cc file, or else deprecated API is not properly
+	disabled by --disable-deprecated-api.
+
+2015-12-05  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _CONFIGINCLUDE() + _IS_DEPRECATED = #include in .cc file
+
+	* tools/m4/base.m4: If both _CONFIGINCLUDE() and _IS_DEPRECATED are used
+	in the .hg file, then #include <xxxconfig.h> is included before
+	ifndef xxx_DISABLE_DEPRECATED in the generated .cc file. This is useful if
+	the mm module is configured with --disable-deprecated-api, because
+	xxx_DISABLE_DEPRECATED is defined in the config file. The .cc file can be
+	compiled, but does not generate any executable code. No need to exclude it
+	from the build by tampering with the filelist.am file.
+
+2015-12-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::ActionMap: Fix the ref count in lookup_action_vfunc()
+
+	* gio/src/actionmap.hg: Add refreturn in _WRAP_VFUNC(lookup_action).
+	Bug #758813.
+
+2015-12-01  T Sailor  <t.sailer@alumni.ethz.ch>
+
+	Dispatcher: #include <mutex> in Windows builds.
+
+	Bug #758894
+
+2015-11-30  Murray Cumming  <murrayc@murrayc.com>
+
+	Threads: Mark the doxygen module as deprecated.
+
+2015-11-29  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Destructor: Use noexcept in the implementation too.
+
+	Bug #758798 (Émeric MASCHINO)
+
+2015-11-29  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	glibmm/main: More declarations within #ifndef GLIBMM_DISABLE_DEPRECATED
+
+	* glib/glibmm/main.h: Include 'namespace Threads' declarations only if
+	GLIBMM_DISABLE_DEPRECATED is not defined.
+	* glib/glibmm/main.cc: Inlude glibmm/threads.h only if
+	GLIBMM_DISABLE_DEPRECATED is not defined.
+	Use G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS instead of undefining
+	G_DISABLE_DEPRECATED.
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	2.47.3.1
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Dispatcher: Actually delete thread_specific_instance_.
+
+	As suggested by Kjell here:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c17
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Use thread_local instead of Glib::Threads::Private.
+
+	See https://bugzilla.gnome.org/show_bug.cgi?id=757674#c15
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	2.47.3
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Threads: Add @deprecated to more API.
+
+2015-11-28  Murray Cumming  <murrayc@murrayc.com>
+
+	Threads::Private: Suggest use of thread_local.
+
+2015-11-28  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Use std::unique_lock::unlock() instead of release()
+
+	* glib/blibmm/main.cc:
+	* gio/src/application.ccg: Glib::Threads::Mutex::Lock::release() should have
+	been replaced by std::unique_lock::unlock(). std::unique_lock::release() does
+	not unlock the mutex. Bug #757674.
+
+2015-11-27  Murray Cumming  <murrayc@murrayc.com>
+
+	Remove now-unnecessary includes of glibmm/threads.h.
+
+2015-11-27  Murray Cumming  <murrayc@murrayc.com>
+
+	Dispatcher: Use std::mutex instead of Glib::Threads::Mutex.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Deprecated Glib::ThreadPool.
+
+	Because we should encourage the use of 2 different thread APIs at
+	the same time. Maybe std::async() does what a thread pool would do?
+	If so, we should improve the deprecation documentation.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib::Main: Use std::mutex instead of Glib::Threads::Mutex.
+
+	And std::unique_lock instead of Glib::Threads::Mutex::Lock.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Use std::mutex instead of Glib::Threads::Mutex.
+
+	And std::unique_lock instead of Glib::Threads::Mutex::Lock.
+	Some of these could probably be replaced by std::lock_guard, in
+	a smaller scope, instead of using release(), but this is a simpler
+	replacement.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	ObjectBase: Change extra_object_base_data_mutex to a std::mutex.
+
+	Instead of a (now deprecated) Glib::Threads::Mutex*.
+	As discussed here:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c12
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib::MainContext: Deprecate wait(cond, mutex).
+
+	Because it uses the deprecated Threads API in its API, and doesn't
+	seem generally useful.
+	As suggested here:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c11
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	glibmm_mainloop test: Allocate a thread on the stack.
+
+	As suggested by Kjell Ahlstedt:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c10
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	examples/tests: Use simpler std::thread constructor.
+
+	Instead of using a lambda. As suggested by Kjell Ahlstedt:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c10
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	thread example: Use std::unique_ptr<> with std::thread.
+
+	As suggested by Andrew Potter:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c9
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	resolver example: Use std::mutex instead of G_LOCK_DEFINE_STATIC.
+
+	As noticed by Kjell Ahlstedt:
+	https://bugzilla.gnome.org/show_bug.cgi?id=757674#c10
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	tests/glibmm_mainloop: Use the std::thread API instead of Glib::Threads.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Network examples: Use std::thread instead of Glib::Threads::Thread.
+
+	Bug #757674
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	examples: dispatcher: Use std::thread and friends.
+
+	Instead of deprecated Glib::Threads::*.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	thread example: Use std::thread, etc, instead of deprecated Glib::Threads::*.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	threadpool example: Use std::mutex instead of Glib::Threads::Mutex.
+
+	And std::lock_guard<> instead of Glib::Threads::Mutex::Lock.
+
+2015-11-26  Murray Cumming  <murrayc@murrayc.com>
+
+	Threads: Deprecate in favour of the C++11/C++14 concurrency API.
+
+	Such as std::thread, std::mutex, std::lock_guard, std::condition_variable.
+
+2015-11-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Tests: More nullptr instead of 0
+
+2015-11-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio: More nullptr instead of 0
+
+2015-11-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib: More nullptr instead of 0
+
+2015-11-23  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate *_docs.xml files.
+
+2015-11-23  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate Glib defs.
+
+2015-11-23  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate GIO .defs.
+
+2015-11-22  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Use nullptr instead of 0,NULL,zero in some comments
+
+	* tools/pm/DocsParser.pm: Replace NULL by nullptr, when C comments are
+	converted to C++ comments. In many cases "an empty string" would be a better
+	replacement text, but it's difficult to automatically decide when "nullptr"
+	is not correct.
+	* tools/pm/Output.pm: Use nullptr where appropriate in comments.
+
+2015-11-22  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Fix a test in Output.pm::get_ctor_properties()
+
+	* tools/pm/Output.pm: A test whether a parameter is optional was messed up
+	in such a way that it was always true. The test is just a precaution.
+	In all normal cases the result of a correct test is also true. Probably
+	the error has not affected the code generation from any correct .hg file.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	2.46.2
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Examples: Use nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio: Use of nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::DBus: Use nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib: More nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	More use of nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Yet more nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: Use nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	More use of nullptr instead of 0.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Mention nullptr instead of NULL in documentation and some comments.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	More use of nullptr instead of 0 or NULL.
+
+2015-11-20  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: Use nullptr instead of 0.
+
+2015-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Replace static_cast<char*>(0) with nullptr.
+
+2015-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Revert "Use -Wzero-as-null-pointer-constant with --enable-warnings=fatal"
+
+	This reverts commit 1755af6e6dc62157737c18e3ed8f5beb4b06e25a.
+	Because it breaks the build do the (correct in C) use of NULL for null
+	pointers in the glib headers.
+	See https://bugzilla.gnome.org/show_bug.cgi?id=757979#c1
+
+2015-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Use nullptr intead of 0 in some generated code.
+
+2015-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Use nullptr instead of 0.
+
+2015-11-12  Murray Cumming  <murrayc@murrayc.com>
+
+	Use -Wzero-as-null-pointer-constant with --enable-warnings=fatal
+
+	But see mm-common bug #757979 .
+
+2015-11-08  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the build with --disable-deprecated-api
+
+	* glib/glibmm/containers.h: Inlude glibmm/wrap.h, which is not included via
+	sarray.h, when SArray is deprecated.
+
+2015-11-06  Murray Cumming  <murrayc@murrayc.com>
+
+	StreamIOChannel: Use the override keyword.
+
+2015-10-31  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	ObjectBase, Object, Interface: Fix move constructors and move assignments
+
+	* glib/glibmm/interface.cc: Don't call ObjectBase's move assignment operator
+	from Interface's move assignment operator.
+	* glib/glibmm/object.cc: Perform of job of sigc::trackable's move constructor
+	in Object's move constructor.
+	* glib/glibmm/objectbase.cc: Move constructor: Set gobject_ = nullptr.
+	Fix the assignment of cpp_destruction_in_progress_.
+	Move assignment: Add self-assignment guard. Avoid the risk of accidentally
+	deleting *this. Let a call to initialize_move() do most of the job.
+	* tests/glibmm_interface_move/main.cc:
+	* tests/glibmm_object_move/main.cc:
+	* tests/glibmm_objectbase_move/main.cc: Really test move assignment.
+	Test that the wrapped C object has been moved, and not copied.
+	Bug #756962.
+
+2015-10-26  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Gio::*Source: Use the override keyword.
+
+2015-10-26  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Glib::Error::what(): Use the override keyword.
+
+2015-10-19  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Revert "Add Glib::c_str_or_null()"
+
+	This reverts commit bf69428947398356c86c43e2be4f26dce03583dc.
+
+	Let's wait with this commit until there is a better reason
+	to branch glibmm-2-46. Didn't notice that master is a stable
+	branch right now.
+
+2015-10-19  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::c_str_or_null()
+
+	* glib/glibmm/utility.h: Add Glib::c_str_or_null().
+	Code such as "s.empty() ? nullptr : s.c_str()" can be replaced by
+	Glib::c_str_or_null(s) when C functions are called, where s is a std::string
+	or a Glib::ustring. A very small part of a fix of bug #755245.
+
+2015-09-25  Murray Cumming  <murrayc@murrayc.com>
+
+	Tiny whitespace fix.
+
+2015-09-25  Murray Cumming  <murrayc@murrayc.com>
+
+	NEWS: List what's new in 2.46.
+
+2015-09-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the build with --enable-warnings=fatal
+
+	* glib/glibmm/objectbase.cc: Cast pointers to void* in call to g_warning().
+
+2015-09-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.46.1
+
+2015-09-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_GOBJECT(): Move = deleted stuff to public.
+
+	It doesn't seem useful as private. The other classes already do this
+	correctly.
+
+2015-09-21  Murray Cumming  <murrayc@murrayc.com>
+
+	2.46.0
+
+2015-09-21  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC Builds: Fix Last Revert on GLib::Weakref<>
+
+	We still need to copy the GLib::Weakref<> headers..., as my last commit
+	accidently removed.
+
+2015-09-21  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Revert "MSVC Projects: Add Newly-added Sources"
+
+	This is a follow commit for commit 6259a46, which the Gio::ListModel is
+	not ready yet.
+
+	This reverts commit 6bb6387237ec8d5d36cdbd44fbadfe3c37392616.
+
+2015-09-21  Murray Cumming  <murrayc@murrayc.com>
+
+	DBus::Connection::signal_subscribe(): Pass nullptr instead of "".
+
+	Because that's what the C documentation requires, and the implementation
+	doesn't accept "" to mean the same thing, though that would be
+	convenient:
+	https://developer.gnome.org/gio/stable/GDBusConnection.html#g-dbus-connection-signal-subscribe
+
+	Noticed by Christof Meerwald on gtkmm-list.
+
+2015-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Application: Remove bind/unbind_busy_property().
+
+	Leaving it commented out with a TODO, because I'm not sure if we
+	want to pass the ObjectBase by RefPtr, or not, or both. Let's leave this
+	until we have some use for it.
+
+2015-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Revert "Added Gio::ListModel"
+
+	Because it is not ready yet.
+	This reverts commit dd19e282d249dc6009834dad9c2af99039675348.
+
+2015-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	gio_methods.defs: Add g_list_store_new().
+
+	For some reason this wasn't generated.
+
+2015-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Add ListStore to extra objects .defs.
+
+2015-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Add GListStore .defs
+
+2015-09-17  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC Projects: Add Newly-added Sources
+
+	There were some more sources that were added along the way that needs to
+	be built and "installed" for glibmm and giomm, so don't miss out on them.
+
+2015-09-16  Murray Cumming  <murrayc@murrayc.com>
+
+	Added Gio::ListModel
+
+2015-09-16  Murray Cumming  <murrayc@murrayc.com>
+
+	Generate signal/property defs for GListModel.
+
+2015-09-16  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::RefPtr: Enable disallowance with certain classes
+
+	* glib/glibmm/refptr.h: Make it possible to stop use of RefPtr with
+	certain classes. Bug #755048.
+
+2015-09-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Update .gitignore
+
+2015-09-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::WeakRef: Add noexcept
+
+	* glib/glibmm/weakref.h: Add noexcept.
+	* glib/glibmm.h: Add weakref.h.
+	* tests/glibmm_weakref/main.cc: Remove #include <glibmm/weakref.h>.
+	Bug #583399.
+
+2015-09-15  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.80
+
+2015-09-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::WeakRef<>
+
+	* glib/glibmm/filelist.am: Add weakref.h.
+	* glib/glibmm/weakref.h: New file.
+	* glib/glibmm.h: Add weakref.h. (Not yet. I'll do it before I push weakref.h.)
+	* tests/Makefile.am: Add test case glibmm_weakref.
+	* tests/glibmm_weakref/main.cc: New test case. Bug #583399.
+	Thanks to worknesday, who attached a first version of WeakRef to
+	the bug report. Bug #583399
+
+2015-09-14  Murray Cumming  <murrayc@murrayc.com>
+
+	TlsClientConnection: Add copy_session_state().
+
+2015-09-14  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Add bind/unbind_busy_property() and set_state_hint().
+
+2015-09-14  Murray Cumming  <murrayc@murrayc.com>
+
+	Application: Ignore g_application_add_main_option().
+
+2015-09-11  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC Builds: Fix "Installation" and giomm Builds
+
+	Some newly-added sources were missed from the giomm projects, so make up
+	for them.  Also, "install" the headers that were added during the last 2
+	development cycles.
+
+2015-09-10  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC Builds: Improve Build Speed and Debugging Experience
+
+	Use multiprocessor compilation, which can cut down build times by quite a
+	bit, and use the /d2Zi+ to put more useful info into the .pdb's in release
+	builds.
+
+2015-09-09  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the build after modification of timer.cc
+
+	If glib.h is included, it must be included after glibmm.h, to give thread.h a
+	chance to include glib.h with G_DISABLE_DEPRECATED undefined. Bug #753271.
+
+2015-09-09  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Update Visual Studio Info in README.win32
+
+	The information in there regarding Visual Studio builds needs to be
+	up-to-date, especially as we dropped support for Visual Studio 2012 and
+	earlier, so update the info.  It is no longer necessary, nor is it
+	recommended, to use the /vd2 option with later Visual Studio versions, as
+	it causes the code to be built incorrectly and causes crashes.
+
+2015-09-09  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	MSVC Builds: Move MSVC_Net2010 to MSVC_Net2013
+
+	This moves all the project files that were in MSVC_Net2010/ to
+	MSVC_Net2013/, as we can't build glibmm with anything before Visual Studio
+	2013.  Note that the project files themselves have already been updated
+	to be Visual Studio 2013-compatible.
+
+	Also drop the MSVC_Net2005 and MSVC_Net2008 directories as the projects
+	there are simply not enough to build glibmm at all.
+
+2015-09-09  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	glibmm: More Fixes on Building on Visual Studio 2013
+
+	timer.cc and random.cc will need to include more of glibmm's headers so
+	that they will be able to use _NOEXCEPT during the build of glibmm.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=753271
+
+2015-09-09  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	glib/glibmmconfig.h: Allow Build on Visual Studio 2013
+
+	Visual Studio 2013 supports enough of C++-11 to support the build of
+	glibmm, except that it does not support noexcept (which is something
+	that Visual Studio 2015 supports).  Define noexcept as _NOEXCEPT on
+	Visual Studio 2013, so that one can build glibmm on it.
+
+	Note that since later Visual Studio versions do not allow one to
+	define known keywords like noexcet as macros, we need to define
+	_ALLOW_KEYWORD_MACROS to workaround this limitation.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=753271
+
+2015-09-03  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.70
+
+2015-09-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Require the latest libsigc++
+
+	So we can use the trackable move operations.
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	Revert "Deprecate Regex now that we have std::regex."
+
+	I didn't mean to push this yet. Maybe we will never deprecate this
+	if it offers better UTF-8 support than std::regex.
+	This reverts commit a1f0b1a06095d81b6a5b8255b818b1c35c92df29.
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	ObjectBase: move operations: Call the sigc::trackable base.
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	IOChannel: move operations: Call the base sigc::trackable.
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	Markup: Add move operations
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	resolver example: Use std:stoul instead of stdstrtoul
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	resolver example: Use std::strtoul instead of strtoul.
+
+2015-09-01  Murray Cumming  <murrayc@murrayc.com>
+
+	Deprecate Regex now that we have std::regex.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: Make everything else noexcept too.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: Make destructor, move operations and swap() noexcept.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	Interface: Make move operations noexcept.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: Make all move operations noexcept.
+
+	This is useful for standard containers, for instance.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	Make destructors explicitly noexcept.
+
+	Destructors are already noexcept, but this makes that even clearer.
+	This might be foolish.
+
+2015-08-31  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: Make destructors explicitly noexcept.
+
+2015-08-26  Daniel Elstner  <daniel.kitta@gmail.com>
+
+	docs: Exclude bogus documentation symbols
+
+	* docs/reference/Doxyfile.in (EXCLUDE_SYMBOLS): Add bogus symbols
+	which appeared in the generated documentation but shouldn't.
+
+2015-08-26  Daniel Elstner  <daniel.kitta@gmail.com>
+
+	Update list of files git should ignore
+
+2015-08-26  Daniel Elstner  <daniel.kitta@gmail.com>
+
+	docs: Update configuration for Doxygen 1.8.9.1
+
+	* docs/reference/Doxyfile.in: Regenerate with Doxygen 1.8.9.1.
+
+2015-08-26  Daniel Elstner  <daniel.kitta@gmail.com>
+
+	docs: Include unused headers in reference documentation
+
+	* glib/glibmm/filelist.am (glibmm_files_all_h): New variable
+	that holds all header files, even those which are not included
+	in the build.
+	* gio/giomm/filelist.am (giomm_files_all_h): ditto.
+	* docs/Makefile.am (doc_input): Make Doxygen parse all public
+	header files, including those which are unused in the current
+	build configuration.  This ensures that the documentation covers
+	all platforms.
+
+2015-08-26  Daniel Elstner  <daniel.kitta@gmail.com>
+
+	docs: Define G_OS_UNIX and G_OS_WIN32 unconditionally
+
+	* docs/reference/Doxyfile.in (PREDEFINED): Always define both
+	G_OS_UNIX and G_OS_WIN32, so that the generated documentation
+	covers all platforms.
+
+2015-08-23  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: _CLASS_GENERIC classes: Add move operations.
+
+	These don't have much in common with each other.
+	Like most of our move operations, they are completely untested,
+	though they could be.
+
+2015-08-23  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use = delete instead of private copy operations.
+
+	There were still some left in the .hg/.ccg files.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.52
+
+	I never released 2.45.1. I had meant to rebase the version change
+	to be the latest commit  but forgot to do that.
+	I might not release this one just yet as a tarball either. I just
+	need a version number for the other *mm projects to check for.
+	Releasing a tarball might cause disruption if these latest changes
+	cause problems.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	tests: Add glibmm_interface_move.
+
+	This code got unpleasantly big because I wanted to test a C++
+	class that wraps a GObject while also implementing a C++ Interface
+	that wraps a GInterface that the GObject implements. But it seems
+	to work.
+
+	However, the code to test a raw TestInterface is commented out
+	because the move constructor does not pass the test. I am not sure
+	if this should even be expected to work:
+	Interface interface = std::move(object);
+	or:
+	Base base = std::move(derived);
+
+	Surely that would lose the data (and virtual method table) from the
+	Derived class anyway?
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	Interface: Move constructor: Add comment about not calling initialize_move().
+
+	I am not entirely sure that this is the right thing to do.
+	See my comment in the next commit about the test.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	tests: Split glibmm_object_move into 2 files.
+
+	To test ObjectBase separately.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	Object: Move constructor: Use initialize_move().
+
+	Because the call to the ObjectBase move constructor will not
+	actually happen. See the comment for the previous commit.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	ObjectBase: Add initialize_move().
+
+	And _move_current_wrapper() for it to use.
+	Object and Interface can use initialize_move() in their move
+	constructors. They need to do this because their calls to the
+	ObjectBase move constructors will not actually run, at least
+	when in a derived class, because ObjectBase is a virtual base
+	class (for use in virtual inheritance).
+	We have initialize() for much the same reason, for the regular
+	constructors.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.51
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_BOXEDTYPE_STATIC: Add copy operations.
+
+	These were previously implicitly generated by the compiler,
+	but are no longer generated because we now have explicit move
+	operations.
+	Being explicit seems like a better way to preserve ABI anyway.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_BOXEDTYPE: Make the static swap() noexcept.
+
+	This is generally a good idea because it lets standard containers
+	use the swap() while maintaining their own noexcept.
+
+	This would not be an ABI break, hopefully, because this is an inline
+	method in the header anyway.
+	We have recently added the noexcept to the member swap() method,
+	but hopefully that is not an ABI break either. Removing noexcept
+	would be an ABI break, I think.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_OPAQUE_COPYABLE: Generate static swap().
+
+	As in _CLASS_BOXEDTYPE().
+	This can then be used by std::swap(), used by standard containers.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_BOXEDTYPE_STATIC(): Add move operations.
+
+	Roughly as in _CLASS_BOXEDTYPE().
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_OPAQUE_COPYABLE(): Add move operations.
+
+	The same as in _CLASS_BOXEDTYPE().
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Mark all _CLASS_OPAQUE_REFCOUNTED classes as final.
+
+	Because _CLASS_OPAQUE_REFCOUNTED already generates a comment
+	telling us not to derive from them, presumably because they can
+	only be instantiated by reinterpret_cast<>ing a base C struct.
+
+	Ideally, _CLASS_OPAQUE_REFCOUNTED would add the final keyword,
+	but the class line is is not generated, so that would be a little
+	difficult.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_OPAQUE_REFCOUNTED: Use = delete for the default constructor.
+
+	And move it (and the = deleted copy operations) to public.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	Add simple test for Object move.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::FileIcon: Remove unncessary IMPLEMENTS_INTERFACE
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_GOBJECT(): Move operations: Call interfaces' move operations.
+
+	The (virtual base) ObjectBase's move operations will not be called
+	multiple times, so this might be useless, but it seems more complete.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_INTERFACE(): Generate move operations.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: _CLASS_GOBJECT(): Generate move operations.
+
+	Generate move constructor and move assignment operator.
+	These might never be used, but it seems generally wise to have them.
+
+2015-08-22  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib::ObjectBase, Object, Interface: Add move operators.
+
+	Add move constructors and move assignment operators so that derived
+	classes can have these too.
+
+2015-08-20  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.50
+
+2015-08-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate _docs.xml files.
+
+2015-08-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs files.
+
+2015-08-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Boxed types: Declare move operations as noexcept.
+
+	Because this can let standard containers more efficiently reallocate
+	memory while still preserving their own noexcept guarantees.
+	I found out about this in Scott Meyer's Effective Modern C++11:
+	Item 14.
+	Likewise make swap() noexcept because we use it in our noexcept
+	move assignment operator.
+
+2015-08-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate *_docs.xml files.
+
+2015-08-12  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::SocketService: Add active property.
+
+2015-08-12  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::NetworkMonitor: Add get_network_metered() and property.
+
+2015-08-12  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs
+
+2015-08-07  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Glib::RefPtr: minor release() improvements.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=752812
+
+	* glib/glibmm/refptr.h: add warning in a comment, replace
+	warn_unused_result attribute with corresponding GLib macro.
+
+2015-08-05  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Visual Studio Projects: Update to 2013
+
+	The latest glibmm requires enough C++11 to be supported so that it can be
+	built, which is Visual Studio 2013 for the Visual Studio compilers.  This
+	updates the 2010 projects (and their settings) to 2013.  The folder in
+	which the projects reside in need to be updated, and we would preferably
+	need to make the projects compatible with Visual Studio 2015, from the 2013
+	projects, which is not too different from the 2010 ones.
+
+2015-08-01  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: move assignment operator: Use swap().
+
+	This is not actually less efficient - the code is inline anyway.
+	Bug #752876
+
+2015-07-30  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Remove unnecessary _IGNORE()
+
+	* gio/src/inputstream.hg:
+	* gio/src/notification.hg:
+	* gio/src/outputstream.hg:
+	* gio/src/resolver.hg:
+	* gio/src/socketconnection.hg: Remove _IGNORE() directives that have become
+	unnecessary when the .defs files don't contain information from private.h
+	files. gmmproc warns about unnecessary _IGNORE().
+
+2015-07-30  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Regenerate gio_methods.defs, glib_functions.defs, gobject_functions.defs
+
+	Regenerated without information from private.h files.
+
+2015-07-30  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	tools/gen_scripts: Don't read private.h files
+
+	* tools/gen_scripts/gio_generate_enums.sh:
+	* tools/gen_scripts/gio_generate_methods.sh:
+	* tools/gen_scripts/glib_generate_enums.sh:
+	* tools/gen_scripts/glib_generate_methods.sh: Don't collect information
+	from header files with names ending in private.h.
+
+2015-07-30  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Remove gio/src/gio_unix_functions.defs
+
+	* gio/src/gio.defs:
+	* gio/src/filelist.am: Remove gio_unix_functions.defs.
+	* gio/src/gio_unix_functions.defs: Remove the whole file.
+	All data in this file is also included in gio_methods.defs.
+
+2015-07-30  Marcin Kolny  <marcin.kolny@flytronic.pl>
+
+	generate_wrap_init.pl: Allow to use nested namespaces for whole module.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=753013
+
+	* tools/generate_wrap_init.pl.in: add support for nested namespaces in
+	--namespace parameter, i.e. --namespace=Gst::Bad. It requires to
+	store all classes from module at least in Gst::Bad namespace, but
+	allows to use this namespace in wrap_init.h class.
+
+2015-07-28  Murray Cumming  <murrayc@murrayc.com>
+
+	tests/glibmm_refptr: Add simpler tests for move constructor/operator=.
+
+	The *with_parent* tests test much the same thing, but these ones
+	are simpler, based on Marcin Kolny's simpler tests for the
+	universal reference versions.
+
+2015-07-28  Murray Cumming  <murrayc@murrayc.com>
+
+	tests/glibmm_refptr: Slight improvement.
+
+	test_refptr_universal_reference_move_constructor(): Make even
+	more sure that its the copy constructor that the compiler uses.
+
+2015-07-27  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Glib::RefPtr: add missing constructor and assignment operator
+
+	* glib/glibmm/refptr.h: add move constructor and move assignment
+	operator which allow to set underlying object to castable type.
+	* tests/glibmm_refptr/main.cc: add tests for move constructor and
+	move assignment operator containing universal reference as an
+	argument.
+
+2015-07-27  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Glib::RefPtr: add "release()" method
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=752812
+
+	* glib/glibmm/refptr.h: "release" method gives an access to managed
+	underlying object, releasing RefPtr's ownership. Method is useful
+	e.g. in wrappers of functions containing transfer-full arguments.
+
+2015-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	tests/glibmm_refptr: Correct the move constructor test.
+
+	The && was const, which was a silly typo. Thanks to Marcin Kolny
+	for noticing.
+
+2015-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	Add tests/glibmm_refptr.
+
+	To test refcounting, though I'm not sure that the test for the
+	move constructor is quite right.
+
+2015-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	tls_client test: Use gnome.org instead of google.org
+
+	Because I recently find that the connection often, but not always,
+	times out. Maybe Google has changed something about its servers.
+	I was seeing this output when running the test:
+
+	$ ./giomm_tls_client/test
+	Successfully resolved address of test host 'www.google.com'.
+	First address of test host is 2a00:1450:4016:802::1011.
+	Could not connect socket to 2a00:1450:4016:802::1011:443. Exception: Connection timed out
+
+2015-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	Correct a comment.
+
+2015-07-24  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Update glib_enums.defs.patch, add gio_enums.defs.patch
+
+	* glib/src/glib_enums.defs.patch: G_IO_FLAG_IS_WRITEABLE is an enum constant
+	since 2013-02-04. No patch needed for that any more.
+	* gio/src/gio_enums.defs.patch: New file. Such a file has been useful for a
+	long time. It should have been stored in git long ago.
+
+2015-07-24  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Update scripts that generate .defs files
+
+	* tools/gen_scripts/gio_generate_enums.sh:
+	* tools/gen_scripts/gio_generate_extra_defs.sh:
+	* tools/gen_scripts/glib_generate_enums.sh:
+	* tools/gen_scripts/glib_generate_methods.sh: These scripts patch the
+	generated .defs files. Update them like gtkmm's gtk_generate_extra_defs.sh,
+	i.e. more comments and an option to regenerate the patch file.
+
+2015-07-24  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.41
+
+2015-07-24  Murray Cumming  <murrayc@murrayc.com>
+
+	Revert "Glib::List_Iterator (and similar): Deprecate via ifdef."
+
+	This reverts commit 05610cec2ccbc54f20fcc3e995e41649f21c5714.
+
+	See the commit in the previous commit about gtkmm-2.24. This is a
+	temporary act of kindness to Inkscape.
+
+2015-07-24  Murray Cumming  <murrayc@murrayc.com>
+
+	HelperList: Don't use ifndef GLIBMM_DISABLE_DEPRECATED around this.
+
+	To avoid breaking the gtkmm-2.24 build with --enable-warnings=fatal,
+	and the build of apps that do this too.
+	However, those apps (Inkscape) need to stop using that ancient
+	deprecated version of gtkmm.
+	Bug #752797
+
+2015-07-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	test_scripts/testheaders.sh: Add -std=c++11 in the g++ commands
+
+2015-07-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Improve processing of documentation
+
+	* tools/pm/Output.pm:
+	* tools/pm/DocsParser.pm: When a C++ parameter name differs from the
+	corresponding C parameter name, change the name in the documentation.
+	The translation of argument names works for _WRAP_METHOD() and _WRAP_SIGNAL().
+	Bug #752469
+
+2015-07-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.40
+
+	I named the previous version 2.45.31 instead of 2.45.3.1, so we have to
+	use a number bigger than 31. Let's say that 40 is like 4 and we'll
+	use 50 for the next one instead of 5. Sorry.
+
+2015-07-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.4
+
+2015-07-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Add the shutdown signal.
+
+	For some reason, gmmproc didn't warn about this unwrapped signal.
+	Bug #752600 (Ben)
+
+2015-07-19  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Replace throw() with noexcept.
+
+2015-07-19  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib::RefPtr: Move assignment operator: Unref the previous object.
+
+2015-07-18  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr: Add move constructor and move assignment operator.
+
+2015-07-18  Murray Cumming  <murrayc@murrayc.com>
+
+	RefPtr<>: Don't mention RefPtr<T_CppObject> when just RefPtr is allowed.
+
+	This seems to be correct and allowed. It makes the code clearer.
+
+2015-07-18  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use = delete instead of private to make classes noncopyable.
+
+2015-07-17  Murray Cumming  <murrayc@murrayc.com>
+
+	Glib::List_Iterator (and similar): Deprecate via ifdef.
+
+	I don't think these have been used since before gtkmm 3.0.
+	They were already hidden from the documentation.
+
+2015-07-17  Murray Cumming  <murrayc@murrayc.com>
+
+	IOChannel: Documentation: Mark vfuncs as deprecated.
+
+	Though we cannot hide them via GIOMM_DISABLE_DEPRECATED.
+
+2015-07-17  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use of the override keyword.
+
+2015-07-16  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use nullptr.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.31
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.31
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerated glib _docs.xml
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate glib_functions.defs.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio _docs.xml
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: examples/tests: More use of auto.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: More use of auto.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: More uses of range-based for.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Examples: OptionGroup: Make the args public again to fix the build.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	examples: Avoid more shadowed variables.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: gmmproc: Use of auto in generated files.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Some use of the auto keyword.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Avoid shadowed variables.
+
+	Because this generally invites programming errors, though I am
+	less concerned about shadowing of method names by parameter or
+	variable names, which requires some tedious parameter renaming.
+
+	In MatchInfo::set_gobject() the confusion between take_ownership and
+	this.take_ownership does seem to have caused a programming error,
+	hopefully now corrected.
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	configure.ac: Use -Wsuggest-override and -Wshadow with --enable-warnings=fatal.
+
+	Although -Wsuggest-override isn't actually available yet in my version
+	of g++ (4.9.2).
+
+2015-07-15  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use the override keyword.
+
+2015-07-14  Murray Cumming  <murrayc@murrayc.com>
+
+	configure.ac: Use MM_AX_CXX_COMPILE_STDCXX_11 from mm-common.
+
+	Instead of AX_CXX_COMPILE_STDCXX_11().
+	See bug #751432
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: examples: more use of auto.
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: examples: Use nullptr.
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: examples: No need for > > now.
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Use range-based for loops.
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: _CLASS_BOXEDTYPE: Generate move constructors and assignment operators.
+
+	Bug #751432
+
+2015-07-09  Murray Cumming  <murrayc@murrayc.com>
+
+	Require C++11.
+
+	configure.ac: Use AX_CXX_COMPILE_STDCXX_11 to check for compiler
+	support for C++11 and use it (--std=c++11 for current versions of
+	g++).
+
+2015-07-09  Maks Naumov  <maksqwe1@ukr.net>
+
+	Glib::HelperList: fix iterator check in operator[]
+
+	Signed-off-by: Maks Naumov <maksqwe1@ukr.net> Bug #751530.
+
+2015-07-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_SIGNAL: Accept apostrophes in a preceding comment
+
+	* tools/pm/Output.pm: If a _WRAP_SIGNAL() is preceded by a Doxygen comment,
+	add enough m4 quotes to the comment in the call to _SIGNAL_PROXY().
+	If not, the generated code is wrong if the comment contains an apostrophe.
+	This bug was probably introduced when I added support for detail_name.
+
+2015-06-30  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.3
+
+2015-06-29  Murray Cumming  <murrayc@murrayc.com>
+
+	SArray: Deprecate this and remove ifdef0-ed code.
+
+	Nothing seems to use this anymore, so it seems safe to deprecate it.
+
+2015-06-29  Murray Cumming  <murrayc@murrayc.com>
+
+	ArrayHandle: Add a comment about removing this one day.
+
+	We still use it in lots of glibmm API, because glibmm (unlike gtkmm)
+	hasn't had an ABI break since 2004.
+
+2015-06-29  Murray Cumming  <murrayc@murrayc.com>
+
+	HelperList: Deprecate this.
+
+	Because nothing uses it anymore. See the previous commit about GP_LIST.
+
+2015-06-29  Murray Cumming  <murrayc@murrayc.com>
+
+	tools/m4/list.m4: GP_LIST: Remove this because nothing uses it.
+
+	I think this has not been used by any *mm projects since gtkmm-2.4
+
+	We can add it back if I am wrong. And we doing new gtkmm-2.4 releases
+	is hard enough anyway so there isn't much point in keeping stuff
+	around just for that.
+
+2015-06-21  Murray Cumming  <murrayc@murrayc.com>
+
+	Add SettingsSchema, SettingsSchemaKey and SettingsSchemaSource.
+
+	However, these are completely untested, and not all functions
+	have been wrapped.
+
+2015-06-21  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio .defs.
+
+2015-06-21  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate glib docs.xml.
+
+2015-06-21  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate glib method .defs.
+
+2015-06-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Don't disable more deprecation warnings than necessary
+
+	* gio/src/application.hg:
+	* gio/src/desktopappinfo.hg:
+	* gio/src/file.hg:
+	* gio/src/notification.hg:
+	* gio/src/settings.[ccg|hg]:
+	* gio/src/simpleactiongroup.hg:
+	* gio/src/tlsconnection.hg:
+	* gio/src/volumemonitor.hg:
+	* glib/src/date.hg: Don't #undef G_DISABLE_DEPRECATED or #define
+	GLIB_DISABLE_DEPRECATION_WARNINGS. This is unnecessary when deprecated code
+	is surrounded by G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS. Bug #750379.
+
+2015-06-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_METHOD: Use G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS
+
+	* tools/m4/method.m4: Put G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS around
+	deprecated code. In most cases it's then not necessary to undef
+	[G|GDK|GTK]_DISABLE_DEPRECATED and define
+	[GLIB|GDK]_DISABLE_DEPRECATION_WARNINGS. Bug #750379.
+
+2015-06-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Thread: Don't disable more deprecation warnings than necessary
+
+	* glib/src/thread.hg: Don't define GLIB_DISABLE_DEPRECATION_WARNINGS in
+	the .h file, only in the .cc file. If it's defined in the .h file,
+	it disables warnings in every file that includes glibmm/thread.h or glibmm.h.
+	Don't include <glibmmconfig.h> in the .cc file. It became unnecessary when
+	thread.hg was added to glibmm_files_deprecated_hg in glib/src/filelist.am.
+	Bug #750379.
+
+2015-06-08  Murray Cumming  <murrayc@murrayc.com>
+
+	2.45.2
+
+2015-06-04  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	docextract_to_xml.py: Minor fix in internal data
+
+	* tools/defs_gen/docextract.py:
+	* tools/defs_gen/docextract_to_xml.py: Keep 'SECTION:' in section names when
+	data is stored in a dictionary (map, hash table). As before, don't write it
+	to the 'section' elements in the generated xml file.
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Regenerate docs.xml files, excluding some subdirectories
+
+	* tools/gen_scripts/gio_generate_docs.sh:
+	* tools/gen_scripts/glib_generate_docs.sh: Add the --no-recursion option
+	to the call to docextract_to_xml.py.
+	* gio/src/gio_docs.xml: Regenerate without traversing uninteresting
+	subdirectories.
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	docextract_to_xml.py: Add support for the --no-recursion option
+
+	* tools/defs_gen/docextract.py:
+	* tools/defs_gen/docextract_to_xml.py: Add support for the --no-recursion
+	command-line option, meaning that only the specified directories shall be
+	traversed, but not their subdirectories.
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the version numbers in some @newin Doxygen commands
+
+	* gio/src/appinfo.hg: Change @newin{3,2} to @newin{2,30}.
+	* gio/src/application.hg:
+	* gio/src/networkmonitor.hg:
+	* gio/src/simpleiostream.hg:
+	* gio/src/tcpwrapperconnection.hg:
+	* glib/src/binding.hg: Add 'newin 2,n"' to some _WRAP_PROPERTY().
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Regenerate docs.xml files, including property documentation
+
+	* tools/gen_scripts/gio_generate_docs.sh:
+	* tools/gen_scripts/glib_generate_docs.sh: Add the --with-properties option
+	to the call to docextract_to_xml.py.
+	* gio/src/gio_docs.xml:
+	* gio/src/glib_docs.xml: Regenerate with property documentation.
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Fetch property docs from the docs.xml file, if available there
+
+	* tools/pm/DocsParser.pm: Read info from <property> tags.
+	* tools/pm/Output.pm: output_wrap_any_property(): Handle 'newin' option.
+	Read documentation from DocsParser, if available there, else (like before)
+	from the Property object.
+	* tools/pm/Property.pm: get_docs(): Handle 'newin' option.
+	* tools/pm/WrapParser.pm: on_wrap_any_property(): Add support for the
+	'newin "m,n"' option in _WRAP_PROPERTY and _WRAP_CHILD_PROPERTY.
+
+2015-06-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	docextract_to_xml.py: Distinguish sections from properties
+
+	* tools/defs_gen/docextract.py:
+	* tools/defs_gen/docextract_to_xml.py: Don't treat sections as properties.
+	Add the --with-sections command-line option. Generate <section> tags.
+
+2015-05-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Settings: Don't use the deprecated "schema" property
+
+	* gio/src/settings.[hg|ccg]: Replace the deprecated "schema" property by
+	"schema_id" in constructors.
+
+2015-05-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Settings: Replace connect_changed() by signal_changed(key)
+
+	* gio/src/settings.[hg|ccg]: Add signal_changed(key). Remove connect_changed().
+	* examples/settings/settings.cc: Test signal_changed(key). Bug #749034.
+
+2015-05-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_SIGNAL: Add support for detail_name
+
+	* tools/m4/signal.m4:
+	* tools/pm/Output.pm:
+	* tools/pm/WrapParser.pm: Add support for optional 'detail_name $name' and
+	'two_signal_methods' parameter in _WRAP_SIGNAL. Bug #749034.
+
+2015-05-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::SignalProxyDetailed
+
+	* glib/glibmm/signalproxy.cc:
+	* glib/src/signalproxy.h.m4: Add SignalProxyDetailed and
+	SignalProxyDetailed[0-6]. Bug #749034.
+
+2015-05-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_SIGNAL: Fix the exception_handler parameter
+
+	* tools/m4/signal.m4: Fix the exception_handler parameter. It was added as
+	a result of bug #735132, but the code was enough changed after it was copied
+	from vfunc.m4.
+
+2015-05-08  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix the version numbers in some @newin Doxygen commands
+
+	* gio/src/application.hg:
+	* gio/src/dbusintrospection.hg:
+	* gio/src/memoryinputstream.hg:
+	* gio/src/networkmonitor.hg:
+	* gio/src/notification.hg:
+	* gio/src/resource.hg:
+	* gio/src/tcpwrapperconnection.hg:
+	* glib/src/binding.hg:
+	* glib/src/variant.hg: Correct the version numbers in some @newin commands
+	by adding 'newin "2,n"' parameters to _WRAP_xxx macros. Bug #748856.
+
+2015-05-08  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add support for 'newin "n,m"' in some _WRAP macros
+
+	* tools/pm/DocsParser.pm:
+	* tools/pm/Enum.pm:
+	* tools/pm/Output.pm:
+	* tools/pm/WrapParser.pm: Add support for the optional 'newin "n,m"' parameter
+	in _WRAP_METHOD, _WRAP_METHOD_DOCS_ONLY, _WRAP_SIGNAL, _WRAP_ENUM,
+	_WRAP_ENUM_DOCS_ONLY and _WRAP_GERRROR. Bug #748856.
+
+2015-05-06  Mikhail Titov  <mlt@gmx.us>
+
+	Missing GLIBMM_API for Interface
+
+	It is used by Gtk::CellLayout and Gtk::TreeViewColumn. Bug #748719.
+
+2015-05-06  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Settings: Add connect_changed().
+
+	This wraps the strange "somekeyname::changed" signal in GSettings,
+	so we can get notification when a specific key has changed.
+	I would welcome any suggestion to improve this API.
+
+2015-05-03  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::ObjectBase: Don't use std::auto_ptr
+
+	* glib/glibmm/objectbase.[h|cc]: Use a plain pointer instead of std::auto_ptr.
+	auto_ptr is deprecated in C++11, and can cause compilation warnings.
+	Bug #748630.
+
+2015-04-29  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Threads::Thread: Don't use GThread, only GThread pointer
+
+	* glib/src/threads.[hg|ccg]: Skip the member data GThread gobject_ in Thread.
+	Use the same technique as in classes wrapped with _CLASS_OPAQUE_REFCOUNTED,
+	i.e. let Glib::Threads::Thread be a class without member data and convert
+	both ways between GThread* and Thread* with reinterpret_cast. Bug #746533.
+
+2015-04-27  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Variant: Wrap handles, add get_data_as_bytes()
+
+	* glib/src/variant.[hg|ccg]: VariantBase::is_castable_to(): Accept casts of
+	handles to Variant<gint32>. Add VariantBase::get_data_as_bytes().
+	Deprecate the non-const get_data() and add a const one.
+	* glib/src/variant_basictypes.[h|cc].m4: Add Variant<gint32>::create_handle().
+
+2015-04-27  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::InetAddress, MemoryOutputStream: Add some _IGNORE
+
+	* gio/src/inetaddress.hg: Ignore g_inet_address_mask_new(). gmmproc does not
+	understand that it belongs to GInetAddressMask.
+	* gio/src/memoryoutputstream.hg: Ignore the destroy-function and
+	realloc-function properties.
+
+2015-04-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Add _IGNORE_PROPERTY() and _IGNORE_CHILD_PROPERTY() macros
+
+	tools/pm/WrapParser.pm: Add code for _IGNORE_PROPERTY() and
+	_IGNORE_CHILD_PROPERTY(), similar to _IGNORE_SIGNAL().
+
+2015-04-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::get_user_special_dir(UserDirectory)
+
+	* glib/src/miscutils.[hg|ccg]: Add _WRAP_ENUM(UserDirectory,...) and
+	Glib::get_user_special_dir(UserDirectory directory).
+	Deprecate get_user_special_dir(GUserDirectory directory). Bug #747311.
+
+2015-04-15  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::format_size()
+
+	* .gitignore: Ignore glib/glibmm/miscutils.[h|cc].
+	* glib/src/filelist.am: Add miscutils.hg.
+	* glib/glibmm/filelist.am: Remove miscutils.[h|cc].
+	* glib/glibmm/miscutils.[h|cc]: Move to glib/src and rename to
+	miscutils.[hg|ccg].
+	* glib/src/miscutils.[hg|ccg]: New files. Move from glib/glibmm and rename.
+	Add _WRAP_ENUM(FormatSizeFlags,...). Add Glib::format_size(). Bug #747311.
+
+2015-04-13  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Variant: Improve handling of object paths and signatures
+
+	* glib/src/variant.[ccg|hg]: Add VariantBase::is_castable_to() and
+	VariantContainerBase::get_iter(). Accept casts of complicated types
+	containing object paths and DBus type signatures to Variant<> types
+	containing Glib::ustring and std::string. Change some get(), get_child()
+	and get_iter() methods similarly.
+	* tests/glibmm_variant/main.cc: Add test_dynamic_cast_composite_types().
+	Bug #747508.
+
+2015-04-13  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_PROPERTY: Remove a line from the generated docs
+
+	* tools/m4/property.m4: Remove the line "You rarely need to use properties..."
+	It's becoming less true. Some new glib and gtk+ classes (GSimpleIOStream,
+	GtkModelButton, GtkPopoverMenu) have no public set/get methods corresponding
+	to their properties.
+
+2015-04-10  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Gio::SimpleIOStream
+
+	* gio/giomm.h: Add simpleiostream.h.
+	* gio/src/filelist.am: Add simpleiostream.hg.
+	* gio/src/gio_signals.defs: Regenerated.
+	* tools/extra_defs_gen/generate_defs_gio.cc: Add G_TYPE_SIMPLE_IO_STREAM.
+	* gio/src/simpleiostream.[hg|ccg]: New files.
+
+2015-03-25  Murray Cumming  <murrayc@murrayc.com>
+
+	NEWS: Mention API Additions since 2.42
+
+2015-03-24  Murray Cumming  <murrayc@murrayc.com>
+
+	2.44.0
+
+2015-03-24  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate docs.xml files.
+
+2015-03-23  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: No #ifdef GLIBMM_*_ENABLED in generated code
+
+	* gio/src/asyncinitable.ccg: Remove #ifdef GLIBMM_EXCEPTIONS_ENABLED.
+	* tools/m4/property.m4: No #ifdef GLIBMM_PROPERTIES_ENABLED in generated code.
+	* tools/m4/signal.m4:
+	* tools/m4/vfunc.m4: No #ifdef GLIBMM_EXCEPTIONS_ENABLED in generated code.
+	These preprocessor macros are always defined.
+
+2015-03-19  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::SignalSocket docs: Add an empty line after @newin
+
+	* gio/giomm/socketsource.h: Add an empty line after @newin where it's needed
+	in order to avoid bad side effects in the documentation. Doxygen assumes that
+	@newin is followed by a paragraph that describes what is new.
+
+2015-03-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Improve tests/glibmm_interface_implementation
+
+	* tests/glibmm_interface_implementation/main.cc: Return EXIT_FAILURE if some
+	test fails. Add more tests of virtual functions. Bug #705124.
+
+2015-03-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Action, ActionGroup: Fix critical messages from vfuncs
+
+	* glib/glibmm/wrap.h: Add unwrap_copy(const T& obj).
+	* gio/src/action.hg:
+	* gio/src/actiongroup.hg: Make vfuncs that return a GVariant* use the
+	new Glib::unwrap_copy() overload by adding the _WRAP_VFUNC parameter
+	refreturn_ctype. It avoids a critical message if Glib::VariantBase::
+	gobj() == 0, which is not an error in these functions. Bug #705124.
+
+2015-03-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Action etc: Add keep_return to some _WRAP_VFUNC()
+
+	* gio/src/action.hg: Add keep_return to get_name_vfunc(),
+	get_parameter_type_vfunc() and get_state_type_vfunc().
+	* gio/src/actiongroup.hg: Add keep_return to get_action_parameter_type_vfunc()
+	and get_action_state_type_vfunc().
+	* gio/src/dbusobject.hg: Add keep_return to get_object_path_vfunc().
+	* gio/src/tlspassword.hg: Add keep_return to get_default_warning_vfunc().
+	The C code that calls these functions does not get its own copy of the
+	returned object. The called function must store a copy. Bug #705124.
+
+2015-03-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_VFUNC: Add the keep_return parameter
+
+	* glib/glibmm/utility.h: Add template function destroy_notify_delete().
+	* tools/pm/WrapParser.pm:
+	* tools/pm/Output.pm:
+	* tools/m4/vfunc.m4: Add optional parameter keep_return to _WRAP_VFUNC().
+	Bug #705124.
+
+2015-03-16  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate _docs.xml files.
+
+2015-03-16  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs.
+
+2015-03-06  Murray Cumming  <murrayc@murrayc.com>
+
+	2.43.91
+
+2015-03-06  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::OutputStream: write_async(), write_all_async(): Improve docs.
+
+	Add the warning about the buffer needing to stay valid because it
+	is not copied, adding to the C API here:
+	https://git.gnome.org/browse/glib/commit/gio/goutputstream.c?id=0f800cd1a863bc0c3e51c03592e2fb1ffbda8982
+
+2015-03-05  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::ThemedIcon: Change parameter name to use_default_fallbacks
+
+	* gio/src/themedicon.[hg|ccg]: Change parameter name use_default_callbacks
+	to use_default_fallbacks in constructor and create().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::OutputStream: Add write_all_async() and write_all_finish().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::MemoryInputStream: Add add_bytes().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	InputStream: Add read_all_async() and read_all_finish().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::File: Add replace_contents_bytes_aync().
+
+	There is no g_file_replace_content_bytes_finish() because this
+	uses the existing g_file_replace_contents_finish().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::DBus::InterfaceInfo: Add cache_build() and cache_release().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	OptionContext: Add get/set_strict_posix().
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Add get/set/unset_resource_base_path() and property.
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio::Application: Add get_is_busy() and property.
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate *_docs.xml files.
+
+2015-03-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs.
+
+2015-02-26  Murray Cumming  <murrayc@murrayc.com>
+
+	2.43.90
+
+2015-02-26  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::OptionGroup: Fix memory leaks
+
+	* glib/src/optiongroup.ccg: CppOptionEntry::set_c_arg_default(),
+	convert_c_to_cpp(), release_c_arg(): Fix memory leaks for string-valued
+	options. Bug #745173.
+
+2015-02-25  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::OptionGroup: Fix enable/disable bool option pairs
+
+	* glib/src/optiongroup.ccg: add_entry_with_wrapper(): Don't allocate a new
+	C variable, if another entry has already been added for the same C++ variable.
+	It makes GLib::OptionContext::parse() behave like g_option_context_parse()
+	when two or more options refer to the same variable, typically
+	an --enable-x / --disable-x pair. Bug #744854.
+
+2015-02-20  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Fix error messages from gmmproc
+
+	* gio/src/gio_extra_objects.defs: Add NetworkMonitor, Notification and
+	Resource.
+	* gio/src/file.hg:
+	* gio/src/fileinputstream.hg:
+	* gio/src/fileoutputstream.hg:
+	* gio/src/notification.hg:
+	* glib/src/iochannel.hg:
+	* glib/src/nodetree.hg: Avoid "gtkmmproc error" messages in the generated
+	files by not _IGNORE()ing non-existent functions. Unnecessary _IGNORE()s
+	generate error messages after the fix in bug 737212 was implemented.
+
+2015-02-20  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	h2def.py: Remove *_DEPRECATED_IN_*_*_FOR(*) prefixes with white space
+
+	* tools/defs_gen/h2def.py: A *_DEPRECATED_IN_*_*_FOR(*) prefix before a
+	function prototype may contain white space within the parenthesis.
+	Remove such prefixes, otherwise the function prototype is not found.
+
+2015-02-18  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Value: Deprecate Value<char>, add Value<signed char>
+
+	* glib/src/value_basictypes.[cc|h].m4: Deprecate Value<char>.
+	Add Value<signed char>. g_value_[get,set]_char() are deprecated in favour of
+	g_value_[get,set]_schar(). G_TYPE_CHAR is a signed char even on platforms
+	where a plain char is unsigned.
+
+2015-02-18  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Notification: Add set_priority() and enum NotificationPriority
+
+	* gio/src/notification.hg: Add enum NotificationPriority and set_priority().
+	* tools/m4/convert_gio.m4: Add conversion of GNotificationPriority.
+
+2015-02-18  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Application, UnixSocketAddress: Deprecate some properties
+
+	* gio/src/application.hg: Deprecate property_action_group().
+	* gio/src/unixsocketaddress.hg: Deprecate property_abstract().
+
+2015-02-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::OptionGroup: Don't use the deprecated g_option_group_free()
+
+	* glib/src/optiongroup.ccg: Replace the deprecated g_option_group_free() by
+	g_option_group_unref().
+	* glib/src/optiongroup.hg: Add a TODO comment.
+
+2015-02-17  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Regenerate methods .defs  and .defs.patch files
+
+	* gio/src/gio_methods.defs:
+	* glib/src/glib_functions.defs:
+	* glib/src/glib_functions.defs.patch:
+	* glib/src/gobject_functions.defs: Updated.
+
+2015-02-16  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Delete obsolete .defs files
+
+	* gio/src/filelist.am: Remove gio_others.defs.
+	* gio/src/gio_methods.defs.patch: Deleted, not used.
+	* gio/src/gio_others.defs: Deleted, not used.
+	* glib/src/filelist.am: Remove glib_deprecated_enums.defs and gobject.defs.
+	* glib/src/glib.defs: Remove glib_deprecated_functions.defs and
+	glib_deprecated_enums.defs.
+	* glib/src/glib_deprecated_enums.defs: Deleted, not needed.
+	* glib/src/glib_deprecated_functions.defs: Deleted, not needed.
+	* glib/src/gobject.defs: Deleted, not used.
+
+2015-02-09  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio: TcpWrapperConnection: Add documentation.
+
+	Based on the C documentation.
+
+2015-02-09  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio: Add TcpWrapperConnection.
+
+	* tools/extra_defs_gen/genererate_defs_gio.cc:
+	Add G_TCP_WRAPPER_CONNECTION.
+	* gio/src/gio_signals.defs: Regenerate this to add the signals
+	for GTcpWrapperConnection.
+	* gio/src/filelist.am:
+	* gio/src/tcpwrapperconnection.[hg|ccg]:
+	Add TcpWrapperConnection.
+
+	Markus Kolb noticed that this was missing.
+	* gio/giomm.h: Include tcpwrapperconnection.h
+
+2015-02-04  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate methods .defs files.
+
+2015-02-04  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate enums .defs files.
+
+2015-02-04  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate _docs.xml files.
+
+2015-02-03  Murray Cumming  <murrayc@murrayc.com>
+
+	gmmproc: Put DOXYGEN_SHOULD_SKIP_THIS around *_Class prototypes.
+
+	These predeclarations, such as below, seem to confuse doxygen.
+	See bug #743918 .
+
+	namespace Gtk
+	{ class Window_Class; } // namespace Gtk
+
+2015-01-25  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Error::register_init(): Call Glib::wrap_register_init()
+
+	* glib/glibmm/error.cc: Call wrap_register_init() before wrap_init().
+	It was not necessary, when Error::register_init() was called from Glib::init(),
+	but Error::register_init() can be called from other places (Glib::thread_init()
+	and Glib::Error::throw_exception()).
+	* glib/glibmm/init.cc: Not necessary to call Glib::wrap_register_init() before
+	calling Glib::Error::register_init(). Bug #743466 (Mike Fleetwood).
+
+2015-01-20  Murray Cumming  <murrayc@murrayc.com>
+
+	2.43.3
+
+2015-01-20  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerated _docs.xml files.
+
+2015-01-13  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Binding: Rename and change BindingTransformSlot
+
+	* glib/src/binding.[hg|ccg]: Change "typedef sigc::slot<bool,
+	const Glib::RefPtr<Binding>&, const GValue*, GValue*> BindingTransformSlot"
+	to "typedef sigc::slot<bool, const GValue*, GValue*> SlotTransform".
+	Bug #738663.
+
+2015-01-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::SlotSpawnChildSetup
+
+	* glib/src/spawn.[hg|ccg]: Add typedef SlotSpawnChildSetup, and say in
+	the documentation that the child_setup parameters can be empty slots.
+	That should make it clear how to avoid having a child_setup slot called.
+	Bug #528285.
+
+2015-01-02  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Resource docs: Suppress inappropriate doxygen links
+
+	* gio/src/resource.hg: Insert '%' before 'Resource' where doxygen shall not
+	generate a link to Gio::Resource.
+
+2014-12-16  Murray Cumming  <murrayc@murrayc.com>
+
+	2.43.2
+
+2014-12-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Gio: Added NetworkMonitor.
+
+2014-12-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .docs.xml
+
+2014-12-15  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .defs.
+
+2014-12-12  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::UnixFDList, UnixFDMessage: Fix array lengths in steal_fds()
+
+	* gio/src/unixfdlist.[hg|ccg]: Hand-code both constructors that take a
+	Glib::ArrayHandle<int>, and call g_unix_fd_list_new_from_array() in them.
+	* gio/src/unixfdlist.ccg: Don't subtract 1 from the length returned by
+	g_unix_fd_list_[peek|steal]_fds().
+	* gio/src/unixfdmessage.hg: get_fd_list(): Add refreturn.
+	* gio/src/unixfdmessage.ccg: Don't subtract 1 from the length returned by
+	g_unix_fd_message_steal_fds(). Bug #741365.
+
+2014-12-12  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Don't make one very long line for the enum documentation
+
+	* tools/pm/DocsParser.pm: lookup_enum_documentation(): Don't replace newlines
+	by spaces in the description of the enum constants.
+
+2014-12-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add an empty line after @newin where it's missing
+
+	* gio/src/action.hg:
+	* gio/src/cancellable.hg:
+	* gio/src/charsetconverter.hg:
+	* gio/src/mount.hg:
+	* gio/src/notification.hg:
+	* gio/src/simpleaction.hg:
+	* gio/src/socket.hg:
+	* glib/src/datetime.hg:
+	* glib/src/glib_docs_override.xml:
+	* glib/src/keyfile.hg:
+	* glib/src/variant.hg: Add an empty line after @newin where it's needed in
+	order to avoid bad side effects in the documentation. Doxygen assumes that
+	@newin is followed by a paragraph that describes what is new.
+
+2014-12-11  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Improve the conversion of Since to @newin
+
+	* tools/m4/enum.m4: Add a blank line in the enum documentation.
+	* tools/pm/Output.pm: Don't always add a blank line in the enum documentation.
+	* tools/pm/DocsParser.pm: Improve the rules for conversion of Since to @newin.
+
+2014-12-04  Murray Cumming  <murrayc@murrayc.com>
+
+	Tiny comment spelling fix.
+
+2014-12-03  Murray Cumming  <murrayc@murrayc.com>
+
+	2.43.1
+
+2014-12-03  Murray Cumming  <murrayc@murrayc.com>
+
+	tests/giomm_tls_client: Put try/catch around Socket::connect().
+
+	Because it's currently timing out for me.
+
+2014-12-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate .docs.xml files.
+
+2014-12-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Regnerate glib .defs.
+
+2014-12-03  Murray Cumming  <murrayc@murrayc.com>
+
+	Regenerate gio .defs.
+
+2014-12-01  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Tidy up the generation of enum docs
+
+	* tools/m4/gerror.m4: Add "/** " at the start of the documentation,
+	like enum.m4 does.
+	* tools/pm/DocsParser.pm: lookup_enum_documentation(): Don't add "/** "
+	which is deleted by the caller. Add "\n * " with the right indentation.
+	* tools/pm/Output.pm: output_wrap_enum(), output_wrap_enum_docs_only(),
+	output_wrap_gerror(): Don't delete "/** ". Don't change indentation.
+
+2014-12-01  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: Change messages that MS Visual Studio can misunderstand
+
+	* tools/gmmproc.in:
+	* tools/pm/DocsParser.pm:
+	* tools/pm/Output.pm: Change messages that MS Visual Studio can misunderstand.
+	https://mail.gnome.org/archives/gtkmm-list/2014-November/msg00044.html
+
+2014-11-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Checksum::ChecksumType: Remove erroneous documentation
+
+	* glib/src/checksum.hg: Remove the erroneous '@class ChecksumType' comment.
+	Should have been '@enum ChecksumType'. It's unnecessary now that gmmproc
+	generates enum documentation.
+
+2014-11-21  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	gmmproc: _WRAP_GERROR: Add documentation to the generated enum Code
+
+	* tools/pm/Output.pm: output_wrap_gerror(): Get the enum documentation from
+	the docs.xml file.
+	* tools/m4/gerror.m4: Include the documentation before 'enum Code' in
+	the generated code.
+
+	_WRAP_GERROR was overlooked when José Alburquerque implemented the
+	documentation of other enums (bug 544694).
+
+2014-11-20  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Glib::Binding
+
+	* .gitignore: Ignore binding.[h|cc].
+	* glib/glibmm/objectbase.h: Add a comment.
+	* glib/src/filelist.am: Add glib_signals.defs and binding.hg.
+	* glib/src/glib.defs:  Add glib_signals.defs.
+	* glib/glibmm.h: Add binding.h.
+	* tools/extra_defs_gen/generate_defs_glib.cc: Add get_defs(G_TYPE_BINDING).
+	* tools/m4/convert_glib.m4: Add conversion for BindingFlags.
+	* tools/generate_wrap_init.pl.in: Define GLIBMM_INCLUDED_FROM_WRAP_INIT_CC.
+	* glib/src/binding.[hg|ccg]: New files with enum BindingFlags and class Binding.
+	* glib/src/glib_signals.defs: New file with info about GBinding's properties.
+	Bug #738663.
+
+2014-11-20  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Resource: Add get_file_exists_nothrow(). Rename some methods
+
+	* gio/src/resource.[hg|ccg]: Add get_file_exists_nothrow() and
+	get_file_exists_global_nothrow(). Rename the get_info() and get_info_global()
+	methods that only check if a file exists. Use std::string for path names.
+	Bug #739206.
+
+2014-11-14  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Docs: Use doxygen-extra.css
+
+	* configure.ac: Require mm-common 0.9.7.
+	* .gitignore: Ignore doxygen-extra.css.
+	* docs/reference/Doxyfile.in: Use doxygen-extra.css instead of doxygen.css.
+
+2014-11-14  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Add Gio::Resource
+
+	* gio/src/resource.[hg|ccg]: Add class Resource, enum ResourceFlags and
+	enum ResourceLookupFlags.
+	* glib/src/bytes.hg: Mention Resource in a comment.
+	* tools/m4/convert_gio.m4: Add conversions for GResource, GResourceFlags and
+	GResourceLookupFlags. Bug #739206.
+
+2014-10-01  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Property: Add some documentation
+
+	* glib/glibmm/propertyproxy.h:
+	* glib/glibmm/property.h: Move the documentation about registering
+	properties from PropertyProxy to Property, which is the class that registers
+	custom properties. Add a code snippet to the documentation. Bug #523043.
+
+2014-09-30  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	gmmproc: added warning when ignored method or signal doesn't exists
+
+	(bgo#737212)
+
+	* tools/pm/WrapParser.pm: when method used in _IGNORE or signal used
+	in _IGNORE_SIGNAL doesn't exists, there is a message posted on
+	stderr and also proper comment in a generated header.
+
 2014-09-22  Murray Cumming  <murrayc@murrayc.com>
 
 	2.42.0

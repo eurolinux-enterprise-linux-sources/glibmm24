@@ -19,7 +19,8 @@
 package Output;
 use strict;
 use open IO => ":utf8";
-use Function qw(FLAG_PARAM_OPTIONAL FLAG_PARAM_OUTPUT);
+use Function qw(FLAG_PARAM_OPTIONAL FLAG_PARAM_OUTPUT FLAG_PARAM_NULLPTR
+                FLAG_PARAM_EMPTY_STRING);
 
 use DocsParser;
 
@@ -72,15 +73,42 @@ sub output_wrap_failed($$$)
 {
   my ($self, $cname, $error) = @_;
 
+  # See "MS Visual Studio" comment in gmmproc.in.
   my $str = sprintf("//gtkmmproc error: %s : %s", $cname, $error);
-  print STDERR "Output.pm: $main::source: $cname : $error\n";
+  print STDERR "Output.pm, $main::source, $cname : $error\n";
   $self->append($str);
 }
 
 sub error
 {
   my $format=shift @_;
-  printf STDERR "Output.pm: $main::source: $format",@_;
+  printf STDERR "Output.pm, $main::source: $format",@_;
+}
+
+# void check_deprecation($file_deprecated, $defs_deprecated, $wrap_deprecated,
+#   $entity_name, $entity_type, $wrapper)
+sub check_deprecation($$$$$$)
+{
+  my ($file_deprecated, $defs_deprecated, $wrap_deprecated,
+      $entity_name, $entity_type, $wrapper) = @_;
+
+  # Don't print a warning if the whole .hg file is deprecated.
+  return if ($file_deprecated);
+
+  if ($defs_deprecated && !$wrap_deprecated)
+  {
+    print STDERR "Warning, $main::source: The $entity_name $entity_type" .
+      " is deprecated in the .defs file, but not in _WRAP_$wrapper.\n";
+  }
+  # Uncomment the following lines some time in the future, when most
+  # signal.defs files have been updated with deprecation information.
+  # generate_extra_defs.cc was updated to generate this info soon after
+  # glibmm 2.47.6.
+  #elsif (!$defs_deprecated && $wrap_deprecated)
+  #{
+  #  print STDERR "Warning, $main::source: The $entity_name $entity_type" .
+  #    " is deprecated in _WRAP_$wrapper, but not in the .defs file.\n";
+  #}
 }
 
 sub ifdef($$)
@@ -204,14 +232,18 @@ sub output_wrap_vfunc_cc($$$$$$$$)
     my $refreturn_ctype = "";
     $refreturn_ctype = "refreturn_ctype" if($$objCFunc{rettype_needs_ref});
 
+    my $keep_return = "";
+    $keep_return = "keep_return" if($$objCppfunc{keep_return});
+
     # Get the conversions.
     my $conversions =
      convert_args_c_to_cpp($objCFunc, $objCppfunc, $line_num);
 
     my $returnValue = $$objCppfunc{return_value};
+    my $errReturnValue = $$objCppfunc{err_return_value};
     my $exceptionHandler = $$objCppfunc{exception_handler};
 
-    my $str = sprintf("_VFUNC_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',%s,%s,%s,%s,%s,%s,%s,%s)dnl\n",
+    my $str = sprintf("_VFUNC_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)dnl\n",
       $$objCppfunc{name},
       $cname,
       $$objCppfunc{rettype},
@@ -221,11 +253,13 @@ sub output_wrap_vfunc_cc($$$$$$$$)
       $conversions,
       ${$objCFunc->get_param_names()}[0],
       $refreturn_ctype,
+      $keep_return,
       $ifdef,
       $errthrow,
       $$objCppfunc{slot_type},
       $$objCppfunc{c_data_param_name},
       $returnValue,
+      $errReturnValue,
       $exceptionHandler);
 
     $self->append($str);
@@ -578,11 +612,14 @@ sub output_wrap_create($$$)
   }
 }
 
-# void output_wrap_sig_decl($filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs, $exceptionHandler)
-# custom_signalproxy_name is "" when no type conversion is required - a normal templates SignalProxy will be used instead.
-sub output_wrap_sig_decl($$$$$$$$$$$)
+# void output_wrap_sig_decl($filename, $line_num, $objCSignal, $objCppfunc, $signal_name,
+#   $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs,
+#   $newin, $exceptionHandler, $detail_name, $bTwoSignalMethods)
+sub output_wrap_sig_decl($$$$$$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs, $exceptionHandler) = @_;
+  my ($self, $filename, $line_num, $objCSignal, $objCppfunc, $signal_name,
+      $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs,
+      $newin, $exceptionHandler, $detail_name, $bTwoSignalMethods) = @_;
 
 # _SIGNAL_PROXY(c_signal_name, c_return_type, `<c_arg_types_and_names>',
 #               cpp_signal_name, cpp_return_type, `<cpp_arg_types>',`<c_args_to_cpp>',
@@ -594,8 +631,8 @@ sub output_wrap_sig_decl($$$$$$$$$$$)
   $underscored_signal_name =~ s/-/_/g;
 
   # Get the existing signal documentation from the parsed docs.
-  my $documentation =
-    DocsParser::lookup_documentation("$$objCSignal{class}::$underscored_signal_name", $deprecation_docs);
+  my $documentation = DocsParser::lookup_documentation(
+    "$$objCSignal{class}::$underscored_signal_name", $deprecation_docs, $newin, $objCppfunc);
 
   # Create a merged Doxygen comment block for the signal from the looked up
   # docs (the block will also contain a prototype of the slot as an example).
@@ -609,6 +646,9 @@ sub output_wrap_sig_decl($$$$$$$$$$$)
   {
     # Strip leading whitespace
     $doxycomment =~ s/^\s+//;
+    # Add a level of m4 quotes. Necessary if $commentblock contains __FT__ or __BT__.
+    # DocsParser::lookup_documentation() adds it in $documentation.
+    $commentblock = "`" . $commentblock . "'";
 
     # We don't have something to add, so just use $commentblock with
     # opening and closing tokens added.
@@ -629,7 +669,7 @@ sub output_wrap_sig_decl($$$$$$$$$$$)
   my $conversions =
     convert_args_c_to_cpp($objCSignal, $objCppfunc, $line_num);
 
-  my $str = sprintf("_SIGNAL_PROXY(%s,%s,\`%s\',%s,%s,\`%s\',\`%s\',\`%s\',%s,\`%s\',%s,%s)dnl\n",
+  my $str = sprintf("_SIGNAL_PROXY(%s,%s,\`%s\',%s,%s,\`%s\',\`%s\',\`%s\',%s,\`%s\',%s,%s,%s,%s)dnl\n",
     $signal_name,
     $$objCSignal{rettype},
     $objCSignal->args_types_and_names_without_object(),
@@ -641,16 +681,22 @@ sub output_wrap_sig_decl($$$$$$$$$$$)
     $deprecated,
     $doxycomment,
     $ifdef,
-    $exceptionHandler
+    $exceptionHandler,
+    $detail_name, # If a detailed name is supported (signal_name::detail_name)
+    $bTwoSignalMethods # If separate signal_xxx() methods for detailed and general name.
   );
 
   $self->append($str);
 }
 
-# void output_wrap_enum($filename, $line_num, $cpp_type, $c_type, $comment, @flags)
-sub output_wrap_enum($$$$$$$)
+# void output_wrap_enum($filename, $line_num, $cpp_type, $c_type,
+#   $comment, $ref_subst_in, $ref_subst_out, $no_gtype,
+#   $deprecated, $deprecation_docs, $newin)
+sub output_wrap_enum($$$$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $cpp_type, $c_type, $comment, @flags) = @_;
+  my ($self, $filename, $line_num, $cpp_type, $c_type,
+    $comment, $ref_subst_in, $ref_subst_out, $no_gtype,
+    $deprecated, $deprecation_docs, $newin) = @_;
 
   my $objEnum = GtkDefs::lookup_enum($c_type);
   if(!$objEnum)
@@ -661,8 +707,7 @@ sub output_wrap_enum($$$$$$$)
 
   $objEnum->beautify_values();
 
-  my $no_gtype = "";
-  my $elements = $objEnum->build_element_list(\@flags, \$no_gtype, "  ");
+  my $elements = $objEnum->build_element_list($ref_subst_in, $ref_subst_out, "  ");
 
   if(!$elements)
   {
@@ -674,39 +719,33 @@ sub output_wrap_enum($$$$$$$)
   $value_suffix = "Flags" if($$objEnum{flags});
 
   # Get the enum documentation from the parsed docs.
-  my $enum_docs =
-    DocsParser::lookup_enum_documentation("$c_type", "$cpp_type", \@flags);
-
-  # Remove initial Doxygen comment block start ('/**') from the enum docs
-  # to merge the passed in Doxygen comment block.
-  $enum_docs =~ s/\/\*\*\s+//g;
-  
-  # Make sure indentation of passed in comment is correct.
-  $comment =~ s/\n\s*\*/\n */g;
+  my $enum_docs = DocsParser::lookup_enum_documentation("$c_type", "$cpp_type",
+    " ", $ref_subst_in, $ref_subst_out, $deprecation_docs, $newin);
 
   # Merge the passed in comment to the existing enum documentation.
-  $comment = $comment . "\n * " . $enum_docs;
+  $comment .= "\n * " . $enum_docs if $enum_docs ne "";
 
-  my $str = sprintf("_ENUM(%s,%s,%s,\`%s\',\`%s\',\`%s\')dnl\n",
+  my $str = sprintf("_ENUM(%s,%s,%s,\`%s\',\`%s\',\`%s\',\`%s\')dnl\n",
     $cpp_type,
     $c_type,
     $value_suffix,
     $elements,
     $no_gtype,
-    $comment
+    $comment,
+    $deprecated
   );
 
   $self->append($str);
 }
 
-sub output_wrap_enum_docs_only($$$$$$$)
+sub output_wrap_enum_docs_only($$$$$$$$$$$)
 {
   my ($self, $filename, $line_num, $module_canonical, $cpp_type, $c_type,
-      $comment, @flags) = @_;
- 
+    $comment, $ref_subst_in, $ref_subst_out, $deprecation_docs, $newin) = @_;
+
   # Get the existing enum description from the parsed docs.
-  my $enum_docs =
-    DocsParser::lookup_enum_documentation("$c_type", "$cpp_type", \@flags);
+  my $enum_docs = DocsParser::lookup_enum_documentation("$c_type", "$cpp_type",
+    " ", $ref_subst_in, $ref_subst_out, $deprecation_docs, $newin);
 
   if($enum_docs eq "")
   {
@@ -715,32 +754,29 @@ sub output_wrap_enum_docs_only($$$$$$$)
   }
 
   # Include the enum docs in the module's enum docs group.
-  $enum_docs .= "\n * \@ingroup ${module_canonical}Enums\n";
+  $enum_docs .= "\n *\n * \@ingroup ${module_canonical}Enums";
 
-  # Remove initial Doxygen comment block start ('/**') from the enum docs
-  # to merge the passed in Doxygen comment block.
-  $enum_docs =~ s/\/\*\*\s+//g;
-  
   # Merge the passed in comment to the existing enum documentation.
-  $comment = "\/\*\* " . $comment . "\n * " . $enum_docs . "\n */\n";
-
-  # Make sure indentation of passed in comment is correct.
-  $comment =~ s/\n\s*\*/\n */g;
+  $comment = "/** " . $comment . "\n * " . $enum_docs . "\n */\n";
 
   $self->append($comment);
 }
 
-# void output_wrap_gerror($filename, $line_num, $cpp_type, $c_enum, $domain, @flags)
-sub output_wrap_gerror($$$$$$$)
+# void output_wrap_gerror($filename, $line_num, $cpp_type, $c_type, $domain,
+#  $class_docs, $ref_subst_in, $ref_subst_out, $no_gtype,
+#  $deprecated, $deprecation_docs, $newin)
+sub output_wrap_gerror($$$$$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $cpp_type, $c_enum, $domain, @flags) = @_;
+  my ($self, $filename, $line_num, $cpp_type, $c_type, $domain,
+    $class_docs, $ref_subst_in, $ref_subst_out, $no_gtype,
+    $deprecated, $deprecation_docs, $newin) = @_;
 
   my $objDefsParser = $$self{objDefsParser};
 
-  my $objEnum = GtkDefs::lookup_enum($c_enum);
+  my $objEnum = GtkDefs::lookup_enum($c_type);
   if(!$objEnum)
   {
-    $self->output_wrap_failed($c_enum, "enum defs lookup failed.");
+    $self->output_wrap_failed($c_type, "enum defs lookup failed.");
     return;
   }
 
@@ -754,17 +790,51 @@ sub output_wrap_gerror($$$$$$$)
   $prefix =~ s/^[^_]+_//;
 
   # Chop off the domain prefix, because we put the enum into the class.
-  unshift(@flags, "s#^${prefix}_##");
+  unshift(@$ref_subst_in, "^${prefix}_");
+  unshift(@$ref_subst_out, "");
 
-  my $no_gtype = "";
-  my $elements = $objEnum->build_element_list(\@flags, \$no_gtype, "    ");
+  my $elements = $objEnum->build_element_list($ref_subst_in, $ref_subst_out, "    ");
 
-  my $str = sprintf("_GERROR(%s,%s,%s,\`%s\',%s)dnl\n",
+  # Get the enum documentation from the parsed docs.
+  my $enum_docs = DocsParser::lookup_enum_documentation("$c_type", "Code",
+    "   ", $ref_subst_in, $ref_subst_out, $deprecation_docs, $newin);
+
+  # Prevent Doxygen from auto-linking to a class called Error.
+  $enum_docs =~ s/([^%])(Error code)/$1%$2/g;
+
+  # Add @newin and @deprecated to the class documentation, if appropriate.
+  my $extra_class_docs = "";
+  if ($newin ne "" and !($class_docs =~ /\@newin/))
+  {
+    $extra_class_docs .= "\n *\n *" if $class_docs;
+    $extra_class_docs .= " \@newin{$newin}";
+  }
+  if ($deprecation_docs ne "" and !($class_docs =~ /\@deprecated/))
+  {
+    $extra_class_docs .= "\n *\n *" if $class_docs or $extra_class_docs;
+    $extra_class_docs .= " \@deprecated $deprecation_docs";
+  }
+  if ($extra_class_docs ne "")
+  {
+    # $class_docs has got ` and ' replaced and m4 quotes added in WrapParser::
+    # on_comment_doxygen() and extract_preceding_documentation().
+    # Fix $extra_class_docs here. $deprecation_docs can contain any characters.
+    DocsParser::add_m4_quotes(\$extra_class_docs);
+    $class_docs .= $extra_class_docs;
+  }
+
+  # Prevent Doxygen from auto-linking to a class called Exception.
+  $class_docs =~ s/([^%])(Exception class)/$1%$2/g;
+
+  my $str = sprintf("_GERROR(%s,%s,%s,\`%s\',%s,\`%s\',\`%s\',\`%s\')dnl\n",
     $cpp_type,
-    $c_enum,
+    $c_type,
     $domain,
     $elements,
-    $no_gtype
+    $no_gtype,
+    $class_docs,
+    $enum_docs,
+    $deprecated
   );
 
   $self->append($str);
@@ -774,7 +844,8 @@ sub output_wrap_gerror($$$$$$$)
 # void output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, $proxy_macro)
 sub output_wrap_any_property($$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, $proxy_macro) = @_;
+  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated,
+      $deprecation_docs, $newin, $objProperty, $proxy_macro) = @_;
 
   my $objDefsParser = $$self{objDefsParser};
 
@@ -806,9 +877,44 @@ sub output_wrap_any_property($$$$$$$$$$)
   my $name_underscored = $name;
   $name_underscored =~ tr/-/_/;
 
-  # Get the property documentation, if any, and add m4 quotes.
-  my $documentation = $objProperty->get_docs($deprecation_docs);
-  add_m4_quotes(\$documentation) if ($documentation ne "");
+  # Get the existing property documentation, if any, from the parsed docs.
+  my $documentation = DocsParser::lookup_documentation(
+    "$$objProperty{class}:$name_underscored", $deprecation_docs, $newin);
+
+  if ($documentation ne "")
+  {
+    # Remove leading "/**" and trailing "*/". They will be added by the m4 macro.
+    $documentation =~ s/^\s*\/\*\*\s*//;
+    $documentation =~ s/\s*\*\/\s*$//;
+  }
+
+  if ($documentation =~ /^`?[*\s]*
+      (?:
+        \@newin\{[\d,]+\}
+        |[Ss]ince[:\h]+\d+\.\d+
+        |\@deprecated\s
+        |[Dd]eprecated[:\s]
+      )/x)
+  {
+    # The documentation begins with a "@newin", "Since", "@deprecated" or
+    # "Deprecated" line. Get documentation also from the Property object,
+    # but don't add another @newin or @deprecated.
+    my $objdoc = $objProperty->get_docs("", "");
+    if ($objdoc ne "")
+    {
+      add_m4_quotes(\$objdoc);
+      $documentation = "$objdoc\n   *\n   * $documentation";
+    }
+  }
+  elsif ($documentation eq "")
+  {
+    # Try to get the (usually short) documentation from the Property object.
+    $documentation = $objProperty->get_docs($deprecation_docs, $newin);
+    if ($documentation ne "")
+    {
+      add_m4_quotes(\$documentation);
+    }
+  }
 
   #Declaration:
   if($deprecated ne "")
@@ -849,10 +955,12 @@ sub output_wrap_any_property($$$$$$$$$$)
 }
 
 # _PROPERTY_PROXY(name, cpp_type)
-# void output_wrap_property($filename, $line_num, $name, $cpp_type, $deprecated, $deprecation_docs)
-sub output_wrap_property($$$$$$$$)
+# void output_wrap_property($filename, $line_num, $name, $cpp_type, $file_deprecated,
+#   $deprecated, $deprecation_docs)
+sub output_wrap_property($$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs) = @_;
+  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $file_deprecated,
+      $deprecated, $deprecation_docs, $newin) = @_;
 
   my $objProperty = GtkDefs::lookup_property($c_class, $name);
   if($objProperty eq 0) #If the lookup failed:
@@ -861,15 +969,21 @@ sub output_wrap_property($$$$$$$$)
   }
   else
   {
-    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, "_PROPERTY_PROXY");
+    Output::check_deprecation($file_deprecated, $objProperty->get_deprecated(),
+      $deprecated, $name, "property", "PROPERTY");
+
+    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class,
+      $deprecated, $deprecation_docs, $newin, $objProperty, "_PROPERTY_PROXY");
   }
 }
 
 # _CHILD_PROPERTY_PROXY(name, cpp_type)
-# void output_wrap_child_property($filename, $line_num, $name, $cpp_type, $deprecated, $deprecation_docs)
-sub output_wrap_child_property($$$$$$$$)
+# void output_wrap_child_property($filename, $line_num, $name, $cpp_type, $file_deprecated,
+#   $deprecated, $deprecation_docs)
+sub output_wrap_child_property($$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs) = @_;
+  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $file_deprecated,
+      $deprecated, $deprecation_docs, $newin) = @_;
 
   my $objChildProperty = GtkDefs::lookup_child_property($c_class, $name);
   if($objChildProperty eq 0) #If the lookup failed:
@@ -878,7 +992,11 @@ sub output_wrap_child_property($$$$$$$$)
   }
   else
   {
-    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objChildProperty, "_CHILD_PROPERTY_PROXY");
+    Output::check_deprecation($file_deprecated, $objChildProperty->get_deprecated(),
+      $deprecated, $name, "child property", "CHILD_PROPERTY");
+
+    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class,
+      $deprecated, $deprecation_docs, $newin, $objChildProperty, "_CHILD_PROPERTY_PROXY");
   }
 }
 
@@ -1138,11 +1256,11 @@ sub convert_args_cpp_to_c($$$$$)
     if(!($possible_arg_list =~ /\b$cpp_param_index\b/))
     {
       # If the C++ index is not found in the list of desired parameters, pass
-      # NULL to the C func unless the param is not optional (applies to a
+      # nullptr to the C func unless the param is not optional (applies to a
       # possibly added GError parameter).
-      if (($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL))
+      if ($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL)
       {
-        push(@conversions, "0");
+        push(@conversions, "nullptr");
         next;
       }
     }
@@ -1156,16 +1274,16 @@ sub convert_args_cpp_to_c($$$$$)
       # will be passed by C reference (&name).
       $cOutputParamType =~ s/\*$//;
 
-      # Only initialize pointers to zero.  Otherwise, use the default
+      # Only initialize pointers to nullptr.  Otherwise, use the default
       # constructor of the type.
       my $initialization = "";
       if($cOutputParamType =~ /\*$/)
       {
-        $initialization = " = 0"; 
+        $initialization = " = nullptr";
       }
       else
       {
-        $initialization = " = $cOutputParamType()"; 
+        $initialization = " = $cOutputParamType()";
       }
 
       push(@declarations, "  $cOutputParamType $cOutputParamName$initialization;");
@@ -1218,10 +1336,15 @@ sub convert_args_cpp_to_c($$$$$)
             $cppParamName,
             $wrap_line_number);
 
-      if (($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL) &&
-       $cppParamType =~ /^(const\s+)?(std::string|Glib::ustring)&?/)
+      # Shall an empty string be translated to a nullptr or to a pointer to
+      # an empty string? The default is "pointer to an empty string" for
+      # mandatory parameters, nullptr for optional parameters.
+      if (($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_NULLPTR) ||
+        (($$cpp_param_flags[$cpp_param_index] &
+         (FLAG_PARAM_OPTIONAL | FLAG_PARAM_EMPTY_STRING)) == FLAG_PARAM_OPTIONAL && # OPTIONAL and not EMPTY_STRING
+        $cppParamType =~ /^(const\s+)?(std::string|Glib::ustring)&?/))
       {
-        push(@conversions, "$cppParamName.empty() ? 0 : " . $std_conversion);
+        push(@conversions, "$cppParamName.empty() ? nullptr : " . $std_conversion);
       }
       else
       {
@@ -1237,7 +1360,7 @@ sub convert_args_cpp_to_c($$$$$)
   # Append the final slot copy parameter to the C function if the method
   # has a slot.  The m4 macros assume that that parameter name is
   # "slot_copy".  The m4 macros will either copy the slot to the
-  # "slot_copy variable or set it to the address of the slot itself if
+  # "slot_copy" variable or set it to the address of the slot itself if
   # the slot should not be copied.
   if ($$objCppfunc{slot_name})
   {
@@ -1247,7 +1370,7 @@ sub convert_args_cpp_to_c($$$$$)
     }
     else
     {
-      push(@conversions, "0")
+      push(@conversions, "nullptr")
     }
   }
 
@@ -1478,10 +1601,10 @@ sub get_ctor_properties($$$$$$)
     if(!($possible_arg_list =~ /\b$cpp_param_index\b/))
     {
       # If the C++ index is not found in the list of desired parameters, pass
-      # NULL to the C func unless the param is not optional.
-      if (~($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL))
+      # nullptr to the C func unless the param is not optional.
+      if ($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL)
       {
-        push(@result, "0");
+        push(@result, "nullptr");
         next;
       }
     }

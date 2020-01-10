@@ -23,7 +23,6 @@
 
 #include <glibmm/object.h>
 
-
 namespace Glib
 {
 
@@ -32,18 +31,21 @@ class Interface_Class;
 #endif
 
 // There is no base GInterface struct in Glib, though there is G_TYPE_INTERFACE enum value.
-class Interface : virtual public Glib::ObjectBase
+class GLIBMM_API Interface : virtual public Glib::ObjectBase
 {
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  typedef Interface       CppObjectType;
-  typedef Interface_Class CppClassType;
-  typedef GTypeInterface  BaseClassType;
+  using CppObjectType = Interface;
+  using CppClassType = Interface_Class;
+  using BaseClassType = GTypeInterface;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
   /** A Default constructor.
    */
   Interface();
+
+  Interface(Interface&& src) noexcept;
+  Interface& operator=(Interface&& src) noexcept;
 
   /** Called by constructors of derived classes. Provide the result of
    * the Class object's init() function to ensure that it is properly
@@ -60,25 +62,24 @@ public:
    * if necessary.
    */
   explicit Interface(GObject* castitem);
-  virtual ~Interface();
+  ~Interface() noexcept override;
 
-  //void add_interface(GType gtype_implementer);
+  // noncopyable
+  Interface(const Interface&) = delete;
+  Interface& operator=(const Interface&) = delete;
 
-  // Hook for translating API
-  //static Glib::Interface* wrap_new(GTypeInterface*);
+// void add_interface(GType gtype_implementer);
+
+// Hook for translating API
+// static Glib::Interface* wrap_new(GTypeInterface*);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static GType get_type()      G_GNUC_CONST;
+  static GType get_type() G_GNUC_CONST;
   static GType get_base_type() G_GNUC_CONST;
 #endif
 
-  inline GObject* gobj()             { return gobject_; }
+  inline GObject* gobj() { return gobject_; }
   inline const GObject* gobj() const { return gobject_; }
-
-private:
-  // noncopyable
-  Interface(const Interface&);
-  Interface& operator=(const Interface&);
 };
 
 RefPtr<ObjectBase> wrap_interface(GObject* object, bool take_copy = false);
@@ -86,4 +87,3 @@ RefPtr<ObjectBase> wrap_interface(GObject* object, bool take_copy = false);
 } // namespace Glib
 
 #endif /* _GLIBMM_INTERFACE_H */
-

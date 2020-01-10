@@ -1,4 +1,3 @@
-// -*- c++ -*-
 // This is a generated file, do not edit.  Generated from value_basictypes.h.m4
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -23,8 +22,8 @@ template <>
 class Value<bool> : public ValueBase
 {
 public:
-  typedef bool CppType;
-  typedef gboolean CType;
+  using CppType = bool;
+  using CType = gboolean;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -33,9 +32,13 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
+#ifndef GLIBMM_DISABLE_DEPRECATED
+/// @deprecated Use Value<signed char> instead.
 
 /**
  * @ingroup glibmmValue
@@ -44,8 +47,8 @@ template <>
 class Value<char> : public ValueBase
 {
 public:
-  typedef char CppType;
-  typedef gchar CType;
+  using CppType = char;
+  using CType = gchar;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -54,6 +57,33 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
+#endif
+};
+
+#endif // GLIBMM_DISABLE_DEPRECATED
+/// @newin{2,44}
+
+/**
+ * @ingroup glibmmValue
+ */
+template <>
+class Value<signed char> : public ValueBase
+{
+public:
+  using CppType = signed char;
+  using CType = gint8;
+
+  static GType value_type() G_GNUC_CONST;
+
+  void set(signed char data);
+  signed char get() const;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -65,8 +95,8 @@ template <>
 class Value<unsigned char> : public ValueBase
 {
 public:
-  typedef unsigned char CppType;
-  typedef guchar CType;
+  using CppType = unsigned char;
+  using CType = guchar;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -75,6 +105,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -86,8 +118,8 @@ template <>
 class Value<int> : public ValueBase
 {
 public:
-  typedef int CppType;
-  typedef gint CType;
+  using CppType = int;
+  using CType = gint;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -96,6 +128,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -107,8 +141,8 @@ template <>
 class Value<unsigned int> : public ValueBase
 {
 public:
-  typedef unsigned int CppType;
-  typedef guint CType;
+  using CppType = unsigned int;
+  using CType = guint;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -117,6 +151,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -128,8 +164,8 @@ template <>
 class Value<long> : public ValueBase
 {
 public:
-  typedef long CppType;
-  typedef glong CType;
+  using CppType = long;
+  using CType = glong;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -138,6 +174,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -149,8 +187,8 @@ template <>
 class Value<unsigned long> : public ValueBase
 {
 public:
-  typedef unsigned long CppType;
-  typedef gulong CType;
+  using CppType = unsigned long;
+  using CType = gulong;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -159,6 +197,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -170,8 +210,8 @@ template <>
 class Value<long long> : public ValueBase
 {
 public:
-  typedef long long CppType;
-  typedef gint64 CType;
+  using CppType = long long;
+  using CType = gint64;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -180,6 +220,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -191,8 +233,8 @@ template <>
 class Value<unsigned long long> : public ValueBase
 {
 public:
-  typedef unsigned long long CppType;
-  typedef guint64 CType;
+  using CppType = unsigned long long;
+  using CType = guint64;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -201,6 +243,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -212,8 +256,8 @@ template <>
 class Value<float> : public ValueBase
 {
 public:
-  typedef float CppType;
-  typedef gfloat CType;
+  using CppType = float;
+  using CType = gfloat;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -222,6 +266,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -233,8 +279,8 @@ template <>
 class Value<double> : public ValueBase
 {
 public:
-  typedef double CppType;
-  typedef gdouble CType;
+  using CppType = double;
+  using CType = gdouble;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -243,6 +289,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 
@@ -254,8 +302,8 @@ template <>
 class Value<void*> : public ValueBase
 {
 public:
-  typedef void* CppType;
-  typedef gpointer CType;
+  using CppType = void*;
+  using CType = gpointer;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -264,6 +312,8 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 

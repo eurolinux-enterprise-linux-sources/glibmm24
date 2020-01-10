@@ -42,19 +42,19 @@ public:
    * because the C/C++ standard explicitly specifies that all _static_ data
    * is zero-initialized at program start.
    */
-  //Class();
-  //~Class();
+  // Class();
+  //~Class() noexcept;
 
-  //static void class_init_function(BaseClassType *p);
-  //static void object_init_function(BaseObjectType *o);
-  //GType get_type() = 0; //Creates the GType when this is first called.
+  // static void class_init_function(BaseClassType *p);
+  // static void object_init_function(BaseObjectType *o);
+  // GType get_type() = 0; //Creates the GType when this is first called.
 
   // Hook for translating API
-  //static Glib::Object* wrap_new(GObject*);
+  // static Glib::Object* wrap_new(GObject*);
 
   inline GType get_type() const;
 
-  //TODO: Remove this method at the next ABI/API break.
+  // TODO: Remove this method at the next ABI/API break.
   /** Register a static custom GType, derived from the parent of this class's type.
    * The parent type of the registered custom type is the same C class as the parent
    * of the get_type() type. If a type with the specified name is already registered,
@@ -67,7 +67,7 @@ public:
   GType clone_custom_type(const char* custom_type_name) const;
 
   /// The type that holds pointers to the interfaces of custom types.
-  typedef std::vector<const Interface_Class*> interface_class_vector_type;
+  using interface_class_vector_type = std::vector<const Interface_Class*>;
 
   /** Register a static custom GType, derived from the parent of this class's type.
    * The parent type of the registered custom type is the same C class as the parent
@@ -79,19 +79,20 @@ public:
    * @param interface_classes Interfaces that the custom type implements.
    * @return The registered type.
    */
-  GType clone_custom_type(const char* custom_type_name,
-    const interface_class_vector_type& interface_classes) const;
+  GType clone_custom_type(
+    const char* custom_type_name, const interface_class_vector_type& interface_classes) const;
 
 protected:
-  GType           gtype_;
-  GClassInitFunc  class_init_func_;
+  GType gtype_;
+  GClassInitFunc class_init_func_;
 
   /** Register a GType, derived from the @a base_type.
    */
   void register_derived_type(GType base_type);
 
   /** Register a GType, derived from the @a base_type.
-   * @param module If this is not 0 then g_type_module_register_type() will be used. Otherwise g_type_register_static() will be used.
+   * @param module If this is not 0 then g_type_module_register_type() will be used. Otherwise
+   * g_type_register_static() will be used.
    */
   void register_derived_type(GType base_type, GTypeModule* module);
 
@@ -102,14 +103,14 @@ private:
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   // The type that holds the values of the interface properties of custom types.
-  typedef std::vector<GValue*> iface_properties_type;
+  using iface_properties_type = std::vector<GValue*>;
   // The quark used for storing/getting the interface properties of custom types.
   static GQuark iface_properties_quark;
 #endif
 };
 
-inline
-GType Class::get_type() const
+inline GType
+Class::get_type() const
 {
   return gtype_;
 }
@@ -119,4 +120,3 @@ GType Class::get_type() const
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 #endif /* _GLIBMM_CLASS_H */
-

@@ -17,7 +17,7 @@ const VariantType& Variant<bool>::variant_type()
 
 Variant<bool> Variant<bool>::create(bool data)
 {
-  Variant<bool> result = Variant<bool>(g_variant_new_boolean(data));
+  auto result = Variant<bool>(g_variant_new_boolean(data));
   return result;
 }
 
@@ -38,7 +38,7 @@ const VariantType& Variant<unsigned char>::variant_type()
 
 Variant<unsigned char> Variant<unsigned char>::create(unsigned char data)
 {
-  Variant<unsigned char> result = Variant<unsigned char>(g_variant_new_byte(data));
+  auto result = Variant<unsigned char>(g_variant_new_byte(data));
   return result;
 }
 
@@ -59,7 +59,7 @@ const VariantType& Variant<gint16>::variant_type()
 
 Variant<gint16> Variant<gint16>::create(gint16 data)
 {
-  Variant<gint16> result = Variant<gint16>(g_variant_new_int16(data));
+  auto result = Variant<gint16>(g_variant_new_int16(data));
   return result;
 }
 
@@ -80,7 +80,7 @@ const VariantType& Variant<guint16>::variant_type()
 
 Variant<guint16> Variant<guint16>::create(guint16 data)
 {
-  Variant<guint16> result = Variant<guint16>(g_variant_new_uint16(data));
+  auto result = Variant<guint16>(g_variant_new_uint16(data));
   return result;
 }
 
@@ -101,13 +101,22 @@ const VariantType& Variant<gint32>::variant_type()
 
 Variant<gint32> Variant<gint32>::create(gint32 data)
 {
-  Variant<gint32> result = Variant<gint32>(g_variant_new_int32(data));
+  auto result = Variant<gint32>(g_variant_new_int32(data));
+  return result;
+}
+
+Variant<gint32> Variant<gint32>::create_handle(gint32 data)
+{
+  auto result = Variant<gint32>(g_variant_new_handle(data));
   return result;
 }
 
 gint32 Variant<gint32>::get() const
 {
-  return g_variant_get_int32(gobject_);
+  if (get_type().equal(VARIANT_TYPE_INT32))
+    return g_variant_get_int32(gobject_);
+  else
+    return g_variant_get_handle(gobject_);
 }
 
 
@@ -122,7 +131,7 @@ const VariantType& Variant<guint32>::variant_type()
 
 Variant<guint32> Variant<guint32>::create(guint32 data)
 {
-  Variant<guint32> result = Variant<guint32>(g_variant_new_uint32(data));
+  auto result = Variant<guint32>(g_variant_new_uint32(data));
   return result;
 }
 
@@ -143,7 +152,7 @@ const VariantType& Variant<gint64>::variant_type()
 
 Variant<gint64> Variant<gint64>::create(gint64 data)
 {
-  Variant<gint64> result = Variant<gint64>(g_variant_new_int64(data));
+  auto result = Variant<gint64>(g_variant_new_int64(data));
   return result;
 }
 
@@ -164,7 +173,7 @@ const VariantType& Variant<guint64>::variant_type()
 
 Variant<guint64> Variant<guint64>::create(guint64 data)
 {
-  Variant<guint64> result = Variant<guint64>(g_variant_new_uint64(data));
+  auto result = Variant<guint64>(g_variant_new_uint64(data));
   return result;
 }
 
@@ -185,7 +194,7 @@ const VariantType& Variant<double>::variant_type()
 
 Variant<double> Variant<double>::create(double data)
 {
-  Variant<double> result = Variant<double>(g_variant_new_double(data));
+  auto result = Variant<double>(g_variant_new_double(data));
   return result;
 }
 

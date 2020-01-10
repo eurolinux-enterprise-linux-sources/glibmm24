@@ -1,7 +1,5 @@
 divert(-1)
 
-dnl $Id$
-
 dnl  Glib::Value specializations for fundamental types
 dnl
 dnl  Copyright 2002 The gtkmm Development Team
@@ -35,8 +33,8 @@ template <>
 class Value<$1> : public ValueBase
 {
 public:
-  typedef $1 CppType;
-  typedef g$2 CType;
+  using CppType = $1;
+  using CType = g$2;
 
   static GType value_type() G_GNUC_CONST;
 
@@ -45,12 +43,13 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   GParamSpec* create_param_spec(const Glib::ustring& name) const;
+  GParamSpec* create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                const Glib::ustring& blurb, Glib::ParamFlags flags) const;
 #endif
 };
 ])
 
 divert[]dnl
-// -*- c++ -*-
 // This is a generated file, do not edit.  Generated from __file__
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -68,7 +67,12 @@ divert[]dnl
 namespace Glib
 {
 GLIB_VALUE_BASIC(bool, boolean)
+#ifndef GLIBMM_DISABLE_DEPRECATED
+/// @deprecated Use Value<signed char> instead.
 GLIB_VALUE_BASIC(char, char)
+#endif // GLIBMM_DISABLE_DEPRECATED
+/// @newin{2,44}
+GLIB_VALUE_BASIC(signed char, int8)
 GLIB_VALUE_BASIC(unsigned char, uchar)
 GLIB_VALUE_BASIC(int, int)
 GLIB_VALUE_BASIC(unsigned int, uint)

@@ -1,3 +1,745 @@
+2.50.0:
+
+No changes since 2.49.7.
+
+2.49.7:
+
+Gio
+* AppInfo: Add launch_default_for_uri_async().
+  (Murray Cumming)
+* Application::get_busy(): return the bool.
+  (Murray Cumming) Bug #770304
+* Drive: Add is_removable().
+  (Murray Cumming)
+* Settings:
+  - set_uiint(): Deprecate for set_uint().
+  - Add get/set_uint64().
+  - Add get/set_int64().
+  (Murray Cumming)
+* giomm.h: Add include for settingsschemasource.h
+  (Murray Cumming)
+
+Documentation:
+* Glib::OptionGroup: Improve the documentation of add_entry()
+  (Kjell Ahlstedt)
+
+
+2.49.5:
+
+Glib:
+* OptionContext: Wrap g_option_context_parse_strv()
+  (Kjell Ahlstedt)
+
+gmmproc:
+* Add DocsParser::remove_c_memory_handling_info()
+  (Kjell Ahlstedt)
+* Add missing objects to glib/gio_extra_objects.defs
+  (Kjell Ahlstedt)
+* Remove DocsParser::non_object_method_name()
+  (Kjell Ahlstedt)
+* swap() implementations: Use std::swap().
+  (Murray Cumming <murrayc@murrayc.com>
+
+Documentation:
+* Gio::SocketService: Update the class documentation
+  (Kjell Ahlstedt)
+
+2.49.4:
+
+glib:
+* Replace some use of some deprecated libsigc++ API.
+  (Murray Cumming)
+
+Build:
+* Really enable silent builds.
+  (Sebastian Geiger) Bug #768797
+
+2.49.2:
+
+Gio:
+* FilterInputStream: Added a constructor.
+  (Krzysztof Kosiński, Kjell Ahlstedt) Bug #572471
+* FilterOutputStream:
+  - Correct the property_base_stream() return type.
+  (Krzysztof Kosiński) Bug #572471
+  (Krzysztof Kosiński, Kjell Ahlstedt) Bug #572471
+* InputStream: Added a constructor, is_closed(), has_pending(),
+  set_pending(), clear_pending()
+  (Krzysztof Kosiński, Kjell Ahlstedt) Bug #572471
+* OutputStream: Added a constructor, is_closed(), is_closing(),
+  has_pending(), set_pending(), and clear_pending().
+  (Krzysztof Kosiński, Kjell Ahlstedt) Bug #572471
+* Pollable, InputStream, OutputStream: Return -1 on error in vfuncs.
+  (Kjell Ahlstedt)
+
+gmmproc:
+* Make h2def.py recognize some GDK_PIXBUF macros
+  (Kjell Ahlstedt)
+* Add optional argument err_return_value in _WRAP_VFUNC
+  (Kjell Ahlstedt)
+
+Build:
+* Visual Studio build files: Update projects
+  (Chun-wei Fan)
+
+2.49.1:
+
+gmmproc:
+* Discard unused m4 sections.
+  (Kjell Ahlstedt)
+* Add 'deprecated' option in _WRAP_ENUM and _WRAP_GERROR
+  (Kjell Ahlstedt)
+* _CLASS_GOBJECT(): Allow custom move operation implementations with
+  _CUSTOM_MOVE_OPERATION().
+  (Marcin Kolny) Bug #756593
+
+Gio:
+* Added ListModel, ListStoreBase and ListStore<>, and tests.
+  (Kjell Ahlstedt, Murray Cumming, Marcin Kolny)
+  Bug #755307
+* SocketAddress: Correct the constructor's implemention.
+  (Murray Cuming) Bug #766150 (Vladimir)
+
+Gio:DBus:
+* Proxy: allow using GDBusProxy* conversion outside DBus namespace
+
+Glib:
+* FileAtrributeInfoList, Checksum, Module, RefPtr:
+  Make operator bool explicit.
+  (Murray Cumming)
+* Property: Allow to set property nick, blurb, and flags.
+  (Marcin Kolny) Bug #755256
+* VariantBase: Add explicit operator bool(), deprecating
+  operator const void*.
+  (Murray Cumming)
+
+Documentation:
+* Examples: Use libsigc++ 2.9/10 and its slot/signal<R(Args...)> syntax.
+  (Murray Cumming)
+
+2.48.1:
+
+Build:
+* MacOS X: Add alternative #ifdefed code when thread_local
+  is not supported by the compiler.
+  (Tom Schoonjans) Bug #759791
+* Replace most typedefs with the C++11 using keyword.
+
+2.48.0:
+
+* No major changes compared to 2.47.92.
+
+2.47.92:
+
+* Adapt to libsigc++-2.0 2.8:
+  - using only the non-deprecated sigc::mem_fun() API.
+  (Kjell Ahlstedt)
+  - using std::ref instead of deprecated sigc::ref.
+  (Murray Cumming)
+  -  Correct bad uses of sigc::bind<1>.
+  (Murray Cumming)
+
+
+gmmproc:
+* defs generation: Mark deprecated signals and properties as such in the
+  generated .defs file.
+* gmmproc: Check if signals and properties are deprecated appropriately
+  (Kjell Ahlstedt)
+
+Build:
+* MSVC builds: Look for includes in include/gio-win32-2.0.
+  (Chun-wei Fan)
+
+2.47.6:
+
+Glib:
+* Add and uses Glib::c_str_or_nullptr().
+  (Kjell Ahlstedt) Bug #755245
+* Add some connect() overloads that move the sigc::slot.
+  (Kjell Ahlstedt)
+* Fix definition of VARIANT_TYPE_DICT_ENTRY to match header declaration
+  (Aurelien Jacobs) Bug #761046
+* Replace, via deprecation, ScopedPtr with make_unique_ptr_gfree().
+  (Murray Cumming) Bug #760223
+* SignalProxy: use variadic templates.
+  (Marcin Kolny)
+* ustring: Add move operators.
+  (Kjell Ahlstedt) Bug #760282
+*  Put deprecation ifdefs around aleady-deprecated GLIBMM_INITIALIZE_STRUCT.
+  (Murray Cumming)
+  
+Gio:
+* FileInfo::list_attributes(): Make name_space optional.
+  (Murray Cumming)
+* Icon: Add serialize(), deserialize() and documentation of create().
+  (Kjell Ahlstedt)
+* PropertyBase: Make custom properties more flexible
+  (Kjell Ahlstedt) Bug #731484.
+* SocketConnectable: Add to_string().
+  (Kjell Ahlstedt)
+
+Gio::DBus::
+* Connection: Pass an empty bus name as nullptr.
+
+gmmproc:
+* Fix errthrow in _WRAP_VFUNC
+  (Kjell Ahlstedt) Bug #762437
+* Add NULL option to _WRAP_METHOD
+  (Kjell Ahlstedt)
+* h2def.py: Accept parameter names beginning with const.
+  (Kjell Ahlstedt)
+
+Build:
+* Use some more minor C++11 features.
+  (Murray Cumming)
+* Threads example: Fix build on Visual Studio
+  (Chun-wei Fan) Bug #760612
+* glibmmconfig.h.in: Fix Visual Studio 2013 builds.
+  (Chun-wei Fan) Bug #760612
+* Glib::ustring: fix -Wmisleading-indentation gcc 6 warning in public header.
+  (Aurelien Jacobs) Bug #760641.
+
+Other:
+* Reformat our hand-written C++ code with clang-format.
+  (Murray Cumming)
+
+
+2.47.4:
+
+Glib::
+* ustring: Don't allow comparison to 0.
+  (Kjell Ahlstedt) Bug #572978 (Armin Burgmeier)
+
+Gio:
+* ActionMap: Fix the ref count in lookup_action_vfunc().
+  (Kjell Ahlstedt) Bug #758813 (Aurimas Černius)
+
+Build:
+* Dispatcher: #include <mutex> in Windows builds.
+  (T Sailor) Bug #758894
+* Gio::Application: Destructor: Use noexcept in the implementation too.
+  (Murray Cumming) Bug #758798 (Émeric MASCHINO)
+* Fix the build with --disable-deprecated-api.
+  (Kjell Ahlstedt)
+
+2.47.3.1:
+
+* Use thread_local instead of (deprecated) Glib::Threads::Private.
+  (Murray Cumming, Kjell Ahlstedt) 
+
+2.47.3:
+
+* Deprecate all of Glib::Threads, including Mutex, Lock, Thread, etc.
+* Deprecated Glib::ThreadPool.
+  (Murray Cumming, Kjell Ahlstedt) 
+
+2.46.2:
+
+* ObjectBase, Object, Interface: Correct move constructors and move assignment
+  operators.
+  (Kjell Ahlstedt) Bug #756962
+
+
+Changes in 2.46 compared to 2.44:
+
+General:
+* Use, and require C++11, using features such as move operations, noexcept
+  auto, = delete, nulltpr, override.
+  (Murray Cumming, Kjell Ahlstedt))
+
+Glib::
+* RefPtr:
+  - Make it possible to stop use of RefPtr with certain classes.
+  (Kjell Ahlstedt)
+  - Make methods noexcept (C++11).
+  (Murray Cumming)
+  - Add move operations.
+  (Murray Cumming, Marcin Kolny, Kjell Ahlstedt)
+  * Add release():
+  (Marcin Kolny)
+* ObjectBase: Don't use std::auto_ptr (deprecated in C++11).
+  (Kjell Ahlstedt)
+* ObjectBase, Object, Interface, IOChannel, Markup: Add move operations
+  (Murray Cumming) Add C++11 move operations.
+  (Murray Cumming)
+* HelperList: fix iterator check in operator[]
+  (Maks Naumov)
+* Add SettingsSchema, SettingsSchemaKey and SettingsSchemaSource.
+  (Murray Cumming)
+* Add Glib::format_size().
+  (Kjell Ahlstedt)
+* Add get_user_special_dir(UserDirectory), deprecating 
+  get_user_special_dir(GUserDirectory directory).
+  (Kjell Ahlstedt)
+* Threads::Thread: Use GThread only via a pointer.
+  Kjell Ahlstedt
+* VariantBase: Add is_castable_to().
+* VariantContainerBase: get_iter(): Accept casts of complicated types
+  containing object paths and DBus type signatures to Variant<> types
+  containing Glib::ustring and std::string.
+  (Kjell Ahlstedt)
+* Variant: Wrap handles and add get_data_as_bytes()
+  (Kjell Ahlstedt)
+* Added SignalProxyDetailed.
+
+Gio:
+* Application: Add the shutdown signal.
+  (Murray Cumming)
+* NetworkMonitor: Add get_network_metered() and property.
+  (Murray Cumming)
+* Settings: Add signal_changed(key).
+  (Kjell Ahlstedt, Murray Cumming)
+* Added SimpleIOStream.
+  (Kjell Ahlstedt)
+* SocketService: Add active property.
+  (Murray Cumming)
+* TlsClientConnection: Add copy_session_state().
+  (Murray Cumming)
+
+Gio::Dbus:
+* Connection::signal_subscribe(): Pass nullptr instead of "".
+  (Murray Cumming)
+
+gmmproc:
+* Generate C++11 move operations.
+  (Murray Cumming)
+* Mark all _CLASS_OPAQUE_REFCOUNTED classes as final (C++11).
+  (Murray Cumming)
+* generate_wrap_init.pl: Allow use of nested namespaces for whole module.
+  (Marcin Kolny)
+* _WRAP_METHOD: deprecated: Use G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS
+  per function, instead of one big undef [G|GDK|GTK]_DISABLE_DEPRECATED.
+  (Kjell Ahlstedt)
+* Add _IGNORE_PROPERTY() and _IGNORE_CHILD_PROPERTY() macros.
+  (Kjell Ahlstedt)
+* Add support for 'newin "n,m"' in some _WRAP macros.
+  (Kjell Ahlstedt)
+* _WRAP_SIGNAL: Add support for detail_name.
+  (Kjell Ahlstedt)
+* Fetch property documentation from the docs.xml file, if available there.
+  (Kjell Ahlstedt)
+
+Build:
+* MSVC Builds: Many improvements
+  (Chun-wei Fan)
+* Add missing GLIBMM_API for Interface
+  (Mikhail Titov)
+
+
+2.46.1 (stable):
+
+* gmmmproc: _CLASS_GOBJECT():
+  Move the "= delete"ed constructor and operator= to public, instead of private.
+  (Murray Cumming)
+
+2.46.0 (stable):
+
+Glib::
+* RefPtr: Make it possible to stop use of RefPtr with certain classes.
+  (Kjell Ahlstedt) Bug #755048
+* WeakRef: Use noexcept.
+  (Kjell Ahlstedt) Bug #583399.
+
+Gio:
+* Application: Remove bind/unbind_busy_property() because they are not
+  quite ready.
+  (Murray Cumming)
+
+Gio::Dbus:
+* Connection::signal_subscribe(): Pass nullptr instead of "".
+  (Murray Cumming)
+
+2.45.80 (unstable):
+
+Gio:
+* Application: Add bind/unbind_busy_property() and set_state_hint().
+  (Murray Cumming)
+* TlsClientConnection: Add copy_session_state().
+  (Murray Cumming)
+
+Build:
+* MSVC Builds: Require MSVC.Net 2013 for C++11 support.
+  (Chun-wei Fan) Bug #753271.
+* MSVC Builds: Adapt for recent source code changes.
+  (Chun-wei Fan) Bug #753271.
+* MSVC Builds: Improve Build Speed and Debugging Experience
+  (Chun-wei Fan)
+
+
+2.45.70 (unstable):
+
+Glib:
+* C++11: Add move operations to ObjectBase and Object.
+  (Murray Cumming)
+* C++11: RefPtr: Make methods noexcept.
+  (Murray Cumming)
+
+gmmproc:
+* C++11: Generate move operations.
+  (Murray Cumming)
+* C++11: IOChannel: move operations: Call the base sigc::trackable.
+  (Murray Cumming)
+* C++11: Markup: Add move operations
+  (Murray Cumming)
+* C++11: More use of = delete instead of private copy operations.
+  (Murray Cumming)
+* C++11: Use std::stoul instead of strtoul.
+  (Murray Cumming)
+
+Documentation:
+* Update configuration for Doxygen 1.8.9.1.
+  (Daniel Elstner)
+* Exclude bogus documentation symbols.
+  (Daniel Elstner)
+* Generate documentation for API all platforms.
+  (Daniel Elstner)
+
+
+2.45.52 (unstable):
+
+Glib::
+* C++11: Glib::ObjectBase, Object, Interface: Add move operators.
+  (Murray Cumming)
+* C++11: Mark all _CLASS_OPAQUE_REFCOUNTED classes as final.
+  (Murray Cumming)
+
+Gio:
+* FileIcon: Remove unncessary IMPLEMENTS_INTERFACE.
+  (Murray Cumming)
+
+gmmproc:
+* _CLASS_GOBJECT(): Generate move operations.
+* _CLASS_INTERFACE(): Generate move operations.
+* _CLASS_BOXEDTYPE_STATIC(): Add move operations.
+* _CLASS_BOXEDTYPE_STATIC: Add explicit copy operations.
+* _CLASS_OPAQUE_COPYABLE(): Add move operations.
+* _CLASS_OPAQUE_COPYABLE: Generate static swap().
+* _CLASS_OPAQUE_REFCOUNTED: Use = delete for the default constructor.
+(Murray Cumming)
+
+
+2.45.50 (unstable):
+
+Glib:
+* RefPtr:
+  * Add move constructor and move assignment operator for castable types.
+    (Marcin Kolny) Bug 752812
+  * Add release():
+    (Marcin Kolny) Bug 752812
+  * move assignment operator: Use swap().
+    (Murray Cumming) Bug 752812
+
+Gio:
+* NetworkMonitor: Add get_network_metered() and property.
+  (Murray Cumming)
+* SocketService: Add active property.
+  (Murray Cumming)
+
+General:
+* C++11: Boxed types: Declare move operations as noexcept.
+  (Murray Cumming)
+
+Build:
+* Update Visual Studio project to Visual Studio 2013,
+  for C++11 support.
+  (Chun-wei Fan)
+* Improve gen_scripts.
+  (Kjell Ahlstedt)
+
+gmmproc:
+* generate_wrap_init.pl: Allow use of nested namespaces for whole module.
+  (Marcin Kolny) Bug 753013
+
+
+2.45.41 (unstable):
+
+Glib:
+* Undeprecate HelperList and List_Iterator because gtkmm-2.4 uses these
+  in its undeprecated API. However, all of gtkmm-2.4 is deprecated, so
+  you (Inkscape) shouldn't be using it anyway.
+  Bug #752797 (Adam Williamson)
+  (Murray Cumming)
+
+2.45.40 (unstable):
+
+Glib:
+* RefPtr: Add move constructor and move assignment operator.
+  (Murray Cumming)
+
+Gio:
+* Application: Add the shutdown signal.
+  (Murray Cumming) Bug #752600 (Ben)
+
+Build:
+* C++11: Use noexcept instead of throw().
+  (Murray Cumming)
+* C++11: Use "= delete" instead of private copy constructors/operator=.
+  (Murray Cumming)
+* C++11: Use nullptr instead of 0.
+  (Murray Cumming)
+* C++11: Use the override keyword.
+
+
+2.45.31 (unstable):
+
+Glib:
+* HelperList: fix iterator check in operator[]
+  (Maks Naumov) Bug #751530.
+
+Build:
+* Use (and require) C++11.
+  (Murray Cumming, Kjell Ahlstedt)
+* Use some simple C++11 syntax.
+  (Murray Cumming)
+* Fix the build with -Wshadow.
+  (Murray Cumming)
+
+gmmproc:
+* Generate code that uses some simple C++11 syntax.
+  (Murray Cumming)
+* _WRAP_SIGNAL: Accept apostrophes in a preceding comment.
+  (Kjell Ahlstedt)
+
+
+2.45.3 (unstable):
+
+* Add SettingsSchema, SettingsSchemaKey and SettingsSchemaSource.
+  (Murray Cumming)
+* Deprecate HelperList and SArray because nothing uses them.
+  (Murray Cumming)
+
+Build:
+* Don't disable more deprecation warnings than necessary
+  (Kjell Ahlstedt) Bug #750379.
+
+gmmproc:
+* _WRAP_METHOD: deprecated: Use G_GNUC_[BEGIN|END]_IGNORE_DEPRECATIONS
+  per function, instead of one big undef [G|GDK|GTK]_DISABLE_DEPRECATED.
+  (Kjell Ahlstedt) Bug #750379
+* Remove GP_LIST, because nothing uses it.
+  (Murray Cumming)
+
+
+2.45.2 (unstable):
+
+Glib:
+* Add Glib::format_size().
+  (Kjell Ahlstedt) Bug #747311 (Zsolt Bölöny)
+* Add get_user_special_dir(UserDirectory), deprecating 
+  get_user_special_dir(GUserDirectory directory).
+  (Kjell Ahlstedt) Bug #747311
+* Threads::Thread: Use GThread only via a pointer.
+  Kjell Ahlstedt (Bug #746533)
+* VariantBase: Add is_castable_to().
+* VariantContainerBase: get_iter(): Accept casts of complicated types
+  containing object paths and DBus type signatures to Variant<> types
+  containing Glib::ustring and std::string.
+  (Kjell Ahlstedt) Bug #747508.
+* Variant: Wrap handles and add get_data_as_bytes()
+  (Kjell Ahlstedt)
+* Added SignalProxyDetailed.
+
+Gio:
+* Settings: Add signal_changed(key).
+  (Kjell Ahlstedt, Murray Cumming) Bug #749034.
+* Added SimpleIOStream.
+  (Kjell Ahlstedt)
+
+Documentation:
+* API Reference: Remove generated " "You rarely need to use properties".
+  Some new glib and gtk+ classes (GSimpleIOStream, GtkModelButton,
+  GtkPopoverMenu) have no public set/get methods for their properties.
+  (Kjell Ahlstedt)
+* API Reference: Fix the version numbers in some @newin Doxygen commands.
+  (Kjell Ahlstedt)
+
+gmmproc:
+* Add _IGNORE_PROPERTY() and _IGNORE_CHILD_PROPERTY() macros.
+  (Kjell Ahlstedt)
+* Add support for 'newin "n,m"' in some _WRAP macros.
+  (Kjell Ahlstedt) Bug #748856 (Andrew Potter)
+* _WRAP_SIGNAL: Add support for detail_name.
+  (Kjell Ahlstedt) Bug #749034
+*  Fetch property documentation from the docs.xml file, if available there.
+  (Kjell Ahlstedt)
+* docextract_to_xml.py: Distinguish sections from properties.
+  (Kjell Ahlstedt)
+* docextract_to_xml.py: Add support for the --no-recursion option.
+  (Kjell Ahlstedt)
+
+Build:
+* Glib::ObjectBase: Don't use std::auto_ptr (deprecated in C++11).
+  (Kjell Ahlstedt) Bug #748630 (Hubert Figuiere)
+* Add missing GLIBMM_API for Interface
+  (Mikhail Titov) Bug #748719.
+
+
+2.44:
+
+API additions since 2.42:
+
+Glib:
+* Add Binding.
+  (Kjell Ahlstedt) Bug #738663.
+* OptionContext: Add get/set_strict_posix().
+  (Murray Cumming)
+
+Gio:
+* Application:
+  - Add get/set/unset_resource_base_path() and property.
+  - Add get_is_busy() and property.
+  (Murray Cumming)
+* File: Add replace_contents_bytes_aync().
+  (Murray Cumming)
+* InputStream: Add read_all_async() and read_all_finish().
+  (Murray Cumming)
+* MemoryInputStream: Add add_bytes().
+  (Murray Cumming)
+* Added NetworkMonitor.
+  (Murray Cumming)
+* Notification: Add set_priority() and enum NotificationPriority.
+  (Kjell Ahlstedt)
+* OutputStream: Add write_all_async() and write_all_finish().
+  (Murray Cumming)
+* Add Resource.
+  (Kjell Ahlstedt)
+* Add TcpWrapperConnection.
+  (Murray Cumming)
+
+Gio::DBus
+* InterfaceInfo: Add cache_build() and cache_release().
+  (Murray Cumming)
+
+
+2.44.0 (stable):
+
+Gio:
+* Action, ActionGroup: Avoid memory leaks in funcs.
+  (Kjell Ahlstedt) Bug #705124
+
+gmmproc:
+* _WRAP_VFUNC(): Add keep_return parameter.
+  (Kjell Ahlstedt) Bug #705124
+
+
+2.43.91 (unstable):
+
+Glib:
+* OptionContext: Add get/set_strict_posix().
+  (Murray Cumming)
+
+Gio:
+* Application:
+  - Add get/set/unset_resource_base_path() and property.
+  - Add get_is_busy() and property.
+  (Murray Cumming)
+* File: Add replace_contents_bytes_aync().
+  (Murray Cumming)
+* InputStream: Add read_all_async() and read_all_finish().
+  (Murray Cumming)
+* MemoryInputStream: Add add_bytes().
+  (Murray Cumming)
+* OutputStream: Add write_all_async() and write_all_finish().
+  (Murray Cumming)
+
+Gio::DBus
+* InterfaceInfo: Add cache_build() and cache_release().
+  (Murray Cumming)
+
+
+
+2.43.90 (unstable):
+
+Glib:
+* Error::register_init(): Call Glib::wrap_register_init().
+  (Kjell Ahlstedt) Bug #743466 (Mike Fleetwood).
+* OptionGroup:
+  - Fix enable/disable bool option pairs.
+  (Kjell Ahlstedt) Bug #744854 (Tom Schoonjans)
+  - Fix memory leaks
+  (Kjell Ahlstedt) Bug #745173.
+  - Don't use deprecate g_option_group_free().
+  (Kjell Ahlstedt) 
+* Value: Deprecate Value<char>, add Value<signed char>.
+  Because g_value_[get,set]_char() are deprecated in favour of
+  g_value_[get,set]_schar().
+  (Kjell Ahlstedt)
+
+Gio:
+* Application: Deprecate property_action_group().
+  (Kjell Ahlstedt)
+* Notification: Add set_priority() and enum NotificationPriority.
+  (Kjell Ahlstedt)
+* Add TcpWrapperConnection.
+  (Murray Cumming)
+* UnixSocketAddress: Deprecate property_abstract().
+  (Kjell Ahlstedt)
+
+gmmproc:
+* Fix error messages in glib and gio by removing unnecessary _IGNORES().
+  (Kjell Ahlstedt)
+* h2def.py: Remove *_DEPRECATED_IN_*_*_FOR(*) prefixes with white space.
+  (Kjell Ahlstedt)
+* Put DOXYGEN_SHOULD_SKIP_THIS around *_Class prototypes.
+  To workaround a doxygen bug, to fix the genereated DevHelp search index.
+  (Murray Cumming) Bug #743918
+
+
+2.43.3 (unstable):
+
+Glib:
+* Binding: Rename and change BindingTransformSlot to SlotTransform.
+  (Kjell Ahlstedt) Bug #738663.   
+* Add SlotSpawnChildSetup.
+  (Kjell Ahlstedt) Bug #528285.   
+
+Documentation:
+* Resource: Suppress incorrect doxygen links.
+  (Kjell Ahlstedt)  
+
+
+2.43.2 (unstable):
+
+Gio:
+* Added NetworkMonitor.
+  (Murray Cumming)
+* UnixFDList, UnixFDMessage: Correct array lengths in steal_fds()
+  (Kjell Ahlstedt) Bug #741365 (Matthew Balkam)
+
+gmmproc:
+* Don't make one very long line for the enum documentation.
+  (Kjell Ahlstedt)
+* Improve the conversion of Since to @newin.
+  (Kjell Ahlstedt)
+* Add an empty line after @newin where it's missing
+  (Kjell Ahlstedt)
+
+
+2.43.1 (unstable):
+
+gmmproc:
+* Tidy up the generation of enum docs
+  (Kjell Ahlstedt)
+* _WRAP_GERROR: Add documentation to the generated enum Code.
+  (Kjell Ahlstedt)
+* Change messages that MS Visual Studio can misunderstand.
+  (Kjell Ahlstedt)
+* Warn when an ignored method or signal doesn't exist.
+  (Marcin Kolny) Bug #737212.
+  
+Glib:
+* Add Binding.
+  (Kjell Ahlstedt) Bug #738663.
+* Checksum::ChecksumType: Remove erroneous documentation
+  (Kjell Ahlstedt)
+* Property: Add some documentation.
+  (Kjell Ahlstedt) Bug #523043.
+
+Gio:
+  Add Resource.
+  (Kjell Ahlstedt)
+
+
 2.42:
 
 API additions since 2.40:

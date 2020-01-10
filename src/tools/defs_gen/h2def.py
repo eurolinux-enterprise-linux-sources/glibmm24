@@ -289,11 +289,11 @@ def clean_func(buf):
     pat = re.compile(r"""\\\n""", re.MULTILINE)
     buf = pat.sub('', buf)
 
-    # Preprocess directives
+    # Preprocessor directives
     pat = re.compile(r"""^[#].*?$""", re.MULTILINE)
     buf = pat.sub('', buf)
 
-    #typedefs, stucts, and enums
+    #typedefs, structs, and enums
     pat = re.compile(r"""^(typedef|struct|enum)(\s|.|\n)*?;\s*""",
                      re.MULTILINE)
     buf = pat.sub('', buf)
@@ -306,22 +306,27 @@ def clean_func(buf):
     pat = re.compile(r"""G_GNUC_WARN_UNUSED_RESULT|G_INLINE_FUNC""", re.MULTILINE)
     buf = pat.sub('', buf)
 
-    #strip *_DEPRECATED_IN_*_FOR (*):
-    pat = re.compile(r"""[A-Z]+_DEPRECATED_IN_[0-9]_([0-9]*)_FOR\s*\(\S*\)\S*""", re.MULTILINE)
+    #strip *_DEPRECATED_IN_*_FOR (*)
+    #e.g. GDK_DEPRECATED_IN_*_FOR (*) and GDK_PIXBUF_DEPRECATED_IN_*_FOR (*)
+    pat = re.compile(r"""([A-Z]+_){1,2}?DEPRECATED_IN_[0-9]_([0-9]*)_FOR\s*\(.*\)\S*""", re.MULTILINE)
     buf = pat.sub('', buf)
 
     #strip *_DEPRECATED*
-    pat = re.compile(r"""[A-Z]+_DEPRECATED\S*""", re.MULTILINE)
+    pat = re.compile(r"""([A-Z]+_){1,2}?DEPRECATED\S*""", re.MULTILINE)
     buf = pat.sub('', buf)
 
     #strip *_AVAILABLE_IN_*
-    pat = re.compile(r"""[A-Z]+_AVAILABLE_IN_[0-9]_[0-9]\S*""", re.MULTILINE)
+    pat = re.compile(r"""([A-Z]+_){1,2}?AVAILABLE_IN_[0-9]_[0-9]\S*""", re.MULTILINE)
     buf = pat.sub('', buf)
 
     #strip *_AVAILABLE_IN_ALL
-    pat = re.compile(r"""[A-Z]+_AVAILABLE_IN_ALL\S*""", re.MULTILINE)
+    pat = re.compile(r"""([A-Z]+_){1,2}?AVAILABLE_IN_ALL\S*""", re.MULTILINE)
     buf = pat.sub('', buf)
 
+    #strip G_DECLARE_FINAL_TYPE (*)
+    pat = re.compile(r"""G_DECLARE_FINAL_TYPE\s*\(.*?\)""", re.MULTILINE)
+    buf = pat.sub('', buf)
+    
     #we are not stripping G_GNUC_INTERNAL
 
     #extern "C"
@@ -349,7 +354,7 @@ def clean_func(buf):
     buf = buf.replace('G_CONST_RETURN ', 'const-')
     buf = buf.replace('const ', 'const-')
     # This is for types such as 'const gchar* const *'
-    buf = buf.replace('* const', '*-const')
+    buf = re.sub(r'\* const\b', '*-const', buf)
 
     #strip GSEAL macros from the middle of function declarations:
     pat = re.compile(r"""GSEAL""", re.VERBOSE)

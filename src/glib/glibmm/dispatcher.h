@@ -1,8 +1,5 @@
-// -*- c++ -*-
 #ifndef _GLIBMM_DISPATCHER_H
 #define _GLIBMM_DISPATCHER_H
-
-/* $Id$ */
 
 /* Copyright 2002 The gtkmm Development Team
  *
@@ -78,24 +75,27 @@ public:
    */
   Dispatcher();
 
+  // noncopyable
+  Dispatcher(const Dispatcher&) = delete;
+  Dispatcher& operator=(const Dispatcher&) = delete;
+
   /** Create new Dispatcher instance using an arbitrary main context.
    * @throw Glib::FileError
    */
   explicit Dispatcher(const Glib::RefPtr<MainContext>& context);
-  ~Dispatcher();
+  ~Dispatcher() noexcept;
 
   void emit();
   void operator()();
 
   sigc::connection connect(const sigc::slot<void>& slot);
+  /** @newin{2,48}
+   */
+  sigc::connection connect(sigc::slot<void>&& slot);
 
 private:
   sigc::signal<void> signal_;
-  DispatchNotifier*  notifier_;
-
-  // noncopyable
-  Dispatcher(const Dispatcher&);
-  Dispatcher& operator=(const Dispatcher&);
+  DispatchNotifier* notifier_;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   friend class Glib::DispatchNotifier;

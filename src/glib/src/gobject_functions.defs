@@ -96,6 +96,7 @@
     '("none" "G_TYPE_DEBUG_NONE")
     '("objects" "G_TYPE_DEBUG_OBJECTS")
     '("signals" "G_TYPE_DEBUG_SIGNALS")
+    '("instance-count" "G_TYPE_DEBUG_INSTANCE_COUNT")
     '("mask" "G_TYPE_DEBUG_MASK")
   )
 )
@@ -578,6 +579,7 @@
   (return-type "GType")
   (parameters
     '("const-gchar*" "name")
+    '("const-GEnumValue*" "const_static_values")
   )
 )
 
@@ -586,6 +588,7 @@
   (return-type "GType")
   (parameters
     '("const-gchar*" "name")
+    '("const-GFlagsValue*" "const_static_values")
   )
 )
 
@@ -595,6 +598,7 @@
   (parameters
     '("GType" "g_enum_type")
     '("GTypeInfo*" "info")
+    '("const-GEnumValue*" "const_values")
   )
 )
 
@@ -604,6 +608,7 @@
   (parameters
     '("GType" "g_flags_type")
     '("GTypeInfo*" "info")
+    '("const-GFlagsValue*" "const_values")
   )
 )
 
@@ -743,6 +748,11 @@
 
 (define-function g_mapped_file_get_type
   (c-name "g_mapped_file_get_type")
+  (return-type "GType")
+)
+
+(define-function g_option_group_get_type
+  (c-name "g_option_group_get_type")
   (return-type "GType")
 )
 
@@ -1351,6 +1361,10 @@
 
 
 
+;; From gobject-autocleanups.h
+
+
+
 ;; From gobject.h
 
 (define-function g_initially_unowned_get_type
@@ -1942,6 +1956,10 @@
 
 
 
+;; From gobject_probes.h
+
+
+
 ;; From gobject_trace.h
 
 
@@ -2126,6 +2144,12 @@
   (of-object "GParamSpec")
   (c-name "g_param_spec_get_default_value")
   (return-type "const-GValue*")
+)
+
+(define-method get_name_quark
+  (of-object "GParamSpec")
+  (c-name "g_param_spec_get_name_quark")
+  (return-type "GQuark")
 )
 
 (define-function g_param_type_register_static
@@ -3136,6 +3160,12 @@
   )
 )
 
+(define-method get_instance_count
+  (of-object "GType")
+  (c-name "g_type_get_instance_count")
+  (return-type "int")
+)
+
 (define-method register_static
   (of-object "GType")
   (c-name "g_type_register_static")
@@ -3545,6 +3575,7 @@
   (return-type "GType")
   (parameters
     '("const-gchar*" "name")
+    '("const-GEnumValue*" "const_static_values")
   )
 )
 
@@ -3554,6 +3585,7 @@
   (return-type "GType")
   (parameters
     '("const-gchar*" "name")
+    '("const-GFlagsValue*" "const_static_values")
   )
 )
 
@@ -3599,10 +3631,6 @@
     '("GInterfaceInfo*" "info")
   )
 )
-
-
-
-;; From gtype-private.h
 
 
 

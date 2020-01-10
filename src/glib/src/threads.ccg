@@ -18,40 +18,52 @@
 #include <glibmm/exceptionhandler.h>
 #include <glib.h>
 
+/* Why reinterpret_cast<Thread*>(gobject) is needed:
+ *
+ * A Thread instance is in fact always a GThread instance.
+ * Unfortunately, GThread cannot be a member of Thread,
+ * because it is an opaque struct. Also, the C interface does not provide
+ * any hooks to install a destroy notification handler, thus we cannot
+ * wrap it dynamically either.
+ *
+ * The cast works because Thread does not have any member data, and
+ * it is impossible to derive from it. This is ensured by not implementing
+ * the (private) default constructor.
+ * This trick is used also in classes declared as _CLASS_OPAQUE_REFCOUNTED.
+ */
 
 namespace
 {
 
-extern "C"
-{
+extern "C" {
 
-static void* call_thread_entry_slot(void* data)
+static void*
+call_thread_entry_slot(void* data)
 {
-  sigc::slot_base *const slot = reinterpret_cast<sigc::slot_base*>(data);
+  const auto slot = reinterpret_cast<sigc::slot_base*>(data);
 
   try
   {
-    // Recreate the specific slot, and drop the reference obtained by create().
+    // Recreate the specific slot.
     (*static_cast<sigc::slot<void>*>(slot))();
   }
-  catch(Glib::Threads::Thread::Exit&)
+  catch (Glib::Threads::Thread::Exit&)
   {
     // Just exit from the thread.  The Threads::Thread::Exit exception
     // is our sane C++ replacement of g_thread_exit().
   }
-  catch(...)
+  catch (...)
   {
     Glib::exception_handlers_invoke();
   }
 
   delete slot;
-  return 0;
+  return nullptr;
 }
 
-} //extern "C"
+} // extern "C"
 
 } // anonymous namespace
-
 
 namespace Glib
 {
@@ -59,64 +71,77 @@ namespace Glib
 namespace Threads
 {
 
-/**** Glib::Thread *********************************************************/
+/**** Glib::Threads::Thread ************************************************/
 
 // static
-Thread* Thread::create(const sigc::slot<void>& slot, const std::string& name)
+Thread*
+Thread::create(const sigc::slot<void>& slot, const std::string& name)
 {
-  // Make a copy of slot on the heap
-  sigc::slot_base *const slot_copy = new sigc::slot<void>(slot);
+  // Make a copy of slot on the heap.
+  const auto slot_copy = new sigc::slot<void>(slot);
 
-  GError* error = 0;
-  GThread* thread;
+  GError* error = nullptr;
+  auto thread = g_thread_try_new(
+    name.empty() ? nullptr : name.c_str(), &call_thread_entry_slot, slot_copy, &error);
 
-  if (name.size() > 0)
-    thread = g_thread_try_new(name.c_str(), &call_thread_entry_slot,
-        slot_copy, &error);
-  else
-    thread = g_thread_try_new(NULL, &call_thread_entry_slot,
-        slot_copy, &error);
-
-  if(error)
+  if (error)
   {
     delete slot_copy;
     Glib::Error::throw_exception(error);
   }
-
+  if (!thread)
+  {
+    delete slot_copy;
+  }
   return reinterpret_cast<Thread*>(thread);
 }
 
 // static
-Thread* Thread::create(const sigc::slot<void>& slot)
+Thread*
+Thread::create(const sigc::slot<void>& slot)
 {
   return create(slot, std::string());
 }
 
 // static
-Thread* Thread::self()
+Thread*
+Thread::self()
 {
   return reinterpret_cast<Thread*>(g_thread_self());
 }
 
-void Thread::join()
+void
+Thread::join()
 {
-  g_thread_join(&gobject_);
+  g_thread_join(reinterpret_cast<GThread*>(this));
 }
 
 // static
-void Thread::yield()
+void
+Thread::yield()
 {
   g_thread_yield();
 }
 
+GThread*
+Thread::gobj()
+{
+  return reinterpret_cast<GThread*>(this);
+}
 
-Thread* wrap(GThread* gobject)
+const GThread*
+Thread::gobj() const
+{
+  return reinterpret_cast<const GThread*>(this);
+}
+
+Thread*
+wrap(GThread* gobject)
 {
   return reinterpret_cast<Thread*>(gobject);
 }
 
-
-/**** Glib::Mutex **********************************************************/
+/**** Glib::Threads::Mutex *************************************************/
 
 Mutex::Mutex()
 {
@@ -128,27 +153,31 @@ Mutex::~Mutex()
   g_mutex_clear(&gobject_);
 }
 
-void Mutex::lock()
+void
+Mutex::lock()
 {
   g_mutex_lock(&gobject_);
 }
 
-bool Mutex::trylock()
+bool
+Mutex::trylock()
 {
   return g_mutex_trylock(&gobject_);
 }
 
-void Mutex::unlock()
+void
+Mutex::unlock()
 {
   g_mutex_unlock(&gobject_);
 }
 
-Mutex* wrap(GMutex* gobject)
+Mutex*
+wrap(GMutex* gobject)
 {
   return reinterpret_cast<Mutex*>(gobject);
 }
 
-/**** Glib::RecMutex *******************************************************/
+/**** Glib::Threads::RecMutex **********************************************/
 
 RecMutex::RecMutex()
 {
@@ -160,59 +189,67 @@ RecMutex::~RecMutex()
   g_rec_mutex_clear(&gobject_);
 }
 
-void RecMutex::lock()
+void
+RecMutex::lock()
 {
   g_rec_mutex_lock(&gobject_);
 }
 
-bool RecMutex::trylock()
+bool
+RecMutex::trylock()
 {
   return g_rec_mutex_trylock(&gobject_);
 }
 
-void RecMutex::unlock()
+void
+RecMutex::unlock()
 {
   g_rec_mutex_unlock(&gobject_);
 }
 
-RecMutex* wrap(GRecMutex* gobject)
+RecMutex*
+wrap(GRecMutex* gobject)
 {
   return reinterpret_cast<RecMutex*>(gobject);
 }
 
-/**** Glib::RWLock ***************************************************/
+/**** Glib::Threads::RWLock ************************************************/
 
-void RWLock::reader_lock()
+void
+RWLock::reader_lock()
 {
   g_rw_lock_reader_lock(&gobject_);
 }
 
-bool RWLock::reader_trylock()
+bool
+RWLock::reader_trylock()
 {
   return g_rw_lock_reader_trylock(&gobject_);
 }
 
-void RWLock::reader_unlock()
+void
+RWLock::reader_unlock()
 {
   g_rw_lock_reader_unlock(&gobject_);
 }
 
-void RWLock::writer_lock()
+void
+RWLock::writer_lock()
 {
   g_rw_lock_writer_lock(&gobject_);
 }
 
-bool RWLock::writer_trylock()
+bool
+RWLock::writer_trylock()
 {
   return g_rw_lock_writer_trylock(&gobject_);
 }
 
-void RWLock::writer_unlock()
+void
+RWLock::writer_unlock()
 {
   g_rw_lock_writer_unlock(&gobject_);
 }
-
-/**** Glib::RWLock *********************************************************/
 
 RWLock::RWLock()
 {
@@ -224,8 +261,7 @@ RWLock::~RWLock()
   g_rw_lock_clear(&gobject_);
 }
 
-
-/**** Glib::Cond ***********************************************************/
+/**** Glib::Threads::Cond **************************************************/
 
 Cond::Cond()
 {
@@ -237,22 +273,26 @@ Cond::~Cond()
   g_cond_clear(&gobject_);
 }
 
-void Cond::signal()
+void
+Cond::signal()
 {
   g_cond_signal(&gobject_);
 }
 
-void Cond::broadcast()
+void
+Cond::broadcast()
 {
   g_cond_broadcast(&gobject_);
 }
 
-void Cond::wait(Mutex& mutex)
+void
+Cond::wait(Mutex& mutex)
 {
   g_cond_wait(&gobject_, mutex.gobj());
 }
 
-bool Cond::wait_until(Mutex& mutex, gint64 end_time)
+bool
+Cond::wait_until(Mutex& mutex, gint64 end_time)
 {
   return g_cond_wait_until(&gobject_, mutex.gobj(), end_time);
 }
@@ -260,4 +300,3 @@ bool Cond::wait_until(Mutex& mutex, gint64 end_time)
 } // namespace Threads
 
 } // namespace Glib
-

@@ -41,13 +41,24 @@ define(`_END_CLASS_OPAQUE_COPYABLE',`
 
 _SECTION(SECTION_HEADER3)
 
+__NAMESPACE_BEGIN__
+
+/** @relates __NAMESPACE__::__CPPNAME__
+ * @param lhs The left-hand side
+ * @param rhs The right-hand side
+ */
+inline void swap(__CPPNAME__& lhs, __CPPNAME__& rhs) noexcept
+  { lhs.swap(rhs); }
+
+__NAMESPACE_END__
+
 ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
 ',`dnl else
 namespace Glib
 {
 
   /** A Glib::wrap() method for this object.
-   * 
+   *
    * @param object The C instance.
    * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
    * @result A C++ instance that wraps this C instance.
@@ -86,7 +97,7 @@ ifdef(`__BOOL_CUSTOM_DEFAULT_CTOR__',`dnl
 __CPPNAME__::__CPPNAME__`'()
 :
 ifelse(__OPAQUE_FUNC_NEW,NONE,`dnl
-  gobject_ (0) // Allows creation of invalid wrapper, e.g. for output arguments to methods.
+  gobject_ (nullptr) // Allows creation of invalid wrapper, e.g. for output arguments to methods.
 ',`dnl else
   gobject_ (__OPAQUE_FUNC_NEW`'())
 ')dnl
@@ -95,7 +106,7 @@ ifelse(__OPAQUE_FUNC_NEW,NONE,`dnl
 
 __CPPNAME__::__CPPNAME__`'(const __CPPNAME__& src)
 :
-  gobject_ ((src.gobject_) ? __OPAQUE_FUNC_COPY`'(src.gobject_) : 0)
+  gobject_ ((src.gobject_) ? __OPAQUE_FUNC_COPY`'(src.gobject_) : nullptr)
 {}
 
 ifdef(`__BOOL_CUSTOM_CTOR_CAST__',,`dnl else
@@ -113,7 +124,7 @@ __CPPNAME__::__CPPNAME__`'(__CNAME__* castitem, bool make_a_copy /* = false */)
     if(castitem)
       gobject_ = __OPAQUE_FUNC_COPY`'(castitem);
     else
-      gobject_ = 0;
+      gobject_ = nullptr;
   }
 }
 ')
@@ -122,7 +133,7 @@ ifelse(__OPAQUE_FUNC_COPY,NONE,`dnl
 ',`dnl else
 __CPPNAME__& __CPPNAME__::operator=(const __CPPNAME__`'& src)
 {
-  __CNAME__ *const new_gobject = (src.gobject_) ? __OPAQUE_FUNC_COPY`'(src.gobject_) : 0;
+  const auto new_gobject = (src.gobject_) ? __OPAQUE_FUNC_COPY`'(src.gobject_) : nullptr;
 
   if(gobject_)
     __OPAQUE_FUNC_FREE`'(gobject_);
@@ -133,10 +144,29 @@ __CPPNAME__& __CPPNAME__::operator=(const __CPPNAME__`'& src)
 }
 ')dnl
 
-__CPPNAME__::~__CPPNAME__`'()
+__CPPNAME__::__CPPNAME__`'(__CPPNAME__&& other) noexcept
+:
+  gobject_(other.gobject_)
+{
+  other.gobject_ = nullptr;
+}
+
+__CPPNAME__& __CPPNAME__::operator=(__CPPNAME__`'&& other) noexcept
+{
+  __CPPNAME__ temp (other);
+  swap(temp);
+  return *this;
+}
+
+__CPPNAME__::~__CPPNAME__`'() noexcept
 {
   if(gobject_)
     __OPAQUE_FUNC_FREE`'(gobject_);
+}
+
+void __CPPNAME__::swap(__CPPNAME__& other) noexcept
+{
+  std::swap(gobject_, other.gobject_);
 }
 
 __CNAME__* __CPPNAME__::gobj_copy() const
@@ -161,8 +191,8 @@ dnl
 _IMPORT(SECTION_CLASS1)
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CNAME__ BaseObjectType;
+  using CppObjectType = __CPPNAME__;
+  using BaseObjectType = __CNAME__;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 ifdef(`__BOOL_CUSTOM_DEFAULT_CTOR__',`dnl
@@ -180,8 +210,13 @@ ifdef(`__BOOL_CUSTOM_DEFAULT_CTOR__',`dnl
   __CPPNAME__`'(const __CPPNAME__& src);
   __CPPNAME__& operator=(const __CPPNAME__& src);
 
+  __CPPNAME__`'(__CPPNAME__&& other) noexcept;
+  __CPPNAME__& operator=(__CPPNAME__&& other) noexcept;
+
 _IMPORT(SECTION_DTOR_DOCUMENTATION)
-  ~__CPPNAME__`'();
+  ~__CPPNAME__`'() noexcept;
+
+  void swap(__CPPNAME__& other) noexcept;
 
   __CNAME__*       gobj()       { return gobject_; }
   const __CNAME__* gobj() const { return gobject_; }

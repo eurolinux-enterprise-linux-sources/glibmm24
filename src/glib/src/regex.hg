@@ -93,7 +93,7 @@ class MatchInfo;
  *
  * @newin{2,14}
  */
-class Regex
+class Regex final
 {
   _CLASS_OPAQUE_REFCOUNTED(Regex, GRegex, NONE, g_regex_ref, g_regex_unref)
   _IGNORE(g_regex_ref, g_regex_unref)
@@ -222,10 +222,16 @@ public:
 
   /** C object constructor.
    * @param castitem The C object.
-   * @param take_ownership Whether to destroy the C object with the wrapper or
+   * @param take_the_ownership Whether to destroy the C object with the wrapper or
    * not.
    */
-  explicit MatchInfo(GMatchInfo* castitem, bool take_ownership = true);
+  explicit MatchInfo(GMatchInfo* castitem, bool take_the_ownership = true); //TODO: Rename to take_ownership when we can rename the member variable.
+
+  MatchInfo(const MatchInfo& other) = delete;
+  MatchInfo& operator=(const MatchInfo& other) = delete;
+
+  MatchInfo(MatchInfo&& other) noexcept;
+  MatchInfo& operator=(MatchInfo&& other) noexcept;
 
   /// Destructor.
   virtual ~MatchInfo();
@@ -239,9 +245,6 @@ public:
     { return reinterpret_cast<GMatchInfo*>(gobject_); }
 
 private:
-// noncopyable
-  MatchInfo(const MatchInfo& other);
-  MatchInfo& operator=(const MatchInfo& other);
 
   friend class Regex;
 
@@ -272,7 +275,7 @@ public:
 
 protected:
   GMatchInfo* gobject_;      // The C object.
-  bool take_ownership;       // Bool signaling ownership.
+  bool take_ownership;       // Bool signaling ownership. //TODO: Give this a _ suffix when we can break API.
 
 protected:
   // So that Glib::Regex::match() can set the C object.

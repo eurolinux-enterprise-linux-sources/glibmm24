@@ -57,8 +57,8 @@ class BalancedTree
 {
   _CLASS_GENERIC(BalancedTree, GTree)
 public:
-  typedef sigc::slot<bool, const K&, const V&> TraverseFunc;
-  typedef sigc::slot<int, const K&, const K&> CompareFunc;
+  using TraverseFunc = sigc::slot<bool, const K&, const V&>;
+  using CompareFunc = sigc::slot<int, const K&, const K&>;
 
 protected:
   BalancedTree() :
@@ -72,6 +72,8 @@ protected:
   {
     gobject_ = g_tree_new_full(on_compare_tree, &key_compare_slot, on_destroy_key, on_destroy_value);
   }
+
+  //TODO: Add move operations, being careful of universal references and overload resolution.
 
 public:
   static Glib::RefPtr< BalancedTree<K, V> > create()
@@ -158,7 +160,7 @@ public:
    * fast.
    *
    * @param key The key to look up.
-   * @result The value corresponding to the key, or 0 if the key was
+   * @result The value corresponding to the key, or <tt>nullptr</tt> if the key was
    * not found.
    */
   V* lookup(const K &key)
@@ -228,7 +230,7 @@ public:
    *
    * @param search_func A function used to search the BalancedTree.
    * @param key The key to search for.
-   * @result The value corresponding to the found key, or <tt>0</tt> if the key
+   * @result The value corresponding to the found key, or <tt>nullptr</tt> if the key
    * was not found.
    */
   V* search(const CompareFunc &search_func, const K& key)
@@ -251,7 +253,7 @@ public:
    *
    * @param search_func A function used to search the BalancedTree.
    * @param key The key to search for.
-   * @result The value corresponding to the found key, or <tt>0</tt> if the key
+   * @result The value corresponding to the found key, or <tt>nullptr</tt> if the key
    * was not found.
    */
   const V* search(const CompareFunc &search_func, const K& key) const

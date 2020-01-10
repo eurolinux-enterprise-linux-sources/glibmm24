@@ -24,13 +24,17 @@ check_PROGRAMS =				\
 	giomm_simple/test			\
 	giomm_asyncresult_sourceobject/test	\
 	giomm_tls_client/test			\
+	giomm_listmodel/test \
 	glibmm_btree/test			\
 	glibmm_base64/test			\
 	glibmm_date/test			\
 	glibmm_buildfilename/test		\
 	glibmm_interface_implementation/test	\
+	glibmm_interface_move/test			\
 	glibmm_mainloop/test			\
 	glibmm_nodetree/test			\
+	glibmm_object_move/test			\
+	glibmm_objectbase_move/test			\
 	glibmm_ustring_compose/test		\
 	glibmm_ustring_format/test		\
 	glibmm_value/test			\
@@ -41,7 +45,9 @@ check_PROGRAMS =				\
 	glibmm_bool_arrayhandle/test		\
 	glibmm_null_vectorutils/test		\
 	glibmm_null_containerhandle/test	\
+	glibmm_refptr/test		\
 	glibmm_refptr_sigc_bind/test		\
+	glibmm_weakref/test		\
 	glibmm_bytearray/test
 
 TESTS =	$(check_PROGRAMS)
@@ -78,6 +84,9 @@ giomm_asyncresult_sourceobject_test_LDADD    = $(giomm_ldadd)
 giomm_tls_client_test_SOURCES                = giomm_tls_client/main.cc
 giomm_tls_client_test_LDADD                  = $(giomm_ldadd)
 
+giomm_listmodel_test_SOURCES                = giomm_listmodel/main.cc
+giomm_listmodel_test_LDADD                  = $(giomm_ldadd)
+
 glibmm_base64_test_SOURCES               = glibmm_base64/main.cc
 glibmm_btree_test_SOURCES                = glibmm_btree/main.cc
 glibmm_buildfilename_test_SOURCES        = glibmm_buildfilename/main.cc
@@ -86,8 +95,11 @@ glibmm_date_test_SOURCES                 = glibmm_date/main.cc
 glibmm_interface_implementation_test_SOURCES = glibmm_interface_implementation/main.cc
 glibmm_interface_implementation_test_LDADD = $(giomm_ldadd)
 
+glibmm_interface_move_test_SOURCES       = glibmm_interface_move/main.cc
 glibmm_mainloop_test_SOURCES             = glibmm_mainloop/main.cc
 glibmm_nodetree_test_SOURCES             = glibmm_nodetree/main.cc
+glibmm_object_move_test_SOURCES          = glibmm_object_move/main.cc
+glibmm_objectbase_move_test_SOURCES      = glibmm_objectbase_move/main.cc
 glibmm_ustring_compose_test_SOURCES      = glibmm_ustring_compose/main.cc
 glibmm_ustring_format_test_SOURCES       = glibmm_ustring_format/main.cc
 glibmm_value_test_SOURCES                = glibmm_value/glibmm_value.cc glibmm_value/main.cc
@@ -101,5 +113,8 @@ glibmm_null_vectorutils_test_SOURCES     = glibmm_null_vectorutils/main.cc
 glibmm_null_vectorutils_test_LDADD       = $(giomm_ldadd)
 glibmm_null_containerhandle_test_SOURCES = glibmm_null_containerhandle/main.cc
 glibmm_null_containerhandle_test_LDADD   = $(giomm_ldadd)
+glibmm_refptr_test_SOURCES               = glibmm_refptr/main.cc
 glibmm_refptr_sigc_bind_test_SOURCES     = glibmm_refptr_sigc_bind/main.cc
+glibmm_weakref_test_SOURCES              = glibmm_weakref/main.cc
+glibmm_weakref_test_LDADD                = $(giomm_ldadd)
 glibmm_bytearray_test_SOURCES            = glibmm_bytearray/main.cc

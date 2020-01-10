@@ -32,6 +32,14 @@ define(`__BOOL_CUSTOM_DTOR__',`$1')
 _POP()
 ')
 
+dnl For classes that need custom code for move operations.
+define(`_CUSTOM_MOVE_OPERATIONS', `dnl
+_PUSH()
+dnl Define this macro to be tested for later.
+define(`__BOOL_CUSTOM_MOVE_OPERATIONS__',`$1')
+_POP()
+')
+
 dnl For classes that need custom code in their cast and construct_params
 dnl constructor.
 define(`_CUSTOM_CTOR_CAST',`dnl
@@ -79,7 +87,7 @@ _POP()
 ')
 
 dnl Some gobjects actually derive from GInitiallyUnowned, which does some odd reference-counting that is useful to C coders.
-dnl We don't want to expose that base class in our API, 
+dnl We don't want to expose that base class in our API,
 dnl but we do want to reverse what it does:
 define(`_DERIVES_INITIALLY_UNOWNED',`dnl
 _PUSH()
@@ -115,7 +123,10 @@ ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
 _STRUCT_PROTOTYPE()
 ')dnl
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 __NAMESPACE_BEGIN__ class __CPPNAME__`'_Class; __NAMESPACE_END__
+#endif //DOXYGEN_SHOULD_SKIP_THIS
+
 _SECTION(SECTION_HEADER3)
 
 ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
@@ -123,7 +134,7 @@ ifdef(`__BOOL_NO_WRAP_FUNCTION__',`dnl
 namespace Glib
 {
   /** A Glib::wrap() method for this object.
-   * 
+   *
    * @param object The C instance.
    * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
    * @result A C++ instance that wraps this C instance.
@@ -208,9 +219,25 @@ __CPPNAME__::__CPPNAME__`'(__CNAME__* castitem)
 
 ')dnl
 
+ifdef(`__BOOL_CUSTOM_MOVE_OPERATIONS__',`dnl
+',`dnl
+__CPPNAME__::__CPPNAME__`'(__CPPNAME__&& src) noexcept
+: __CPPPARENT__`'(std::move(src))
+_IMPORT(SECTION_CC_MOVE_CONSTRUCTOR_INTERFACES)
+{}
+
+__CPPNAME__& __CPPNAME__::operator=(__CPPNAME__&& src) noexcept
+{
+  __CPPPARENT__::operator=`'(std::move(src));
+_IMPORT(SECTION_CC_MOVE_ASSIGNMENT_OPERATOR_INTERFACES)
+  return *this;
+}
+
+')dnl
+
 ifdef(`__BOOL_CUSTOM_DTOR__',`dnl
 ',`dnl
-__CPPNAME__::~__CPPNAME__`'()
+__CPPNAME__::~__CPPNAME__`'() noexcept
 {}
 
 ')dnl
@@ -234,21 +261,20 @@ _IMPORT(SECTION_CLASS1)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 public:
-  typedef __CPPNAME__ CppObjectType;
-  typedef __CPPNAME__`'_Class CppClassType;
-  typedef __CNAME__ BaseObjectType;
-  typedef __REAL_CNAME__`'Class BaseClassType;
+  using CppObjectType = __CPPNAME__;
+  using CppClassType = __CPPNAME__`'_Class;
+  using BaseObjectType = __CNAME__;
+  using BaseClassType = __REAL_CNAME__`'Class;
+
+  // noncopyable
+  __CPPNAME__`'(const __CPPNAME__&) = delete;
+  __CPPNAME__& operator=(const __CPPNAME__&) = delete;
 
 m4_ifdef(`__BOOL_PROTECTED_GCLASS__',
 `protected:',`dnl else
 private:')dnl endif
   friend class __CPPNAME__`'_Class;
   static CppClassType `'__BASE__`'_class_;
-
-private:
-  // noncopyable
-  __CPPNAME__`'(const __CPPNAME__&);
-  __CPPNAME__& operator=(const __CPPNAME__&);
 
 protected:
   explicit __CPPNAME__`'(const Glib::ConstructParams& construct_params);
@@ -257,8 +283,15 @@ protected:
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 public:
+
+ifdef(`__BOOL_CUSTOM_MOVE_OPERATIONS__',`dnl
+',`dnl
+  __CPPNAME__`'(__CPPNAME__&& src) noexcept;
+  __CPPNAME__& operator=(__CPPNAME__&& src) noexcept;
+')dnl
+
 _IMPORT(SECTION_DTOR_DOCUMENTATION)
-  virtual ~__CPPNAME__`'();
+  ~__CPPNAME__`'() noexcept override;
 
   /** Get the GType for this class, for use with the underlying GObject type system.
    */

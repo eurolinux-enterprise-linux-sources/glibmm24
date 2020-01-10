@@ -1,5 +1,3 @@
-// -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-
 /* Copyright (C) 2007 The gtkmm Development Team
  *
  * This library is free software; you can redistribute it and/or
@@ -215,8 +213,9 @@ public:
    * If any errors occurred during the operation, an exception will be thrown.
    * In particular, you may get a Gio::Error::NOT_SUPPORTED if the mount
    * does not support content guessing.
-   * 
+   *
    * @newin{2,18}
+   *
    * @param result An AsyncResult.
    * @return An array of content types.
    * @throw Glib::Error
@@ -257,9 +256,9 @@ namespace Container_Helpers
 template <>
 struct TypeTraits< Glib::RefPtr<Gio::Mount> >
 {
-  typedef Glib::RefPtr<Gio::Mount> CppType;
-  typedef GMount* CType;
-  typedef GMount* CTypeNonConst;
+  using CppType = Glib::RefPtr<Gio::Mount>;
+  using CType = GMount*;
+  using CTypeNonConst = GMount*;
 
   static CType   to_c_type      (const CppType& item)
   { return Glib::unwrap (item); }
@@ -273,7 +272,7 @@ struct TypeTraits< Glib::RefPtr<Gio::Mount> >
 
   static void    release_c_type (CType item)
   {
-    GLIBMM_DEBUG_UNREFERENCE(0, item);
+    GLIBMM_DEBUG_UNREFERENCE(nullptr, item);
     g_object_unref(item);
   }
 };

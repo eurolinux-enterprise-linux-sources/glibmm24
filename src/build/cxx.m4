@@ -159,8 +159,8 @@ AS_VAR_IF([glibmm_cv_cxx_can_use_dynamic_cast_in_unused_template_without_definit
 
 ## GLIBMM_CXX_CAN_ASSIGN_NON_EXTERN_C_FUNCTIONS_TO_EXTERN_C_CALLBACKS
 ##
-## Check whether the compiler allows us to use a non-extern "C" function, 
-## such as a static member function, to an extern "C" function pointer, 
+## Check whether the compiler allows us to use a non-extern "C" function,
+## such as a static member function, to an extern "C" function pointer,
 ## such as a GTK+ callback.
 ##
 AC_DEFUN([GLIBMM_CXX_CAN_ASSIGN_NON_EXTERN_C_FUNCTIONS_TO_EXTERN_C_CALLBACKS],
@@ -235,4 +235,25 @@ void do_something()
 AS_VAR_IF([glibmm_cv_cxx_can_use_namespaces_inside_externc], ['yes'],
           [AC_DEFINE([GLIBMM_CAN_USE_NAMESPACES_INSIDE_EXTERNC], [1],
                      [Define if the compiler honors namespaces inside extern "C" blocks.])])[]dnl
+])
+
+## GLIBMM_CXX_CAN_USE_THREAD_LOCAL
+##
+## Check for thread_local support
+##
+AC_DEFUN([GLIBMM_CXX_CAN_USE_THREAD_LOCAL],
+[dnl
+AC_CACHE_CHECK(
+  [whether the thread_local keyword is supported],
+  [glibmm_cv_cxx_can_use_thread_local],
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+thread_local int i=0;
+]], [])],
+    [glibmm_cv_cxx_can_use_thread_local=yes],
+    [glibmm_cv_cxx_can_use_thread_local=no])])
+
+AS_VAR_IF([glibmm_cv_cxx_can_use_thread_local], ['yes'],
+          [AC_DEFINE([GLIBMM_CAN_USE_THREAD_LOCAL], [1],
+                     [Define if the thread_local keyword is supported.])])[]dnl
 ])

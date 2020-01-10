@@ -1,6 +1,3 @@
-// -*- c++ -*-
-/* $Id$ */
-
 /* propertyproxy_base.h
  *
  * Copyright 2002 The gtkmm Development Team
@@ -22,97 +19,122 @@
 
 #include <glibmm/propertyproxy_base.h>
 
-
 #include <glibmm/signalproxy_connectionnode.h>
 #include <glibmm/object.h>
 #include <glibmm/private/object_p.h>
+#include <utility> // For std::move()
 
 namespace Glib
 {
 
-PropertyProxyConnectionNode::PropertyProxyConnectionNode(const sigc::slot_base& slot, GObject* gobject)
+// PropertyProxyConnectionNode implementation:
+
+PropertyProxyConnectionNode::PropertyProxyConnectionNode(
+  const sigc::slot_base& slot, GObject* gobject)
 : SignalProxyConnectionNode(slot, gobject)
 {
 }
 
-void PropertyProxyConnectionNode::callback(GObject*, GParamSpec* pspec, gpointer data) //static
+PropertyProxyConnectionNode::PropertyProxyConnectionNode(sigc::slot_base&& slot, GObject* gobject)
+: SignalProxyConnectionNode(std::move(slot), gobject)
 {
-  if(pspec && data)
+}
+
+sigc::connection
+PropertyProxyConnectionNode::connect_changed(const Glib::ustring& property_name)
+{
+  // connect it to glib
+  // 'this' will be passed as the data argument to the callback.
+  const Glib::ustring notify_signal_name = "notify::" + property_name;
+  connection_id_ = g_signal_connect_data(object_, notify_signal_name.c_str(),
+    (GCallback)(&PropertyProxyConnectionNode::callback), this,
+    &PropertyProxyConnectionNode::destroy_notify_handler, G_CONNECT_AFTER);
+
+  return sigc::connection(slot_);
+}
+
+void PropertyProxyConnectionNode::callback(GObject*, GParamSpec* pspec, gpointer data) // static
+{
+  if (pspec && data)
   {
-    if(sigc::slot_base *const slot = SignalProxyBase::data_to_slot(data))
+    if (sigc::slot_base* const slot = SignalProxyBase::data_to_slot(data))
       (*static_cast<sigc::slot<void>*>(slot))();
   }
 }
 
-
-//SignalProxyProperty implementation:
+// SignalProxyProperty implementation:
 
 SignalProxyProperty::SignalProxyProperty(Glib::ObjectBase* obj, const gchar* property_name)
-: SignalProxyBase(obj),
-  property_name_(property_name)
+: SignalProxyBase(obj), property_name_(property_name)
 {
 }
 
-SignalProxyProperty::~SignalProxyProperty()
+SignalProxyProperty::~SignalProxyProperty() noexcept
 {
 }
 
-sigc::connection SignalProxyProperty::connect(const SlotType& sl)
+sigc::connection
+SignalProxyProperty::connect(const SlotType& slot)
 {
   // Create a proxy to hold our connection info
   // This will be deleted by destroy_notify_handler.
-  PropertyProxyConnectionNode* pConnectionNode = new PropertyProxyConnectionNode(sl, obj_->gobj());
+  auto pConnectionNode = new PropertyProxyConnectionNode(slot, obj_->gobj());
 
-  // connect it to gtk+
+  // connect it to glib
   // pConnectionNode will be passed as the data argument to the callback.
-  // The callback will then call the virtual Object::property_change_notify() method,
-  // which will contain a switch/case statement which will examine the property name.
-  const Glib::ustring notify_signal_name = "notify::" + Glib::ustring(property_name_);
-  pConnectionNode->connection_id_ = g_signal_connect_data(obj_->gobj(),
-         notify_signal_name.c_str(), (GCallback)(&PropertyProxyConnectionNode::callback), pConnectionNode,
-         &PropertyProxyConnectionNode::destroy_notify_handler,
-         G_CONNECT_AFTER);
-
-  return sigc::connection(pConnectionNode->slot_);
+  return pConnectionNode->connect_changed(property_name_);
 }
 
+sigc::connection
+SignalProxyProperty::connect(SlotType&& slot)
+{
+  // Create a proxy to hold our connection info
+  // This will be deleted by destroy_notify_handler.
+  auto pConnectionNode = new PropertyProxyConnectionNode(std::move(slot), obj_->gobj());
 
-//PropertyProxy_Base implementation:
+  // connect it to glib
+  // pConnectionNode will be passed as the data argument to the callback.
+  return pConnectionNode->connect_changed(property_name_);
+}
+
+// PropertyProxy_Base implementation:
 
 PropertyProxy_Base::PropertyProxy_Base(ObjectBase* obj, const char* property_name)
-:
-  obj_           (obj),
-  property_name_ (property_name)
-{}
+: obj_(obj), property_name_(property_name)
+{
+}
 
 PropertyProxy_Base::PropertyProxy_Base(const PropertyProxy_Base& other)
-:
-  obj_           (other.obj_),
-  property_name_ (other.property_name_)
-{}
+: obj_(other.obj_), property_name_(other.property_name_)
+{
+}
 
-SignalProxyProperty PropertyProxy_Base::signal_changed()
+SignalProxyProperty
+PropertyProxy_Base::signal_changed()
 {
   return SignalProxyProperty(obj_, property_name_);
 }
 
-void PropertyProxy_Base::set_property_(const Glib::ValueBase& value)
+void
+PropertyProxy_Base::set_property_(const Glib::ValueBase& value)
 {
   g_object_set_property(obj_->gobj(), property_name_, value.gobj());
 }
 
-void PropertyProxy_Base::get_property_(Glib::ValueBase& value) const
+void
+PropertyProxy_Base::get_property_(Glib::ValueBase& value) const
 {
   g_object_get_property(obj_->gobj(), property_name_, value.gobj());
 }
 
-void PropertyProxy_Base::reset_property_()
+void
+PropertyProxy_Base::reset_property_()
 {
   // Get information about the parameter:
-  const GParamSpec *const pParamSpec =
-      g_object_class_find_property(G_OBJECT_GET_CLASS(obj_->gobj()), property_name_);
+  const GParamSpec* const pParamSpec =
+    g_object_class_find_property(G_OBJECT_GET_CLASS(obj_->gobj()), property_name_);
 
-  g_return_if_fail(pParamSpec != 0);
+  g_return_if_fail(pParamSpec != nullptr);
 
   Glib::ValueBase value;
   value.init(G_PARAM_SPEC_VALUE_TYPE(pParamSpec));
@@ -124,6 +146,4 @@ void PropertyProxy_Base::reset_property_()
   g_object_set_property(obj_->gobj(), property_name_, value.gobj());
 }
 
-
 } // namespace Glib
-

@@ -23,10 +23,11 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-extern "C" { typedef struct _GPatternSpec GPatternSpec; }
+extern "C" {
+using GPatternSpec = struct _GPatternSpec;
+}
 
 #include <glibmm/ustring.h>
-
 
 namespace Glib
 {
@@ -41,7 +42,11 @@ class PatternSpec
 public:
   explicit PatternSpec(const Glib::ustring& pattern);
   explicit PatternSpec(GPatternSpec* gobject);
-  ~PatternSpec();
+  ~PatternSpec() noexcept;
+
+  // noncopyable
+  PatternSpec(const PatternSpec&) = delete;
+  PatternSpec& operator=(const PatternSpec&) = delete;
 
   bool match(const Glib::ustring& str) const;
   bool match(const Glib::ustring& str, const Glib::ustring& str_reversed) const;
@@ -49,21 +54,15 @@ public:
   bool operator==(const PatternSpec& rhs) const;
   bool operator!=(const PatternSpec& rhs) const;
 
-  GPatternSpec*       gobj()       { return gobject_; }
+  GPatternSpec* gobj() { return gobject_; }
   const GPatternSpec* gobj() const { return gobject_; }
 
 private:
   GPatternSpec* gobject_;
-
-  // noncopyable
-  PatternSpec(const PatternSpec&);
-  PatternSpec& operator=(const PatternSpec&);
 };
 
 /** @} group PatternMatching */
 
 } // namespace Glib
 
-
 #endif /* _GLIBMM_PATTERN_H */
-

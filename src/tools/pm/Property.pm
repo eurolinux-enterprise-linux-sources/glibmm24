@@ -26,6 +26,7 @@ our @EXPORT_OK;
 #       bool readable;
 #       bool writable;
 #       bool construct_only;
+#       bool deprecated; # optional
 #       string docs;
 #    }
 
@@ -46,6 +47,7 @@ sub new
   $$self{readable} = ($1 eq "#t")       if ($def =~ s/\(readable (\S+)\)//);
   $$self{writable} = ($1 eq "#t")       if ($def =~ s/\(writable (\S+)\)//);
   $$self{construct_only} = ($1 eq "#t") if ($def =~ s/\(construct-only (\S+)\)//);
+  $$self{deprecated} = ($1 eq "#t")     if ($def =~ s/\(deprecated (\S+)\)//);
   $$self{entity_type} = 'property';
 
   # Property documentation:
@@ -110,15 +112,27 @@ sub get_writable($)
   return $$self{writable};
 }
 
+sub get_deprecated($)
+{
+  my ($self) = @_;
+  return $$self{deprecated}; # undef, 0 or 1
+}
+
 sub get_docs($$)
 {
-  my ($self, $deprecation_docs) = @_;
+  my ($self, $deprecation_docs, $newin) = @_;
   my $text = $$self{docs};
 
-  #Add note about deprecation if we have specified that in our _WRAP_METHOD() call:
+  #Add note about deprecation if we have specified that in our _WRAP_PROPERTY()
+  #or_WRAP_CHILD_PROPERTY() call:
   if($deprecation_docs ne "")
   {
     $text .= "\n   * \@deprecated $deprecation_docs";
+  }
+
+  if ($newin ne "")
+  {
+    $text .= "\n   *\n   * \@newin{$newin}";
   }
 
   return $text;

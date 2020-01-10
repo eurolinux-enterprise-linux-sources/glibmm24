@@ -1,24 +1,45 @@
 
 #include <iostream>
-#include <glibmm/threads.h>
+#include <mutex>
+#include <thread>
+
+// TODO: Remove this example sometime. Glib::ThreadPool is deprecated.
+// TODO: Maybe use std::async() instead?
+#undef GLIBMM_DISABLE_DEPRECATED
+
+#include <glibmmconfig.h>
+
+#ifdef GLIBMM_DISABLE_DEPRECATED
+int
+main(int, char**)
+{
+  // If glibmm is configured with --disable-deprecated-api,
+  // GLIBMM_DISABLE_DEPRECATED is defined in glibmmconfig.h.
+  std::cout << "Glib::ThreadPool not available because deprecated API has been disabled."
+            << std::endl;
+  return 77; // Tell automake's test harness to skip this test.
+}
+
+#else
+
 #include <glibmm/random.h>
 #include <glibmm/threadpool.h>
 #include <glibmm/timer.h>
 
-
 namespace
 {
 
-Glib::Threads::Mutex mutex;
+std::mutex mutex;
 
-void print_char(char c)
+void
+print_char(char c)
 {
   Glib::Rand rand;
 
-  for(int i = 0; i < 100; ++i)
+  for (auto i = 0; i < 100; ++i)
   {
     {
-      Glib::Threads::Mutex::Lock lock (mutex);
+      std::lock_guard<std::mutex> lock(mutex);
       std::cout << c;
       std::cout.flush();
     }
@@ -28,20 +49,20 @@ void print_char(char c)
 
 } // anonymous namespace
 
-
-int main(int, char**)
+int
+main(int, char**)
 {
-  Glib::ThreadPool pool (10);
+  Glib::ThreadPool pool(10);
 
-  for(char c = 'a'; c <= 'z'; ++c)
+  for (auto c = 'a'; c <= 'z'; ++c)
   {
-    pool.push(sigc::bind<1>(sigc::ptr_fun(&print_char), c));
+    pool.push(sigc::bind(sigc::ptr_fun(&print_char), c));
   }
-  
+
   pool.shutdown();
 
   std::cout << std::endl;
 
   return 0;
 }
-
+#endif // GLIBMM_DISABLE_DEPRECATED

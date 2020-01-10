@@ -61,7 +61,7 @@ public:
    * Glib::Module module("plugins/helloworld");
    * if(module)
    * {
-   *   void* func = 0;
+   *   void* func = nullptr;
    *   bool found = get_symbol("some_function", func);
    * }
    * @endcode
@@ -71,6 +71,12 @@ public:
    */
   explicit Module(const std::string& file_name, ModuleFlags flags = ModuleFlags(0));
 
+  Module(const Module&) = delete;
+  Module& operator=(const Module&) = delete;
+
+  Module(Module&& other) noexcept;
+  Module& operator=(Module&& other) noexcept;
+
   /** Close a module. The module will be removed from memory, unless
    * <tt>make_resident</tt> has been called.
    */
@@ -78,7 +84,7 @@ public:
 
   /** Check whether the module was found.
    */
-  operator bool() const;
+  explicit operator bool() const;
 
   /** Checks if modules are supported on the current platform.
    * @returns true if available, false otherwise
@@ -137,11 +143,6 @@ public:
 
 protected:
   GModule* gobject_;
-
-private:
-  // noncopyable
-  Module(const Module&);
-  Module& operator=(const Module&);
 };
 
 } // namespace Glib

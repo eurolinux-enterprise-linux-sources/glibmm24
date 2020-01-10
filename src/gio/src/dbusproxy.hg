@@ -161,7 +161,7 @@ public:
 
   _WRAP_METHOD_DOCS_ONLY(g_dbus_proxy_new_finish)
   /// @throw Glib::Error.
-  _WRAP_METHOD(static Glib::RefPtr<Proxy> create_finish(const Glib::RefPtr<AsyncResult>& res), g_dbus_proxy_new_finish, errthrow)
+  _WRAP_METHOD(static Glib::RefPtr<Gio::DBus::Proxy> create_finish(const Glib::RefPtr<AsyncResult>& res), g_dbus_proxy_new_finish, errthrow)
 
   _WRAP_METHOD_DOCS_ONLY(g_dbus_proxy_new_sync)
   static Glib::RefPtr<Proxy>
@@ -203,7 +203,7 @@ public:
 
   _WRAP_METHOD_DOCS_ONLY(g_dbus_proxy_new_for_bus_finish)
   /// @throw Glib::Error.
-  _WRAP_METHOD(static Glib::RefPtr<Proxy> create_for_bus_finish(const Glib::RefPtr<AsyncResult>& res), g_dbus_proxy_new_for_bus_finish, errthrow)
+  _WRAP_METHOD(static Glib::RefPtr<Gio::DBus::Proxy> create_for_bus_finish(const Glib::RefPtr<AsyncResult>& res), g_dbus_proxy_new_for_bus_finish, errthrow)
 
   _WRAP_METHOD_DOCS_ONLY(g_dbus_proxy_new_for_bus_sync)
   static Glib::RefPtr<Proxy>
@@ -401,7 +401,7 @@ public:
  _WRAP_PROPERTY("g-name-owner", Glib::ustring)
  _WRAP_PROPERTY("g-object-path", Glib::ustring)
 
-  typedef std::map<Glib::ustring, Glib::VariantBase> MapChangedProperties;
+  using MapChangedProperties = std::map<Glib::ustring, Glib::VariantBase>;
 
   // TODO: Should the signal names match the C API names (ie. the C API names
   // are g_signal_name while these are just signal_name).

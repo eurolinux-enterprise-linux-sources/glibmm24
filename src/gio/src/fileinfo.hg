@@ -47,7 +47,7 @@ const FileType FILE_TYPE_UNKNOWN = FILE_TYPE_NOT_KNOWN;
  *
  * @newin{2,16}
  */
-class FileAttributeMatcher
+class FileAttributeMatcher final
 {
   _CLASS_OPAQUE_REFCOUNTED(FileAttributeMatcher, GFileAttributeMatcher,
                            NONE, g_file_attribute_matcher_ref, g_file_attribute_matcher_unref)
@@ -99,7 +99,7 @@ public:
   _WRAP_METHOD(bool has_namespace(const std::string& name_space) const, g_file_info_has_namespace)
 
   #m4 _CONVERSION(`char**',`Glib::StringArrayHandle',`Glib::StringArrayHandle($3, Glib::OWNERSHIP_DEEP)')
-  _WRAP_METHOD(Glib::StringArrayHandle list_attributes(const std::string& name_space) const,
+  _WRAP_METHOD(Glib::StringArrayHandle list_attributes(const std::string& name_space{?}) const,
                g_file_info_list_attributes)
 
   _WRAP_METHOD(FileAttributeType get_attribute_type(const std::string& attribute) const,
@@ -200,8 +200,8 @@ public:
   // helper setters
 
   _WRAP_METHOD(void set_file_type(FileType type), g_file_info_set_file_type)
-  _WRAP_METHOD(void set_is_hidden(bool is_hidden = true), g_file_info_set_is_hidden)
-  _WRAP_METHOD(void set_is_symlink(bool is_symlink = true), g_file_info_set_is_symlink)
+  _WRAP_METHOD(void set_is_hidden(bool hidden = true), g_file_info_set_is_hidden)
+  _WRAP_METHOD(void set_is_symlink(bool symlink = true), g_file_info_set_is_symlink)
   _WRAP_METHOD(void set_name(const std::string& name), g_file_info_set_name)
 
   //TODO: This should take a ustring instead. See https://bugzilla.gnome.org/show_bug.cgi?id=615950#c4

@@ -1,4 +1,3 @@
-// -*- c++ -*-
 // This is a generated file, do not edit.  Generated from value_basictypes.cc.m4
 
 /* So we can use deprecated functions in our deprecated methods */
@@ -34,12 +33,21 @@ bool Value<bool>::get() const
 
 GParamSpec* Value<bool>::create_param_spec(const Glib::ustring& name) const
 {
-  return g_param_spec_boolean(
-      name.c_str(), 0, 0,
-      g_value_get_boolean(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
 }
 
+GParamSpec* Value<bool>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
+  return g_param_spec_boolean(
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
+      g_value_get_boolean(&gobject_),
+      static_cast<GParamFlags>(flags));
+}
+
+#ifndef GLIBMM_DISABLE_DEPRECATED
 
 /**** Glib::Value<char> ****************************************************/
 
@@ -61,10 +69,54 @@ char Value<char>::get() const
 
 GParamSpec* Value<char>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<char>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_char(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       -128, 127, g_value_get_char(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
+}
+
+#endif // GLIBMM_DISABLE_DEPRECATED
+
+/**** Glib::Value<signed char> *********************************************/
+
+// static
+GType Value<signed char>::value_type()
+{
+  return G_TYPE_CHAR;
+}
+
+void Value<signed char>::set(signed char data)
+{
+  g_value_set_schar(&gobject_, data);
+}
+
+signed char Value<signed char>::get() const
+{
+  return g_value_get_schar(&gobject_);
+}
+
+GParamSpec* Value<signed char>::create_param_spec(const Glib::ustring& name) const
+{
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<signed char>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
+  return g_param_spec_char(
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
+      -128, 127, g_value_get_schar(&gobject_),
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -88,10 +140,18 @@ unsigned char Value<unsigned char>::get() const
 
 GParamSpec* Value<unsigned char>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<unsigned char>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_uchar(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       0, 255, g_value_get_uchar(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -115,10 +175,18 @@ int Value<int>::get() const
 
 GParamSpec* Value<int>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<int>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_int(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       G_MININT, G_MAXINT, g_value_get_int(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -142,10 +210,18 @@ unsigned int Value<unsigned int>::get() const
 
 GParamSpec* Value<unsigned int>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<unsigned int>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_uint(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       0, G_MAXUINT, g_value_get_uint(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -169,10 +245,18 @@ long Value<long>::get() const
 
 GParamSpec* Value<long>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<long>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_long(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       G_MINLONG, G_MAXLONG, g_value_get_long(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -196,10 +280,18 @@ unsigned long Value<unsigned long>::get() const
 
 GParamSpec* Value<unsigned long>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<unsigned long>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_ulong(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       0, G_MAXULONG, g_value_get_ulong(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -223,10 +315,18 @@ long_long Value<long_long>::get() const
 
 GParamSpec* Value<long_long>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<long_long>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_int64(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       G_GINT64_CONSTANT(0x8000000000000000), G_GINT64_CONSTANT(0x7fffffffffffffff), g_value_get_int64(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -250,10 +350,18 @@ unsigned_long_long Value<unsigned_long_long>::get() const
 
 GParamSpec* Value<unsigned_long_long>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<unsigned_long_long>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_uint64(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       G_GINT64_CONSTANT(0U), G_GINT64_CONSTANT(0xffffffffffffffffU), g_value_get_uint64(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -277,10 +385,18 @@ float Value<float>::get() const
 
 GParamSpec* Value<float>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<float>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_float(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       -G_MAXFLOAT, G_MAXFLOAT, g_value_get_float(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -304,10 +420,18 @@ double Value<double>::get() const
 
 GParamSpec* Value<double>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<double>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_double(
-      name.c_str(), 0, 0,
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
       -G_MAXDOUBLE, G_MAXDOUBLE, g_value_get_double(&gobject_),
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      static_cast<GParamFlags>(flags));
 }
 
 
@@ -331,9 +455,17 @@ void* Value<void*>::get() const
 
 GParamSpec* Value<void*>::create_param_spec(const Glib::ustring& name) const
 {
+  return create_param_spec(name, Glib::ustring(), Glib::ustring(),
+      Glib::PARAM_READWRITE);
+}
+
+GParamSpec* Value<void*>::create_param_spec(const Glib::ustring& name, const Glib::ustring& nick,
+                                         const Glib::ustring& blurb, Glib::ParamFlags flags) const
+{
   return g_param_spec_pointer(
-      name.c_str(), 0, 0,
-      GParamFlags(G_PARAM_READABLE | G_PARAM_WRITABLE));
+      name.c_str(), nick.empty() ? nullptr : nick.c_str(),
+      blurb.empty() ? nullptr : blurb.c_str(), 
+      static_cast<GParamFlags>(flags));
 }
 
 } // namespace Glib

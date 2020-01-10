@@ -59,11 +59,15 @@ public:
 
   OptionEntry();
   OptionEntry(const OptionEntry& src);
+
+  OptionEntry(OptionEntry&& other) noexcept;
+  OptionEntry& operator=(OptionEntry&& other) noexcept;
+
   virtual ~OptionEntry();
 
   OptionEntry& operator=(const OptionEntry& src);
 
-  //#m4 _CONVERSION(`Glib::ustring',`const gchar*',`($3).empty() ? NULL : g_strdup(($3).c_str())')
+  //#m4 _CONVERSION(`Glib::ustring',`const gchar*',`($3).empty() ? nullptr : g_strdup(($3).c_str())')
 
   _MEMBER_GET(long_name, long_name, Glib::ustring, const char*)
 
@@ -90,6 +94,9 @@ public:
 
   GOptionEntry*       gobj()       { return gobject_; }
   const GOptionEntry* gobj() const { return gobject_; }
+
+private:
+  void release_gobject() noexcept;
 
 protected:
 

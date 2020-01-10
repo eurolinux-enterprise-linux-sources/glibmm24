@@ -1,6 +1,3 @@
-// -*- c++ -*-
-/* $Id$ */
-
 /* timer.cc
  *
  * Copyright (C) 2002 The gtkmm Development Team
@@ -20,53 +17,55 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <glibmm.h>
 #include <glib.h>
-#include <glibmm/timer.h>
-
 
 namespace Glib
 {
 
-Timer::Timer()
-:
-  gobject_ (g_timer_new())
-{}
+Timer::Timer() : gobject_(g_timer_new())
+{
+}
 
-Timer::~Timer()
+Timer::~Timer() noexcept
 {
   g_timer_destroy(gobject_);
 }
 
-void Timer::start()
+void
+Timer::start()
 {
   g_timer_start(gobject_);
 }
 
-void Timer::stop()
+void
+Timer::stop()
 {
   g_timer_stop(gobject_);
 }
 
-void Timer::reset()
+void
+Timer::reset()
 {
   g_timer_reset(gobject_);
 }
 
-double Timer::elapsed() const
+double
+Timer::elapsed() const
 {
-  return g_timer_elapsed(gobject_, 0);
+  return g_timer_elapsed(gobject_, nullptr);
 }
 
-double Timer::elapsed(unsigned long& microseconds) const
+double
+Timer::elapsed(unsigned long& microseconds) const
 {
   return g_timer_elapsed(gobject_, &microseconds);
 }
 
-
-void usleep(unsigned long microseconds)
+void
+usleep(unsigned long microseconds)
 {
   g_usleep(microseconds);
 }
 
 } // namespace Glib
-

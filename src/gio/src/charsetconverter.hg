@@ -41,8 +41,9 @@ protected:
 
 public:
   /** Creates a new CharsetConverter.
-   * 
+   *
    * @newin{2,24}
+   *
    * @param to_charset Destination charset.
    * @param from_charset Source charset.
    * @return A new CharsetConverter, or <tt>0</tt> on error.

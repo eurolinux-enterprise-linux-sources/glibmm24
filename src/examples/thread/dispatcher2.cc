@@ -1,9 +1,9 @@
 /*
  * original Glib::Dispatcher example -- cross thread signalling
  * by Daniel Elstner  <daniel.elstner@gmx.net>
- * 
+ *
  * Modified by Stephan Puchegger <stephan.puchegger@ap.univie.ac.at>
- * to contain 2 mainloops in 2 different threads, that communicate 
+ * to contain 2 mainloops in 2 different threads, that communicate
  * via cross thread signalling in both directions. The timer thread
  * sends the UI thread a cross thread signal every second, which in turn
  * updates the label stating how many seconds have passed since the start
@@ -20,10 +20,12 @@
  * Copyright (c) 2002-2003  Free Software Foundation
  */
 
+#include <condition_variable>
 #include <glibmm.h>
-#include <sstream>
 #include <iostream>
-
+#include <mutex>
+#include <sstream>
+#include <thread>
 
 namespace
 {
@@ -39,18 +41,18 @@ public:
   void signal_finished_emit();
   void print() const;
 
-  typedef sigc::signal<void> type_signal_end;
+  using type_signal_end = sigc::signal<void()>;
   static type_signal_end& signal_end();
 
 private:
-  unsigned int      time_;
-  Glib::Dispatcher  signal_increment_;  
+  unsigned int time_;
+  Glib::Dispatcher signal_increment_;
   Glib::Dispatcher* signal_finished_ptr_;
 
-  Glib::Threads::Mutex       startup_mutex_;
-  Glib::Threads::Cond        startup_cond_;
-  Glib::Threads::Thread*     thread_;
-  
+  std::mutex startup_mutex_;
+  std::condition_variable startup_cond_;
+  std::thread* thread_;
+
   static type_signal_end signal_end_;
 
   void timer_increment();
@@ -71,72 +73,81 @@ private:
   ThreadTimer* timer_;
 };
 
-ThreadTimer::ThreadTimer() 
-:
-  time_ (0),
+ThreadTimer::ThreadTimer()
+: time_(0),
   // Create a new Glib::Dispatcher that is attached to the default main context,
-  signal_increment_ (),
+  signal_increment_(),
   // This pointer will be initialized later by the 2nd thread.
-  signal_finished_ptr_ (NULL)
+  signal_finished_ptr_(nullptr),
+  thread_(nullptr)
 {
   // Connect the cross-thread signal.
   signal_increment_.connect(sigc::mem_fun(*this, &ThreadTimer::timer_increment));
 }
 
 ThreadTimer::~ThreadTimer()
-{}
+{
+}
 
-void ThreadTimer::launch()
+void
+ThreadTimer::launch()
 {
   // Unfortunately, the thread creation has to be fully synchronized in
   // order to access the Glib::Dispatcher object instantiated by the 2nd thread.
   // So, let's do some kind of hand-shake using a mutex and a condition
   // variable.
-  Glib::Threads::Mutex::Lock lock (startup_mutex_);
+  std::unique_lock<std::mutex> lock(startup_mutex_);
 
-  // Create a joinable thread -- it needs to be joined, otherwise it's a memory leak.
-  thread_ = Glib::Threads::Thread::create(
-      sigc::mem_fun(*this, &ThreadTimer::thread_function));
+  // Create a joinable thread -- it needs to be joined, otherwise its destructor will block.
+  thread_ = new std::thread([this]() { thread_function(); });
 
   // Wait for the 2nd thread's startup notification.
-  while(signal_finished_ptr_ == NULL)
-    startup_cond_.wait(startup_mutex_);
+  startup_cond_.wait(lock, [this]() -> bool { return signal_finished_ptr_; });
 }
 
-void ThreadTimer::signal_finished_emit()
+void
+ThreadTimer::signal_finished_emit()
 {
   // Cause the 2nd thread's main loop to quit.
   signal_finished_ptr_->emit();
 
   // wait for the thread to join
-  if(thread_ != NULL)
+  if (thread_)
+  {
     thread_->join();
+    delete thread_;
+    thread_ = nullptr;
+  }
 
-  signal_finished_ptr_ = NULL;
+  signal_finished_ptr_ = nullptr;
 }
 
-void ThreadTimer::print() const
+void
+ThreadTimer::print() const
 {
   std::cout << time_ << " seconds since start" << std::endl;
 }
 
-sigc::signal< void >& ThreadTimer::signal_end()
+sigc::signal<void()>&
+ThreadTimer::signal_end()
 {
   return signal_end_;
 }
 
-void ThreadTimer::timer_increment()
+void
+ThreadTimer::timer_increment()
 {
   // another second has passed since the start of the program
   ++time_;
   print();
 
-  if(time_ >= 10)
+  if (time_ >= 10)
     signal_finished_emit();
 }
 
 // static
-void ThreadTimer::finished_handler(Glib::RefPtr<Glib::MainLoop> mainloop)
+void
+ThreadTimer::finished_handler(Glib::RefPtr<Glib::MainLoop> mainloop)
 {
   // quit the timer thread mainloop
   mainloop->quit();
@@ -144,7 +155,8 @@ void ThreadTimer::finished_handler(Glib::RefPtr<Glib::MainLoop> mainloop)
   ThreadTimer::signal_end().emit();
 }
 
-bool ThreadTimer::timeout_handler()
+bool
+ThreadTimer::timeout_handler()
 {
   // inform the printing thread that another second has passed
   signal_increment_();
@@ -153,12 +165,13 @@ bool ThreadTimer::timeout_handler()
   return true;
 }
 
-void ThreadTimer::thread_function()
+void
+ThreadTimer::thread_function()
 {
   // create a new Main Context
-  Glib::RefPtr<Glib::MainContext> context = Glib::MainContext::create();
+  auto context = Glib::MainContext::create();
   // create a new Main Loop
-  Glib::RefPtr<Glib::MainLoop> mainloop = Glib::MainLoop::create(context, true);
+  auto mainloop = Glib::MainLoop::create(context, true);
 
   // attach a timeout handler, that is called every second, to the
   // newly created MainContext
@@ -166,19 +179,21 @@ void ThreadTimer::thread_function()
 
   // We need to lock while creating the Glib::Dispatcher instance,
   // in order to ensure memory visibility.
-  Glib::Threads::Mutex::Lock lock (startup_mutex_);
+  std::unique_lock<std::mutex> lock(startup_mutex_);
 
   // create a new dispatcher, that is connected to the newly
   // created MainContext
-  Glib::Dispatcher signal_finished (context);
-  
+  Glib::Dispatcher signal_finished(context);
+
   signal_finished.connect(sigc::bind(sigc::ptr_fun(&ThreadTimer::finished_handler), mainloop));
 
   signal_finished_ptr_ = &signal_finished;
 
   // Tell the launcher thread that everything is in place now.
-  startup_cond_.signal();
-  lock.release();
+  // We unlock before notifying, because that is what the documentation suggests:
+  // http://en.cppreference.com/w/cpp/thread/condition_variable
+  lock.unlock();
+  startup_cond_.notify_one();
 
   // start the mainloop
   mainloop->run();
@@ -187,9 +202,7 @@ void ThreadTimer::thread_function()
 // initialize static member:
 ThreadTimer::type_signal_end ThreadTimer::signal_end_;
 
-ThreadDispatcher::ThreadDispatcher()
-: 
-  timer_ (NULL)
+ThreadDispatcher::ThreadDispatcher() : timer_(nullptr)
 {
   std::cout << "Thread Dispatcher Example #2" << std::endl;
 
@@ -198,13 +211,15 @@ ThreadDispatcher::ThreadDispatcher()
   timer_->print();
 }
 
-void ThreadDispatcher::launch_thread()
+void
+ThreadDispatcher::launch_thread()
 {
   // launch the timer thread
   timer_->launch();
 }
 
-void ThreadDispatcher::end()
+void
+ThreadDispatcher::end()
 {
   // quit the main mainloop
   main_loop->quit();
@@ -212,8 +227,8 @@ void ThreadDispatcher::end()
 
 } // anonymous namespace
 
-
-int main(int, char**)
+int
+main(int, char**)
 {
   Glib::init();
   main_loop = Glib::MainLoop::create();
@@ -227,4 +242,3 @@ int main(int, char**)
 
   return 0;
 }
-

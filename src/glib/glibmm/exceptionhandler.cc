@@ -19,45 +19,50 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <glibmmconfig.h>
+#ifndef GLIBMM_CAN_USE_THREAD_LOCAL
 #include <glibmm/threads.h>
+#endif
+#include <glibmmconfig.h>
 #include <glibmm/error.h>
 #include <glibmm/exceptionhandler.h>
 #include <glib.h>
 #include <exception>
 #include <list>
 
-
 namespace
 {
 
-typedef sigc::signal<void> HandlerList;
+using HandlerList = std::list<sigc::slot<void()>>;
 
 // Each thread has its own list of exception handlers
 // to avoid thread synchronization problems.
+#ifdef GLIBMM_CAN_USE_THREAD_LOCAL
+static thread_local HandlerList* thread_specific_handler_list = nullptr;
+#else
 static Glib::Threads::Private<HandlerList> thread_specific_handler_list;
+#endif
 
-
-static void glibmm_exception_warning(const GError* error)
+static void
+glibmm_exception_warning(const GError* error)
 {
-  g_assert(error != 0);
+  g_assert(error != nullptr);
 
   g_critical("\n"
-      "unhandled exception (type Glib::Error) in signal handler:\n"
-      "domain: %s\n"
-      "code  : %d\n"
-      "what  : %s\n",
-      g_quark_to_string(error->domain), error->code,
-      (error->message) ? error->message : "(null)");
+             "unhandled exception (type Glib::Error) in signal handler:\n"
+             "domain: %s\n"
+             "code  : %d\n"
+             "what  : %s\n",
+    g_quark_to_string(error->domain), error->code, (error->message) ? error->message : "(null)");
 }
 
-static void glibmm_unexpected_exception()
+static void
+glibmm_unexpected_exception()
 {
   try
   {
     throw; // re-throw current exception
   }
-  catch(const Glib::Error& error)
+  catch (const Glib::Error& error)
   {
     // Access the GError directly, to avoid possible exceptions from C++ code.
     glibmm_exception_warning(error.gobj());
@@ -66,13 +71,14 @@ static void glibmm_unexpected_exception()
     // program seems too harsh.  Instead, give control back to the main loop.
     return;
   }
-  catch(const std::exception& except)
+  catch (const std::exception& except)
   {
     g_error("\n"
-        "unhandled exception (type std::exception) in signal handler:\n"
-        "what: %s\n", except.what());
+            "unhandled exception (type std::exception) in signal handler:\n"
+            "what: %s\n",
+      except.what());
   }
-  catch(...)
+  catch (...)
   {
     g_error("\nunhandled exception (type unknown) in signal handler\n");
   }
@@ -80,26 +86,36 @@ static void glibmm_unexpected_exception()
 
 } // anonymous namespace
 
-
 namespace Glib
 {
 
-sigc::connection add_exception_handler(const sigc::slot<void>& slot)
+sigc::connection
+add_exception_handler(const sigc::slot<void>& slot)
 {
+#ifdef GLIBMM_CAN_USE_THREAD_LOCAL
+  HandlerList* handler_list = thread_specific_handler_list;
+#else
   HandlerList* handler_list = thread_specific_handler_list.get();
+#endif
 
-  if(!handler_list)
+  if (!handler_list)
   {
     handler_list = new HandlerList();
+#ifdef GLIBMM_CAN_USE_THREAD_LOCAL
+    thread_specific_handler_list = handler_list;
+#else
     thread_specific_handler_list.set(handler_list);
+#endif
   }
 
-  handler_list->slots().push_front(slot);
-  return handler_list->slots().begin();
+  handler_list->emplace_back(slot);
+  auto& added_slot = handler_list->back();
+  return sigc::connection(added_slot);
 }
 
 // internal
-void exception_handlers_invoke() throw()
+void
+exception_handlers_invoke() noexcept
 {
   // This function will be called from our GLib signal handler proxies
   // if an exception has been caught.  It's not possible to throw C++
@@ -114,17 +130,21 @@ void exception_handlers_invoke() throw()
   // handled.  If there are no more handlers in the list and the exception
   // is still unhandled, call glibmm_unexpected_exception().
 
+#ifdef GLIBMM_CAN_USE_THREAD_LOCAL
+  if (HandlerList* const handler_list = thread_specific_handler_list)
+#else
   if(HandlerList *const handler_list = thread_specific_handler_list.get())
+#endif
   {
-    HandlerList::iterator pslot = handler_list->slots().begin();
+    HandlerList::iterator pslot = handler_list->begin();
 
-    while(pslot != handler_list->slots().end())
+    while (pslot != handler_list->end())
     {
       // Calling an empty slot would mean ignoring the exception,
       // thus we have to check for dead slots explicitly.
-      if(pslot->empty())
+      if (pslot->empty())
       {
-        pslot = handler_list->slots().erase(pslot);
+        pslot = handler_list->erase(pslot);
         continue;
       }
 
@@ -134,7 +154,7 @@ void exception_handlers_invoke() throw()
       {
         (*pslot)();
       }
-      catch(...) // unhandled, try next slot
+      catch (...) // unhandled, try next slot
       {
         ++pslot;
         continue;
@@ -151,6 +171,3 @@ void exception_handlers_invoke() throw()
 }
 
 } // namespace Glib
-
-
-
