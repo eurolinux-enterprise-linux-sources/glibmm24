@@ -1,0 +1,177 @@
+// -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+
+/* Copyright (C) 2011 The giomm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include <glibmm/interface.h>
+#include <glibmm/varianttype.h>
+
+_DEFS(giomm,gio)
+_PINCLUDE(glibmm/private/interface_p.h)
+_PINCLUDE(gio/gio.h)
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+typedef struct _GActionInterface GActionInterface;
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+namespace Glib
+{
+
+class VariantBase;
+
+}
+
+namespace Gio
+{
+
+/** Action - An action.
+ * Action represents a single named action.
+ *
+ * The main interface to an action is that it can be activated with activate().
+ * This results in the signal_activate() signal being emitted. An activation
+ * has a Glib::VariantBase parameter (which may be <tt>0</tt>). The correct
+ * type for the parameter is determined by a static parameter type (which is
+ * given at construction time).
+ *
+ * An action may optionally have a state, in which case the state may be set
+ * with change_state(). This call takes a Glib::VariantBase. The correct type
+ * for the state is determined by a static state type (which is given at
+ * construction time).
+ *
+ * The state may have a hint associated with it, specifying its valid range.
+ *
+ * Action is merely the interface to the concept of an action, as described
+ * above. Various implementations of actions exist, including SimpleAction and
+ * Gtk::Action.
+ *
+ * In all cases, the implementing class is responsible for storing the name of
+ * the action, the parameter type, the enabled state, the optional state type
+ * and the state and emitting the appropriate signals when these change. The
+ * implementor responsible for filtering calls to activate() and change_state()
+ * for type safety and for the state being enabled.
+ *
+ * Probably the only useful thing to do with a Action is to put it inside of a
+ * SimpleActionGroup.
+ *
+ * @newin{2,32}
+ */
+class Action : public Glib::Interface
+{
+  _CLASS_INTERFACE(Action, GAction, G_ACTION, GActionInterface)
+
+public:
+  _WRAP_METHOD(Glib::ustring get_name() const, g_action_get_name)
+  _WRAP_METHOD(Glib::VariantType get_parameter_type() const, g_action_get_parameter_type)
+  _WRAP_METHOD(Glib::VariantType get_state_type() const, g_action_get_state_type)
+
+  //TODO: Change the return type of get_state_hint() when we can break ABI.
+  // See https://bugzilla.gnome.org/show_bug.cgi?id=690134
+  /** Requests a hint about the valid range of values for the state of
+   *  @a action.
+   *
+   * @note
+   * This method is useless in its present form. It should return Glib::VariantBase,
+   * but it returns @c void. This bug cannot be fixed until the ABI of glibmm can be broken.
+   * Meanwhile you can use the C function in glib like so:
+   * @code
+   * Glib::VariantBase state_hint = Glib::wrap(g_action_get_state_hint(myAction.gobj()));
+   * @endcode
+   * If myAction is a const object:
+   * @code
+   * Glib::VariantBase state_hint = Glib::wrap(g_action_get_state_hint(const_cast<GAction*>(myAction.gobj())));
+   * @endcode
+   *
+   * If <tt>0</tt> is returned it either means that the action is not stateful
+   * or that there is no hint about the valid range of values for the
+   * state of the action.
+   * 
+   * If a Variant array is returned then each item in the array is a
+   * possible value for the state.  If a Variant pair (ie: two-tuple) is
+   * returned then the tuple specifies the inclusive lower and upper bound
+   * of valid values for the state.
+   * 
+   * In any case, the information is merely a hint.  It may be possible to
+   * have a state value outside of the hinted range and setting a value
+   * within the range may fail.
+   * 
+   * @newin{2,28}
+   * @return The state range hint.
+   */
+  _WRAP_METHOD(void get_state_hint() const, g_action_get_state_hint)
+
+  _WRAP_METHOD(bool get_enabled() const, g_action_get_enabled)
+
+  //TODO: Change the return type of get_state() when we can break ABI.
+  // See https://bugzilla.gnome.org/show_bug.cgi?id=690134
+  /** Queries the current state of @a action.
+   *
+   * @note
+   * This method is useless in its present form. It should return Glib::VariantBase,
+   * but it returns @c void. This bug cannot be fixed until the ABI of glibmm can be broken.
+   * Meanwhile you can use property_state() like so:
+   * @code
+   * Glib::VariantBase state = myAction.property_state();
+   * @endcode
+   * You can also use the C function in glib like so:
+   * @code
+   * Glib::VariantBase state = Glib::wrap(g_action_get_state(myAction.gobj()));
+   * @endcode
+   * If myAction is a const object:
+   * @code
+   * Glib::VariantBase state = Glib::wrap(g_action_get_state(const_cast<GAction*>(myAction.gobj())));
+   * @endcode
+   *
+   * If the action is not stateful then <tt>0</tt> will be returned.  If the
+   * action is stateful then the type of the return value is the type
+   * given by get_state_type().
+   * 
+   * @newin{2,28}
+   * @return The current state of the action.
+   */
+  _WRAP_METHOD(void get_state() const, g_action_get_state)
+
+  _WRAP_METHOD(void change_state(const Glib::VariantBase& value), g_action_change_state)
+  _WRAP_METHOD(void activate(const Glib::VariantBase& parameter), g_action_activate)
+
+  _WRAP_PROPERTY("enabled", bool)
+  _WRAP_PROPERTY("name", Glib::ustring)
+  _WRAP_PROPERTY("parameter-type", Glib::VariantType)
+  _WRAP_PROPERTY("state", Glib::VariantBase)
+  _WRAP_PROPERTY("state-type", Glib::VariantType)
+
+#m4 _CONVERSION(`Glib::ustring',`const gchar*',`g_strdup($3.c_str())')
+  _WRAP_VFUNC(Glib::ustring get_name() const, "get_name")
+
+#m4 _CONVERSION(`Glib::VariantType',`const GVariantType*',`$3.gobj_copy()')
+
+  _WRAP_VFUNC(Glib::VariantType get_parameter_type() const, "get_parameter_type")
+  _WRAP_VFUNC(Glib::VariantType get_state_type() const, "get_state_type")
+
+#m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`$3.gobj_copy()')
+
+  _WRAP_VFUNC(Glib::VariantBase get_state_hint() const, "get_state_hint")
+
+  _WRAP_VFUNC(bool get_enabled() const, "get_enabled")
+
+  _WRAP_VFUNC(Glib::VariantBase get_state() const, "get_state")
+
+#m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
+  _WRAP_VFUNC(void change_state(const Glib::VariantBase& value), "change_state")
+  _WRAP_VFUNC(void activate(const Glib::VariantBase& parameter), "activate")
+};
+
+} // namespace Gio
