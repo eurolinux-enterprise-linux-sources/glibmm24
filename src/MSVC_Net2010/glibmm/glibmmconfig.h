@@ -85,10 +85,10 @@
 #define GLIBMM_MEMBER_FUNCTIONS_MEMBER_TEMPLATES 1
 
 /* Micro version number of glibmm. */
-#define GLIBMM_MICRO_VERSION 2
+#define GLIBMM_MICRO_VERSION 0
 
 /* Minor version number of glibmm. */
-#define GLIBMM_MINOR_VERSION 36
+#define GLIBMM_MINOR_VERSION 42
 
 /* This is always set. This is only for backwards compatibility. */
 #define GLIBMM_PROPERTIES_ENABLED 1

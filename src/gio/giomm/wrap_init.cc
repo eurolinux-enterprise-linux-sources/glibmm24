@@ -38,6 +38,7 @@
 #include "dbuserror.h"
 #include "dbuserrorutils.h"
 #include "dbusinterface.h"
+#include "dbusinterfaceskeleton.h"
 #include "dbusinterfacevtable.h"
 #include "dbusintrospection.h"
 #include "dbusmenumodel.h"
@@ -89,7 +90,9 @@
 #include "mountoperation.h"
 #include "networkaddress.h"
 #include "networkservice.h"
+#include "notification.h"
 #include "outputstream.h"
+#include "permission.h"
 #include "pollableinputstream.h"
 #include "pollableoutputstream.h"
 #include "proxy.h"
@@ -102,6 +105,7 @@
 #include "settings.h"
 #include "simpleaction.h"
 #include "simpleactiongroup.h"
+#include "simplepermission.h"
 #include "socket.h"
 #include "socketaddress.h"
 #include "socketaddressenumerator.h"
@@ -115,6 +119,13 @@
 #include "tcpconnection.h"
 #include "themedicon.h"
 #include "threadedsocketservice.h"
+#include "tlscertificate.h"
+#include "tlsclientconnection.h"
+#include "tlsconnection.h"
+#include "tlsdatabase.h"
+#include "tlsinteraction.h"
+#include "tlspassword.h"
+#include "tlsserverconnection.h"
 #ifndef G_OS_WIN32
 #include "unixconnection.h"
 #endif // ifndef G_OS_WIN32
@@ -160,6 +171,7 @@ GType g_data_output_stream_get_type(void);
 GType g_dbus_action_group_get_type(void);
 GType g_dbus_auth_observer_get_type(void);
 GType g_dbus_connection_get_type(void);
+GType g_dbus_interface_skeleton_get_type(void);
 GType g_dbus_menu_model_get_type(void);
 GType g_dbus_message_get_type(void);
 GType g_dbus_method_invocation_get_type(void);
@@ -194,12 +206,15 @@ GType g_menu_model_get_type(void);
 GType g_mount_operation_get_type(void);
 GType g_network_address_get_type(void);
 GType g_network_service_get_type(void);
+GType g_notification_get_type(void);
 GType g_output_stream_get_type(void);
+GType g_permission_get_type(void);
 GType g_proxy_address_get_type(void);
 GType g_resolver_get_type(void);
 GType g_settings_get_type(void);
 GType g_simple_action_get_type(void);
 GType g_simple_action_group_get_type(void);
+GType g_simple_permission_get_type(void);
 GType g_socket_get_type(void);
 GType g_socket_address_get_type(void);
 GType g_socket_address_enumerator_get_type(void);
@@ -211,6 +226,11 @@ GType g_socket_service_get_type(void);
 GType g_tcp_connection_get_type(void);
 GType g_themed_icon_get_type(void);
 GType g_threaded_socket_service_get_type(void);
+GType g_tls_certificate_get_type(void);
+GType g_tls_connection_get_type(void);
+GType g_tls_database_get_type(void);
+GType g_tls_interaction_get_type(void);
+GType g_tls_password_get_type(void);
 #ifndef G_OS_WIN32
 GType g_unix_connection_get_type(void);
 #endif // ifndef G_OS_WIN32
@@ -241,6 +261,7 @@ GType g_zlib_decompressor_get_type(void);
 GQuark g_dbus_error_quark(void);
 GQuark g_io_error_quark(void);
 GQuark g_resolver_error_quark(void);
+GQuark g_tls_error_quark(void);
 GQuark g_resource_error_quark(void);
 } // extern "C"
 
@@ -263,6 +284,7 @@ class DataOutputStream_Class { public: static Glib::ObjectBase* wrap_new(GObject
 namespace DBus { class ActionGroup_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class AuthObserver_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class Connection_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
+namespace DBus { class InterfaceSkeleton_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class MenuModel_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class Message_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class MethodInvocation_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
@@ -297,12 +319,15 @@ class MenuModel_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class MountOperation_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class NetworkAddress_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class NetworkService_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class Notification_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class OutputStream_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class Permission_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class ProxyAddress_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class Resolver_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class Settings_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class SimpleAction_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class SimpleActionGroup_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class SimplePermission_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class Socket_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class SocketAddress_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class SocketAddressEnumerator_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
@@ -314,6 +339,11 @@ class SocketService_Class { public: static Glib::ObjectBase* wrap_new(GObject*);
 class TcpConnection_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class ThemedIcon_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class ThreadedSocketService_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class TlsCertificate_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class TlsConnection_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class TlsDatabase_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class TlsInteraction_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
+class TlsPassword_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 #ifndef G_OS_WIN32
 class UnixConnection_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 #endif // ifndef G_OS_WIN32
@@ -356,6 +386,7 @@ void wrap_init()
   // Register Error domains in the main namespace:
   Glib::Error::register_domain(g_io_error_quark(), &Error::throw_func);
   Glib::Error::register_domain(g_resolver_error_quark(), &ResolverError::throw_func);
+  Glib::Error::register_domain(g_tls_error_quark(), &TlsError::throw_func);
   Glib::Error::register_domain(g_resource_error_quark(), &ResourceError::throw_func);
 
   // Call the wrap_init() functions in sub-namespaces:
@@ -377,6 +408,7 @@ void wrap_init()
   Glib::wrap_register(g_dbus_action_group_get_type(), &DBus::ActionGroup_Class::wrap_new);
   Glib::wrap_register(g_dbus_auth_observer_get_type(), &DBus::AuthObserver_Class::wrap_new);
   Glib::wrap_register(g_dbus_connection_get_type(), &DBus::Connection_Class::wrap_new);
+  Glib::wrap_register(g_dbus_interface_skeleton_get_type(), &DBus::InterfaceSkeleton_Class::wrap_new);
   Glib::wrap_register(g_dbus_menu_model_get_type(), &DBus::MenuModel_Class::wrap_new);
   Glib::wrap_register(g_dbus_message_get_type(), &DBus::Message_Class::wrap_new);
   Glib::wrap_register(g_dbus_method_invocation_get_type(), &DBus::MethodInvocation_Class::wrap_new);
@@ -411,12 +443,15 @@ void wrap_init()
   Glib::wrap_register(g_mount_operation_get_type(), &MountOperation_Class::wrap_new);
   Glib::wrap_register(g_network_address_get_type(), &NetworkAddress_Class::wrap_new);
   Glib::wrap_register(g_network_service_get_type(), &NetworkService_Class::wrap_new);
+  Glib::wrap_register(g_notification_get_type(), &Notification_Class::wrap_new);
   Glib::wrap_register(g_output_stream_get_type(), &OutputStream_Class::wrap_new);
+  Glib::wrap_register(g_permission_get_type(), &Permission_Class::wrap_new);
   Glib::wrap_register(g_proxy_address_get_type(), &ProxyAddress_Class::wrap_new);
   Glib::wrap_register(g_resolver_get_type(), &Resolver_Class::wrap_new);
   Glib::wrap_register(g_settings_get_type(), &Settings_Class::wrap_new);
   Glib::wrap_register(g_simple_action_get_type(), &SimpleAction_Class::wrap_new);
   Glib::wrap_register(g_simple_action_group_get_type(), &SimpleActionGroup_Class::wrap_new);
+  Glib::wrap_register(g_simple_permission_get_type(), &SimplePermission_Class::wrap_new);
   Glib::wrap_register(g_socket_get_type(), &Socket_Class::wrap_new);
   Glib::wrap_register(g_socket_address_get_type(), &SocketAddress_Class::wrap_new);
   Glib::wrap_register(g_socket_address_enumerator_get_type(), &SocketAddressEnumerator_Class::wrap_new);
@@ -428,6 +463,11 @@ void wrap_init()
   Glib::wrap_register(g_tcp_connection_get_type(), &TcpConnection_Class::wrap_new);
   Glib::wrap_register(g_themed_icon_get_type(), &ThemedIcon_Class::wrap_new);
   Glib::wrap_register(g_threaded_socket_service_get_type(), &ThreadedSocketService_Class::wrap_new);
+  Glib::wrap_register(g_tls_certificate_get_type(), &TlsCertificate_Class::wrap_new);
+  Glib::wrap_register(g_tls_connection_get_type(), &TlsConnection_Class::wrap_new);
+  Glib::wrap_register(g_tls_database_get_type(), &TlsDatabase_Class::wrap_new);
+  Glib::wrap_register(g_tls_interaction_get_type(), &TlsInteraction_Class::wrap_new);
+  Glib::wrap_register(g_tls_password_get_type(), &TlsPassword_Class::wrap_new);
 #ifndef G_OS_WIN32
   Glib::wrap_register(g_unix_connection_get_type(), &UnixConnection_Class::wrap_new);
 #endif // ifndef G_OS_WIN32
@@ -469,6 +509,7 @@ void wrap_init()
   DBus::ActionGroup::get_type();
   DBus::AuthObserver::get_type();
   DBus::Connection::get_type();
+  DBus::InterfaceSkeleton::get_type();
   DBus::MenuModel::get_type();
   DBus::Message::get_type();
   DBus::MethodInvocation::get_type();
@@ -503,12 +544,15 @@ void wrap_init()
   MountOperation::get_type();
   NetworkAddress::get_type();
   NetworkService::get_type();
+  Notification::get_type();
   OutputStream::get_type();
+  Permission::get_type();
   ProxyAddress::get_type();
   Resolver::get_type();
   Settings::get_type();
   SimpleAction::get_type();
   SimpleActionGroup::get_type();
+  SimplePermission::get_type();
   Socket::get_type();
   SocketAddress::get_type();
   SocketAddressEnumerator::get_type();
@@ -520,6 +564,11 @@ void wrap_init()
   TcpConnection::get_type();
   ThemedIcon::get_type();
   ThreadedSocketService::get_type();
+  TlsCertificate::get_type();
+  TlsConnection::get_type();
+  TlsDatabase::get_type();
+  TlsInteraction::get_type();
+  TlsPassword::get_type();
 #ifndef G_OS_WIN32
   UnixConnection::get_type();
 #endif // ifndef G_OS_WIN32

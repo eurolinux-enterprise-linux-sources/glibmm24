@@ -31,6 +31,24 @@ void Settings::get_value(const Glib::ustring& key, Glib::VariantBase& value) con
   value.init(g_value, false /* don't take a reference */);
 }
 
+bool Settings::get_user_value(const Glib::ustring& key, Glib::VariantBase& value) const
+{
+  GVariant* const g_value = g_settings_get_user_value(const_cast<GSettings*>(gobj()), key.c_str());
+  if(!g_value)
+    return false;
+
+  value.init(g_value, false /* don't take a reference */);
+  return true;
+}
+
+void Settings::get_default_value(const Glib::ustring& key, Glib::VariantBase& value) const
+{
+  GVariant* const g_value = g_settings_get_default_value(const_cast<GSettings*>(gobj()), key.c_str());
+  if(!g_value)
+    return;
+
+  value.init(g_value, false /* don't take a reference */);
+}
 void Settings::bind(const Glib::ustring& key,
                     const Glib::PropertyProxy_Base& property_proxy,
                     SettingsBindFlags flags)
@@ -45,9 +63,11 @@ void Settings::bind_writable(const Glib::ustring& key,
     bind_writable(key, property_proxy.get_object(), property_proxy.get_name(), inverted);
 }
 
+_DEPRECATE_IFDEF_START
 std::vector<Glib::ustring> Settings::list_schemas()
 {
   return Glib::ArrayHandler<Glib::ustring>::array_to_vector(g_settings_list_schemas(), Glib::OWNERSHIP_NONE);
 }
+_DEPRECATE_IFDEF_END
 
 }

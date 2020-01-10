@@ -1,3 +1,646 @@
+2.42:
+
+API additions since 2.40:
+
+* Add Permission and SimplePermission.
+  (Juan R. García Blanco) Bug #732436
+* Add support for GtkContainer child properties.
+  (Juan R. García Blanco)
+
+
+2.42.0 (stable):
+
+Gio:
+* Notification: Deprecate set_urgent().
+  (Murray Cumming)
+
+Tools:
+*  h2def.py: fixed generator in case of inline functions.
+   (Marcin Kolny) Bug #736427
+
+Build:
+* Update and overhaul of Visual Studio 2005 project build files.
+ (Chun-wei Fan)   
+* Fixes for  Visual Studio 2008 and 2010 project build files.
+ (Chun-wei Fan)
+* Fix ustring for Visual Studio Builds.
+ (Chun-wei Fan) Bug #736720
+* Visual Studio Builds: Add "install" project.
+  (Chun-wei Fan)
+* Fix tests in Visual Studio.
+  (Chun-wei Fan) Bug #736778
+
+2.41.4 (unstable):
+
+gmmproc:
+* Added parameter exception_handler in _WRAP_VFUNC().
+  (Marcin Koln) Bug #735132
+* Better error checks in some _WRAP_* macros.
+  (Kjell Ahlstedt)
+
+Build:
+* Update and overhaul of Visual Studio 2010 and Visual Studio 2008
+  project build files.
+  (Chun-wei Fan)
+* Gio::DBus: Don't use parameter name 'interface' to fix the build with MinGW.
+  (Kjell Ahlstedt) Bug #735137.
+
+
+2.41.3 (unstable):
+
+Documentation:
+* Network example:
+  - Use Glib::OptionEntry and friends
+  (Kjell Ahlstedt)
+  - Network example: Add --use-ipv6 command line option
+  (Shashank) Bug #734094.
+
+2.41.2 (unstable):
+
+Gio:
+* Menu: Allow detailed_action == null
+  (Kjell Ahlstedt) Bug #733203 (Hubert Figuiere)
+* Add Permission and SimplePermission.
+  (Juan R. García Blanco) Bug #732436
+
+Glib:
+* Make custom interface properties instance data.
+  (Kjell Ahlstedt) Bug #732746
+* PropertyBase: Use g_object_notify_by_pspec() instead of g_object_notify()
+  (Povilas Kanapickas) Bug #731484
+
+gmmproc:
+* Add support for GtkContainer child properties.
+  (Juan R. García Blanco)
+*  _WRAP_METHOD: Allow multi-word parameter types such as unsigned int.
+  (Kjell Ahlstedt)
+
+
+2.41.1 (unstable):
+
+Gio:
+* Application: Deprecate set_action_group().
+  (Kjell Ahlstedt)
+* DesktopAppInfo: Deprecate set_desktop_env().
+  (Kjell Ahlstedt)
+* Settings:  Deprecate list_schemas(), range_check() and
+  property_schema().
+  (Kjell Ahlstedt)
+* TlsConnection: Deprecate [set|get]_use_system_certdb()
+  and property_use_system_certdb().
+  (Kjell Ahlstedt)
+* VolumeMonitor: Deprecate adopt_orphan_mount().
+  (Kjell Ahlstedt)
+
+Glib:
+* Keyfile: Deprecate one of the load_from_dirs() methods.
+  (Kjell Ahlstedt)
+* ValueArray: Deprecated.
+  (Kjell Ahlstedt)
+
+tests:
+* Test custom properties and an interface with properties.
+  (José Alburquerque) Bug #697229
+
+Documentation:
+*  Add a blank line after @deprecated and @newin to help doxygen.
+  (Kjell Ahlstedt)
+
+
+2.41.0 (unstable):
+  
+Gio:
+* Application:
+  - Add add_main_option_entry() and enum OptionType.
+  (Kjell Ahlsted) Bug #727822.
+  - Add add_main_option_entry() taking a slot parameter
+  (Kjell Ahlsted) Bug #727822.
+* Add SocketSource, SignalSocket and Socket::create_source().
+  (Kjell Ahlsted) Bug #725281.
+
+Documentation:
+* examples/network: Use SocketSource and SignalSocket.
+  (Kjell Ahlstedt)
+
+Build:
+* gmmproc: Don't interpret a comma as the end of a deprecation message.
+  (Kjell Ahlstedt)
+
+
+2.40:
+
+API additions since 2.38:
+
+Glib:
+* Keyfile: Add save_to_file().
+  (Murray Cumming)
+* Add VariantDict.
+  (Murray Cumming)
+
+Gio:
+* Action: Add parse_detailed_name() and parse_detailed_name_variant().
+  (Kjell Ahlstedt)
+* Application: Add the handle-local-options signal.
+  (Murray Cumming)
+* ApplicationCommandline: Add get_options_dict().
+* MenuModel: Add signal_items_changed()
+  (Kjell Ahlstedt)
+* MemoryInputStream: Add add_data() taking a sigc::slot,
+  with a test.
+  (Kjell Ahlstedt) Bug #609946 (Daniel Elstner)
+* Add Notification.
+  (Kjell Ahlstedt) Bug #722896.
+* Settings: Add get_user_value() and get_default_value().
+  (Murray Cumming)
+* Socket: Add get/set_option().
+  (Murray Cumming)
+* TlsInteraction: Add invoke_request_certificate(),
+  request_certificate(), request_certificate_async() and
+  request_certificate_finish().
+  (Murray Cumming)
+
+
+2.40.0 (stable):
+
+* VariantType: Fix typo in VARIANT_TYPE_BYTESTRING_ARRAY value.
+  (Murray Cumming)
+* gmmproc: Small improvement of enum documentation
+  (Kjell Ahlstedt)
+* Windows Update the visual Studio build files.
+  (Chun-wei Fan)
+
+2.39.93 (unstable):
+
+Glib:
+* Keyfile: Add save_to_file().
+  (Murray Cumming)
+* Add VariantDict.
+  (Murray Cumming)
+* Variant: Remove the now-unnecessary local g_variant_parse_error_quark().
+  (Murray Cumming) Bug #727554 (Antoine Jacoutot)
+
+Gio:
+* Application: Add the handle-local-options signal.
+* ApplicationCommandline: Add get_options_dict().
+* Settings: Add get_user_value() and get_default_value().
+  (Murray Cumming)
+* Socket: Add get/set_option().
+  (Murray Cumming)
+* TlsInteraction: Add invoke_request_certificate(),
+  request_certificate(), request_certificate_async() and
+  request_certificate_finish().
+  (Murray Cumming)
+
+Build:
+* h2def.py:
+  - Handle *_DEPRECATED_IN_* and AVAILABLE_IN_* with 0 digits.
+  - Also strip *_DEPRECATE_IN_*_FOR () without a space.
+  (Murray Cumming)
+* Visual Studio Projects: Update giomm Projects.
+  (Chun-wei Fan)
+
+
+2.39.92 (unstable):
+
+Gio:
+* Application: Add add_main_option_entry() and add_option_group().
+  (Murray Cumming)
+
+Documentation:
+* Glib::ustring: Say more clearly that it must be only UTF-8.
+  (Kjell Ahlstedt) Bug #681560 (vurentjie)
+
+Build:
+* win32: Surround content_type_get_symbolic_icon() with ifdefs.
+  (Giuseppe Penone)
+
+
+2.39.91 (unstable):
+
+Documenation:
+* Improve Gio::Socket documentation.
+  (Tomasz Jankowski, Murray Cumming)
+
+2.39.3 (unstable):
+
+Gio
+* Action:
+  - Add parse_detailed_name() and parse_detailed_name_variant().
+    (Kjell Ahlstedt)
+  - Fix activate(const Glib::Variant<T_Value>& value).
+    (Kjell Ahlstedt) Bug #722896
+* MenuModel: Add signal_items_changed()
+  (Kjell Ahlstedt)
+* MemoryInputStream: Add add_data() taking a sigc::slot,
+  with a test.
+  (Kjell Ahlstedt) Bug #609946 (Daniel Elstner)
+* MenuModel: Add signal_items_changed()
+  (Kjell Ahlstedt)
+* Add Notification.
+  (Kjell Ahlstedt) Bug #722896.
+    
+Documentation:
+* Fix some doxygen warnings.
+  (Kjell Ahlstedt)
+* Don't change NULL to 0 in docs, when it's part of a longer name.
+  (Kjell Ahlstedt)
+* OptionContext: Add API documentation based on the C docs.
+  (Murray Cumming)
+
+
+2.39.3 (unstable):
+
+* Documentation improvements.
+  (Kjell Ahlstedt)
+* Fix a test on IPv6 systems.
+  (Adam Sampson)
+
+
+2.38.1 (stable):
+
+Build:
+* Gio::ActionGroup: Remove a nonsensical check that
+  clang complains about, correctly.
+  (Murray Cumming) Bug #709963 (Johannes Meng, David Evans)
+
+Documentation:
+* Gio::content_type_*(): Add a link from Gtk::AppChooser.
+  (Kjell Ahlstedt)
+* giomm_tls_client test: Add some comments
+  (Kjell Ahlstedt)
+
+
+Changes in 2.38 compared to 2.36:
+
+Glib:
+* Object: Add interfaces to custom types before class_init.
+  This deprecates the use of Glib::Object as a base class
+  anywhere but in the last in the list of base classes when
+  implementing an interface, such as TreeModel or 
+  CellRenderer.
+  Having it, for instance, as the first base class,
+  is unfortunately likely to break with glib 3.40.
+  (Kjell Ahlstedt) Bug #697229
+* Use std::memset() instead of GLIBMM_INITIALIZE_STRUCT
+  (Because it causes compiler warnings with --std=c++ with g++,
+  because that defines __STRICT_ANSI__.) and deprecate
+  GLIBMM_INITIALIZE_STRUCT.
+  (Kjell Ahlstedt)
+* ByteArray:
+  - Fix refcount problems.
+    (Krzesimir Nowak)
+  - ByteArray: Add some tests for methods returning self.
+    (Krzesimir Nowak)
+* DateTime: Fix compare() and equal().
+  (Kjell Ahlstedt) Bug #704639 (Aurimas Černius)
+* Regex: Add get_max_lookbehind().
+  (Murray Cumming)
+* Variant: Fix memory leaks.
+  (Kjell Ahlstedt) Bug #704851 (xanm)
+
+Gio:
+* Action:
+  - get_state() and get_state_hint() now return something.
+    We choose not to consider this an ABI break because these
+    methods were impossible to use for anything useful before.
+   (Andrew Potter) Bug #690134.
+  - Add get_state_bool() and change_state(bool),
+    to make it easier to deal with toggle actions.
+    However, we might add a whole derived convenience class for these
+    instead.
+    (Murray Cumming, Kjell Ahlstedt)
+  - Add create_radio_string() and create_radio_integer() for
+    radio items, though we might change this API lots.
+    (Murray Cumming)
+  - Add name_is_valid() and print_detailed_name().
+    (Murray Cumming)
+  - Add an activate() method that takes no parameter.
+    (Murray Cumming)
+  - print_detailed_name(): Remove the action_name parameter.
+    (Murray Cumming)
+  - print_detailed_name() Make this templated.
+   (Murray Cumming)
+  - Make get_state() templated.
+    (Murray Cumming)
+  - get_state_hint(): Correct a check.
+    (Murray Cumming)
+  - Add templated change_state() and activate().
+    (Murray Cumming)
+* Application: Add mark/unmark_busy().
+  (Murray Cumming)
+* ActionGroup:
+  - Add templated getters.
+    (Murray Cumming)
+  - activate_action(): Add a method overload
+    that takes no parameter parameter.
+    (Murray Cumming)
+* ActionMap:
+  - Add add_action(name, slot).
+    This is a convenience method similar to
+    g_action_map_add_action_entries() in C.
+    (Murray Cumming, Kjell Ahlstedt)
+  - Add add_action_radio_string() and add_action_radio_integer()
+    for radio items, though we might change this API lots.
+    (Murray Cumming)
+* DesktopInfo: Add list_actions(), launch_action() and get_action_name().
+  (Murray Cumming)
+* File:
+  - Add measure_disk_usage() and measure_disk_usage_async().
+    (Murray Cumming)
+  - Add trash_async(), trash_finish(), make_directory_async()
+    and make_directory_finish().
+    (Murray Cumming)
+* Menu: Add remove_all().
+  (Murray Cumming)
+* MenuItem:
+  - Add set/unset_icon().
+    (Murray Cumming)
+  - Reimplement the constructors.
+    (Murray Cumming) Bug #705199 (Pete Woods)
+  - Add set_action(), unset_target() and
+    unset_action_and_target().
+    (Murray Cumming)
+  - MenuItem: get/set_attribute(): Deprecated for
+    get/set_attribute_value() methods.
+    (Murray Cumming)
+  - Add insert/append/prepend_section() with no label parameter.
+   (Murray Cumming) Bug #702456 (Aurimas Černius)
+* Settings:
+  - Add create_action().
+    (Murray Cumming)
+  - Add get/set_uint().
+    (Murray Cumming)
+* SimpleAction:
+  - Make set_state() protected.
+    (Murray Cumming)
+  - add_action() now takes a slot with no parameter.
+    Added add_action_with_parameter().
+    (Murray Cumming)
+  - set_enabled(): Add default parameter value.
+    (Murray Cumming)
+  - Add constructors and create_bool() methods that take a bool instead of
+    a VariantBase for the state, to make it easier to deal with toggle actions.
+    However, we might add a whole derived convenience class for these
+    instead.
+    (Murray Cumming)
+* SimpleActionGroup:
+  - lookup(): Add a const version and use refreturn.
+    (Murray Cumming)
+  - Deprecate all methods, because they just call methods in
+    the base ActionMap. The C functions are now deprecated too.
+    See glib bug #705600 .
+    (Murray Cumming)
+* Add VariantParseError.
+  Because it is thrown by GtkBuilder, at least for now.
+  (Murray Cumming
+
+Gio::DBus:
+* Add InterfaceSkeleton.
+  (José Alburquerque)
+
+Build:
+* Port tools/defs_gen to Python 3.
+  (Kjell Ahlstedt) Bug #690969
+* tools/h2def.py: Handle functions with Handle *_DEPRECATED_IN_*_FOR (*).
+  (Murray Cumming)
+* Update Visual Studio Projects
+  (Chun-wei Fan)
+* Glib::TypeTraits<>: Avoid warnings when compiling with -Wcast-qual.
+  (Kjell Ahlstedt) Bug #704640 (Aurimas Černius)
+* enums.pl: fixed multi-argument defines as enum values.
+  (Marcin Kolny) Bug #705113
+* Move to a generated ChangeLog.
+  (José Alburquerque)
+
+gmmproc:
+* Pass NULL to C function calls for optional empty strings.
+  (José Alburquerque) Bug #686909. Bug #702456
+* Add parameter return_value in _WRAP_VFUNC.
+  (Marcin Kolny) Bug #705699.
+* Fix _WRAP_SIGNAL with 'ifdef' and 'deprecated'.
+  (Kjell Ahlstedt)
+* docextract_to_xml.py: Add '&rArr;' to the list of escape sequences.
+  (José Alburquerque)
+* Add _WRAP_ENUM_DOCS_ONLY() and simplify enum docs process.
+  (José Alburquerque) Bug #703155
+*  gmmproc: Use GMMPROC_RETURN_MISMATCHES environment variable.
+  (José Alburquerque)
+* Write glibmm version in generated files.
+  (Kjell Ahlstedt) Bug #697835 and Bug #700495
+    
+Documentation:
+* gmmproc: Add docs to the default constructor of _CLASS_OPAQUE_COPYABLE.
+  mentioning that the constructed object is invalid.
+  (Kjell Ahlstedt) Bug #704639 (Aurimas Černius)
+
+
+
+2.38.0 (stable):
+
+Glib:
+* ByteArray:
+  - Fix refcount problems.
+  (Krzesimir Nowak)
+  - ByteArray: Add some tests for methods returning self.
+  (Krzesimir Nowak)
+
+Gio
+* Action:
+  - Add an activate() method that takes no parameter.
+  (Murray Cumming)
+  - print_detailed_name(): Remove the action_name parameter.
+  (Murray Cumming)
+* ActionGroup: activate_action(): Add a method overload
+  that takes no parameter parameter.
+  (Murray Cumming)
+* ActionMap: Fix a reference-counting problem.
+  (Murray Cumming)
+* MenuItem:
+  - Add set_action(), unset_target() and
+  unset_action_and_target().
+  (Murray Cumming)
+  - MenuItem: get/set_attribute(): Deprecated for
+    get/set_attribute_value() methods.
+  (Murray Cumming)
+* Settings: Add create_action().
+  (Murray Cumming)
+
+
+2.37.93 (unstable):
+
+Gio
+* ActionMap: lookup_action(): Fix the reference counting.
+  (Murray Cumming)
+* File: Add measure_disk_usage() and measure_disk_usage_async().
+  (Murray Cumming)
+* Settings: Add get/set_uint().
+  (Murray Cumming)
+* Add VariantParseError.
+  Because it is thrown by GtkBuilder, at least for now.
+  (Murray Cumming
+
+Build:
+* Port tools/defs_gen to Python 3.
+  (Kjell Ahlstedt) Bug #690969
+* tools/h2def.py: Handle functions with Handle *_DEPRECATED_IN_*_FOR (*).
+  (Murray Cumming)
+
+2.37.7 (unstable):
+
+Gio:
+* Menu: Add insert/append/prepend_section() with no label parameter.
+  (Murray Cumming) Bug #702456 (Aurimas Černius)
+    
+gmmproc:
+* Pass NULL to C function calls for optional empty strings.
+  (José Alburquerque) Bug #686909. Bug #702456
+* Add parameter return_value in _WRAP_VFUNC.
+  (Marcin Kolny) Bug #705699.
+    
+Build:
+* Update Visual Studio Projects
+  (Chun-wei Fan)
+
+
+2.37.6 (unstable):
+
+Gio:
+* Action:
+  - Make get_state() templated.
+    (Murray Cumming)
+  - get_state_hint(): Correct a check.
+    (Murray Cumming)
+  - Add templated change_state() and activate().
+    (Murray Cumming)
+  - print_detailed_name() Make this templated.
+     (Murray Cumming)
+* ActionGroup: Add templated getters.
+  (Murray Cumming)
+* ActionMap: add_action_radio_*(): Use better Slot types.
+  (Murray Cumming)
+* SimpleAction:
+  - Make set_state() protected.
+   (Murray Cumming)
+  - add_action() now takes a slot with no parameter.
+    Added add_action_with_parameter().
+    (Murray Cumming)
+* SimpleActionGroup:
+  - lookup(): Add a const version and use refreturn.
+    (Murray Cumming)
+  - Deprecate all methods, because they just call methods in
+    the base ActionMap. The C functions are now deprecated too.
+    See glib bug #705600 .
+    (Murray Cumming)
+
+gmmproc:
+* Fix _WRAP_SIGNAL with 'ifdef' and 'deprecated'.
+  (Kjell Ahlstedt)   
+
+
+2.37.5 (unstable):
+
+Glib
+* Object: Add interfaces to custom types before class_init.
+  This deprecates the use of Glib::Object as a base class
+  anywhere but in the last in the list of base classes when
+  implementing an interface, such as TreeModel or 
+  CellRenderer.
+  Having it, for instance, as the first base class,
+  is unfortunately likely to break with glib 3.40.
+  (Kjell Ahlstedt) Bug #697229
+* DateTime: Fix compare() and equal().
+  (Kjell Ahlstedt) Bug #704639 (Aurimas Černius)
+* Regex: Add get_max_lookbehind().
+  (Murray Cumming)
+* Variant: Fix memory leaks.
+  (Kjell Ahlstedt) Bug #704851 (xanm)
+
+Gio:
+* Action:
+  - get_state() and get_state_hint() now return something.
+  We choose not to consider this an ABI break because these
+  methods were impossible to use for anything useful before.
+  (Andrew Potter) Bug #690134.
+  - Add get_state_bool() and change_state(bool),
+  to make it easier to deal with toggle actions.
+  However, we might add a whole derived convenience class for these
+  instead.
+  (Murray Cumming, Kjell Ahlstedt)
+  - Add create_radio_string() and create_radio_integer() for
+  radio items, though we might change this API lots.
+  (Murray Cumming)
+  - Add name_is_valid() and print_detailed_name().
+  (Murray Cumming)
+* ActionMap:
+  - Add add_action(name, slot).
+  This is a convenience method similar to
+  g_action_map_add_action_entries() in C.
+  (Murray Cumming, Kjell Ahlstedt)
+  - Add add_action_radio_string() and add_action_radio_integer()
+  for radio items, though we might change this API lots.
+  (Murray Cumming)
+* Application: Add mark/unmark_busy().
+  (Murray Cumming)
+* DesktopInfo: Add list_actions(), launch_action() and get_action_name().
+  (Murray Cumming)
+* File: Add trash_async(), trash_finish(), make_directory_async()
+  and make_directory_finish().
+  (Murray Cumming)
+* Menu: Add remove_all().
+  (Murray Cumming)
+* MenuItem:
+  - Add set/unset_icon().
+  (Murray Cumming)
+  - Reimplement the constructors.
+  (Murray Cumming) Bug #705199 (Pete Woods)
+* SimpleAction:
+  - set_enabled(): Add default parameter value.
+  (Murray Cumming)
+  - Add constructors and create_bool() methods that take a bool instead of
+  a VariantBase for the state, to make it easier to deal with toggle actions.
+  However, we might add a whole derived convenience class for these
+  instead.
+  (Murray Cumming)
+
+Documentation:
+* gmmproc: Add docs to the default constructor of _CLASS_OPAQUE_COPYABLE.
+  mentioning that the constructed object is invalid.
+  (Kjell Ahlstedt) Bug #704639 (Aurimas Černius)
+
+Build:
+* Glib::TypeTraits<>: Avoid warnings when compiling with -Wcast-qual.
+  (Kjell Ahlstedt) Bug #704640 (Aurimas Černius)
+* enums.pl: fixed multi-argument defines as enum values.
+  (Marcin Kolny) Bug #705113 
+
+
+2.37.4 (unstable):
+
+glibmm:
+* Use std::memset() instead of GLIBMM_INITIALIZE_STRUCT
+  (Because it causes compiler warnings with --std=c++ with g++,
+  because that defines __STRICT_ANSI__.) and deprecate
+  GLIBMM_INITIALIZE_STRUCT.
+  (Kjell Ahlstedt)
+
+giomm:
+* Add Gio::DBus::InterfaceSkeleton.
+  (José Alburquerque)
+
+gmmproc:
+* docextract_to_xml.py: Add '&rArr;' to the list of escape sequences.
+  (José Alburquerque)
+* Add _WRAP_ENUM_DOCS_ONLY() and simplify enum docs process.
+  (José Alburquerque) Bug #703155
+*  gmmproc: Use GMMPROC_RETURN_MISMATCHES environment variable.
+  (José Alburquerque)
+* Write glibmm version in generated files.
+  (Kjell Ahlstedt) Bug #697835 and Bug #700495
+  
+Build:
+* Move to a generated ChangeLog.
+  (José Alburquerque)
+    	
 2.36.2 (stable):
 
 * Revert this change from 2.36.1, which should not have appeared in a

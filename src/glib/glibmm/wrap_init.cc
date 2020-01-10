@@ -38,8 +38,11 @@
 #include "timezone.h"
 #include "unicode.h"
 #include "uriutils.h"
+#ifndef GLIBMM_DISABLE_DEPRECATED
 #include "valuearray.h"
+#endif // *_DISABLE_DEPRECATED
 #include "variant.h"
+#include "variantdict.h"
 #include "variantiter.h"
 #include "varianttype.h"
 
@@ -63,6 +66,7 @@ GQuark g_spawn_error_quark(void);
 GQuark g_thread_error_quark(void);
 #endif // *_DISABLE_DEPRECATED
 GQuark g_thread_error_quark(void);
+GQuark g_variant_parse_error_quark(void);
 } // extern "C"
 
 namespace Glib {
@@ -97,6 +101,7 @@ void wrap_init()
 #ifndef GLIBMM_DISABLE_DEPRECATED
   Glib::Error::register_domain(g_thread_error_quark(), &ThreadError::throw_func);
 #endif // *_DISABLE_DEPRECATED
+  Glib::Error::register_domain(g_variant_parse_error_quark(), &VariantParseError::throw_func);
 
   // Call the wrap_init() functions in sub-namespaces:
   Threads::wrap_init();

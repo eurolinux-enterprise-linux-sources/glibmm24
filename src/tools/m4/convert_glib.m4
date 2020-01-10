@@ -46,6 +46,7 @@ _CONVERSION(`bool&',`gboolean*',`(($2) &($3))')
 _CONVERSION(`int&',`gint*',`&($3)')
 _CONVERSION(`gint*',`int&',`*($3)')
 _CONVERSION(`guint&',`guint*',`&($3)')
+_CONVERSION(`guint64&',`guint64*',`&($3)')
 _CONVERSION(`double&',`gdouble*',`&($3)')
 _CONVERSION(`float&',`gfloat*',`&($3)')
 _CONVERSION(`gchar**',`char**',`$3')
@@ -121,7 +122,7 @@ _CONVERSION(`GObject*',`Glib::RefPtr<const Glib::ObjectBase>',`Glib::wrap($3)')
 
 dnl OptionGroup
 _CONVERSION(`OptionGroup&',`GOptionGroup*',`($3).gobj()')
-#_CONVERSION(`GOptionGroup*',`OptionGroup',`Glib::wrap(($3), true /* take_copy */)')
+_CONVERSION(`Glib::OptionGroup&',`GOptionGroup*',`($3).gobj()')
 
 dnl Bytes
 _CONVERSION(`GBytes*',`Glib::RefPtr<Glib::Bytes>',`Glib::wrap($3)')
@@ -153,10 +154,23 @@ _CONVERSION(`const Glib::ValueBase&',`GValue*',`const_cast<GValue*>(($3).gobj())
 _CONVERSION(`GValue*', `Glib::ValueBase&', `*reinterpret_cast<Glib::ValueBase*>($3)')
 _CONVERSION(`const GValue*', `const Glib::ValueBase&', `*reinterpret_cast<const Glib::ValueBase*>($3)')
 
-dnl VariantContainerBase
+#Variant
+_CONVERSION(`GVariant*',`Glib::VariantBase',`Glib::wrap($3, false)')
+_CONVERSION(`GVariant*',`Glib::VariantContainerBase',`Glib::VariantContainerBase($3, false)')
+_CONVERSION(`const VariantBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
+_CONVERSION(`const Glib::VariantBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
+_CONVERSION(`const Glib::VariantContainerBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
+
+# VariantContainerBase
 _CONVERSION(`const VariantContainerBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
 
-dnl VariantType
+#VariantDict
+_CONVERSION(`GVariantDict*',`Glib::RefPtr<VariantDict>',`Glib::wrap($3)')
+_CONVERSION(`GVariantDict*',`Glib::RefPtr<Glib::VariantDict>',`Glib::wrap($3)')
+_CONVERSION(`GVariantDict*',`Glib::RefPtr<const Glib::VariantDict>',`Glib::wrap($3)')
+
+#VariantType
+_CONVERSION(`const GVariantType*',`Glib::VariantType',`Glib::wrap(const_cast<GVariantType*>($3), true)')
 _CONVERSION(`const VariantType&',`const GVariantType*',`($3).gobj()')
 _CONVERSION(`const Glib::VariantType&',`const GVariantType*',`($3).gobj()')
 _CONVERSION(`GVariantType*',`VariantType',`Glib::wrap($3)')

@@ -25,11 +25,13 @@
 #include <glib-object.h>
 #include <glibmmconfig.h> //Include this here so that the /private/*.h classes have access to GLIBMM_VFUNCS_ENABLED
 
+#include <vector> //For interface properties that custom types might override.
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace Glib
 {
+class Interface_Class;
 
 class Class
 {
@@ -51,7 +53,34 @@ public:
   //static Glib::Object* wrap_new(GObject*);
 
   inline GType get_type() const;
+
+  //TODO: Remove this method at the next ABI/API break.
+  /** Register a static custom GType, derived from the parent of this class's type.
+   * The parent type of the registered custom type is the same C class as the parent
+   * of the get_type() type. If a type with the specified name is already registered,
+   * nothing is done. register_derived_type() must have been called.
+   * @param custom_type_name The name of the registered type is
+   *        "gtkmm__CustomObject_" + canonic(custom_type_name), where canonic()
+   *        replaces special characters with '+'.
+   * @return The registered type.
+   */
   GType clone_custom_type(const char* custom_type_name) const;
+
+  /// The type that holds pointers to the interfaces of custom types.
+  typedef std::vector<const Interface_Class*> interface_class_vector_type;
+
+  /** Register a static custom GType, derived from the parent of this class's type.
+   * The parent type of the registered custom type is the same C class as the parent
+   * of the get_type() type. If a type with the specified name is already registered,
+   * nothing is done. register_derived_type() must have been called.
+   * @param custom_type_name The name of the registered type is
+   *        "gtkmm__CustomObject_" + canonic(custom_type_name), where canonic()
+   *        replaces special characters with '+'.
+   * @param interface_classes Interfaces that the custom type implements.
+   * @return The registered type.
+   */
+  GType clone_custom_type(const char* custom_type_name,
+    const interface_class_vector_type& interface_classes) const;
 
 protected:
   GType           gtype_;
@@ -67,7 +96,16 @@ protected:
   void register_derived_type(GType base_type, GTypeModule* module);
 
 private:
+  static void custom_class_base_finalize_function(void* g_class);
   static void custom_class_init_function(void* g_class, void* class_data);
+
+public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  // The type that holds the values of the interface properties of custom types.
+  typedef std::vector<GValue*> iface_properties_type;
+  // The quark used for storing/getting the interface properties of custom types.
+  static GQuark iface_properties_quark;
+#endif
 };
 
 inline

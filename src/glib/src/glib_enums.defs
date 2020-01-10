@@ -77,7 +77,8 @@
 ;;   G_CONVERT_ERROR_FAILED,
 ;;   G_CONVERT_ERROR_PARTIAL_INPUT,
 ;;   G_CONVERT_ERROR_BAD_URI,
-;;   G_CONVERT_ERROR_NOT_ABSOLUTE_PATH
+;;   G_CONVERT_ERROR_NOT_ABSOLUTE_PATH,
+;;   G_CONVERT_ERROR_NO_MEMORY
 ;; } GConvertError;
 
 (define-enum-extended ConvertError
@@ -90,6 +91,7 @@
     '("partial-input" "G_CONVERT_ERROR_PARTIAL_INPUT" "3")
     '("bad-uri" "G_CONVERT_ERROR_BAD_URI" "4")
     '("not-absolute-path" "G_CONVERT_ERROR_NOT_ABSOLUTE_PATH" "5")
+    '("no-memory" "G_CONVERT_ERROR_NO_MEMORY" "6")
   )
 )
 
@@ -521,7 +523,8 @@
 ;; {
 ;;   G_MARKUP_DO_NOT_USE_THIS_UNSUPPORTED_FLAG = 1 << 0,
 ;;   G_MARKUP_TREAT_CDATA_AS_TEXT              = 1 << 1,
-;;   G_MARKUP_PREFIX_ERROR_POSITION            = 1 << 2
+;;   G_MARKUP_PREFIX_ERROR_POSITION            = 1 << 2,
+;;   G_MARKUP_IGNORE_QUALIFIED                 = 1 << 3
 ;; } GMarkupParseFlags;
 
 (define-flags-extended MarkupParseFlags
@@ -531,6 +534,7 @@
     '("do-not-use-this-unsupported-flag" "G_MARKUP_DO_NOT_USE_THIS_UNSUPPORTED_FLAG" "1 << 0")
     '("treat-cdata-as-text" "G_MARKUP_TREAT_CDATA_AS_TEXT" "1 << 1")
     '("prefix-error-position" "G_MARKUP_PREFIX_ERROR_POSITION" "1 << 2")
+    '("ignore-qualified" "G_MARKUP_IGNORE_QUALIFIED" "1 << 3")
   )
 )
 
@@ -646,6 +650,7 @@
 ;; Original typedef:
 ;; typedef enum
 ;; {
+;;   G_OPTION_FLAG_NONE            = 0,
 ;;   G_OPTION_FLAG_HIDDEN		= 1 << 0,
 ;;   G_OPTION_FLAG_IN_MAIN		= 1 << 1,
 ;;   G_OPTION_FLAG_REVERSE		= 1 << 2,
@@ -659,6 +664,7 @@
   (in-module "G")
   (c-name "GOptionFlags")
   (values
+    '("none" "G_OPTION_FLAG_NONE" "0x0")
     '("hidden" "G_OPTION_FLAG_HIDDEN" "1 << 0")
     '("in-main" "G_OPTION_FLAG_IN_MAIN" "1 << 1")
     '("reverse" "G_OPTION_FLAG_REVERSE" "1 << 2")
@@ -1145,6 +1151,7 @@
 ;; Original typedef:
 ;; typedef enum
 ;; {
+;;   G_SPAWN_DEFAULT                = 0,
 ;;   G_SPAWN_LEAVE_DESCRIPTORS_OPEN = 1 << 0,
 ;;   G_SPAWN_DO_NOT_REAP_CHILD      = 1 << 1,
 ;;   /* look for argv[0] in the path i.e. use execvp() */
@@ -1154,13 +1161,15 @@
 ;;   G_SPAWN_STDERR_TO_DEV_NULL     = 1 << 4,
 ;;   G_SPAWN_CHILD_INHERITS_STDIN   = 1 << 5,
 ;;   G_SPAWN_FILE_AND_ARGV_ZERO     = 1 << 6,
-;;   G_SPAWN_SEARCH_PATH_FROM_ENVP  = 1 << 7
+;;   G_SPAWN_SEARCH_PATH_FROM_ENVP  = 1 << 7,
+;;   G_SPAWN_CLOEXEC_PIPES          = 1 << 8
 ;; } GSpawnFlags;
 
 (define-flags-extended SpawnFlags
   (in-module "G")
   (c-name "GSpawnFlags")
   (values
+    '("default" "G_SPAWN_DEFAULT" "0x0")
     '("leave-descriptors-open" "G_SPAWN_LEAVE_DESCRIPTORS_OPEN" "1 << 0")
     '("do-not-reap-child" "G_SPAWN_DO_NOT_REAP_CHILD" "1 << 1")
     '("search-path" "G_SPAWN_SEARCH_PATH" "1 << 2")
@@ -1169,6 +1178,7 @@
     '("child-inherits-stdin" "G_SPAWN_CHILD_INHERITS_STDIN" "1 << 5")
     '("file-and-argv-zero" "G_SPAWN_FILE_AND_ARGV_ZERO" "1 << 6")
     '("search-path-from-envp" "G_SPAWN_SEARCH_PATH_FROM_ENVP" "1 << 7")
+    '("cloexec-pipes" "G_SPAWN_CLOEXEC_PIPES" "1 << 8")
   )
 )
 
@@ -1228,6 +1238,23 @@
 
 ;; Original typedef:
 ;; typedef enum {
+;;   G_TEST_SUBPROCESS_INHERIT_STDIN  = 1 << 0,
+;;   G_TEST_SUBPROCESS_INHERIT_STDOUT = 1 << 1,
+;;   G_TEST_SUBPROCESS_INHERIT_STDERR = 1 << 2
+;; } GTestSubprocessFlags;
+
+(define-flags-extended TestSubprocessFlags
+  (in-module "G")
+  (c-name "GTestSubprocessFlags")
+  (values
+    '("stdin" "G_TEST_SUBPROCESS_INHERIT_STDIN" "1 << 0")
+    '("stdout" "G_TEST_SUBPROCESS_INHERIT_STDOUT" "1 << 1")
+    '("stderr" "G_TEST_SUBPROCESS_INHERIT_STDERR" "1 << 2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum {
 ;;   G_TEST_LOG_NONE,
 ;;   G_TEST_LOG_ERROR,             /* s:msg */
 ;;   G_TEST_LOG_START_BINARY,      /* s:binaryname s:seed */
@@ -1237,7 +1264,9 @@
 ;;   G_TEST_LOG_STOP_CASE,         /* d:status d:nforks d:elapsed */
 ;;   G_TEST_LOG_MIN_RESULT,        /* s:blurb d:result */
 ;;   G_TEST_LOG_MAX_RESULT,        /* s:blurb d:result */
-;;   G_TEST_LOG_MESSAGE            /* s:blurb */
+;;   G_TEST_LOG_MESSAGE,           /* s:blurb */
+;;   G_TEST_LOG_START_SUITE,
+;;   G_TEST_LOG_STOP_SUITE
 ;; } GTestLogType;
 
 (define-enum-extended TestLogType
@@ -1254,6 +1283,24 @@
     '("min-result" "G_TEST_LOG_MIN_RESULT" "7")
     '("max-result" "G_TEST_LOG_MAX_RESULT" "8")
     '("message" "G_TEST_LOG_MESSAGE" "9")
+    '("start-suite" "G_TEST_LOG_START_SUITE" "10")
+    '("stop-suite" "G_TEST_LOG_STOP_SUITE" "11")
+  )
+)
+
+;; Original typedef:
+;; typedef enum
+;; {
+;;   G_TEST_DIST,
+;;   G_TEST_BUILT
+;; } GTestFileType;
+
+(define-enum-extended TestFileType
+  (in-module "G")
+  (c-name "GTestFileType")
+  (values
+    '("dist" "G_TEST_DIST" "0")
+    '("built" "G_TEST_BUILT" "1")
   )
 )
 
@@ -1597,7 +1644,32 @@
 ;;   G_UNICODE_SCRIPT_MIAO,                   /* Plrd */
 ;;   G_UNICODE_SCRIPT_SHARADA,                /* Shrd */
 ;;   G_UNICODE_SCRIPT_SORA_SOMPENG,           /* Sora */
-;;   G_UNICODE_SCRIPT_TAKRI                   /* Takr */
+;;   G_UNICODE_SCRIPT_TAKRI,                  /* Takr */
+;; 
+;;   /* Unicode 7.0 additions */
+;;   G_UNICODE_SCRIPT_BASSA_VAH,              /* Bass */
+;;   G_UNICODE_SCRIPT_CAUCASIAN_ALBANIAN,     /* Aghb */
+;;   G_UNICODE_SCRIPT_DUPLOYAN,               /* Dupl */
+;;   G_UNICODE_SCRIPT_ELBASAN,                /* Elba */
+;;   G_UNICODE_SCRIPT_GRANTHA,                /* Gran */
+;;   G_UNICODE_SCRIPT_KHOJKI,                 /* Khoj */
+;;   G_UNICODE_SCRIPT_KHUDAWADI,              /* Sind */
+;;   G_UNICODE_SCRIPT_LINEAR_A,               /* Lina */
+;;   G_UNICODE_SCRIPT_MAHAJANI,               /* Mahj */
+;;   G_UNICODE_SCRIPT_MANICHAEAN,             /* Manu */
+;;   G_UNICODE_SCRIPT_MENDE_KIKAKUI,          /* Mend */
+;;   G_UNICODE_SCRIPT_MODI,                   /* Modi */
+;;   G_UNICODE_SCRIPT_MRO,                    /* Mroo */
+;;   G_UNICODE_SCRIPT_NABATAEAN,              /* Nbat */
+;;   G_UNICODE_SCRIPT_OLD_NORTH_ARABIAN,      /* Narb */
+;;   G_UNICODE_SCRIPT_OLD_PERMIC,             /* Perm */
+;;   G_UNICODE_SCRIPT_PAHAWH_HMONG,           /* Hmng */
+;;   G_UNICODE_SCRIPT_PALMYRENE,              /* Palm */
+;;   G_UNICODE_SCRIPT_PAU_CIN_HAU,            /* Pauc */
+;;   G_UNICODE_SCRIPT_PSALTER_PAHLAVI,        /* Phlp */
+;;   G_UNICODE_SCRIPT_SIDDHAM,                /* Sidd */
+;;   G_UNICODE_SCRIPT_TIRHUTA,                /* Tirh */
+;;   G_UNICODE_SCRIPT_WARANG_CITI             /* Wara */
 ;; } GUnicodeScript;
 
 (define-enum-extended UnicodeScript
@@ -1708,6 +1780,29 @@
     '("sharada" "G_UNICODE_SCRIPT_SHARADA" "100")
     '("sora-sompeng" "G_UNICODE_SCRIPT_SORA_SOMPENG" "101")
     '("takri" "G_UNICODE_SCRIPT_TAKRI" "102")
+    '("bassa-vah" "G_UNICODE_SCRIPT_BASSA_VAH" "103")
+    '("caucasian-albanian" "G_UNICODE_SCRIPT_CAUCASIAN_ALBANIAN" "104")
+    '("duployan" "G_UNICODE_SCRIPT_DUPLOYAN" "105")
+    '("elbasan" "G_UNICODE_SCRIPT_ELBASAN" "106")
+    '("grantha" "G_UNICODE_SCRIPT_GRANTHA" "107")
+    '("khojki" "G_UNICODE_SCRIPT_KHOJKI" "108")
+    '("khudawadi" "G_UNICODE_SCRIPT_KHUDAWADI" "109")
+    '("linear-a" "G_UNICODE_SCRIPT_LINEAR_A" "110")
+    '("mahajani" "G_UNICODE_SCRIPT_MAHAJANI" "111")
+    '("manichaean" "G_UNICODE_SCRIPT_MANICHAEAN" "112")
+    '("mende-kikakui" "G_UNICODE_SCRIPT_MENDE_KIKAKUI" "113")
+    '("modi" "G_UNICODE_SCRIPT_MODI" "114")
+    '("mro" "G_UNICODE_SCRIPT_MRO" "115")
+    '("nabataean" "G_UNICODE_SCRIPT_NABATAEAN" "116")
+    '("old-north-arabian" "G_UNICODE_SCRIPT_OLD_NORTH_ARABIAN" "117")
+    '("old-permic" "G_UNICODE_SCRIPT_OLD_PERMIC" "118")
+    '("pahawh-hmong" "G_UNICODE_SCRIPT_PAHAWH_HMONG" "119")
+    '("palmyrene" "G_UNICODE_SCRIPT_PALMYRENE" "120")
+    '("pau-cin-hau" "G_UNICODE_SCRIPT_PAU_CIN_HAU" "121")
+    '("psalter-pahlavi" "G_UNICODE_SCRIPT_PSALTER_PAHLAVI" "122")
+    '("siddham" "G_UNICODE_SCRIPT_SIDDHAM" "123")
+    '("tirhuta" "G_UNICODE_SCRIPT_TIRHUTA" "124")
+    '("warang-citi" "G_UNICODE_SCRIPT_WARANG_CITI" "125")
   )
 )
 

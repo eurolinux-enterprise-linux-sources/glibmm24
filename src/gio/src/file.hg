@@ -55,6 +55,7 @@ _WRAP_ENUM(FileQueryInfoFlags, GFileQueryInfoFlags, NO_GTYPE)
 _WRAP_ENUM(FileCreateFlags, GFileCreateFlags, NO_GTYPE)
 _WRAP_ENUM(FileCopyFlags, GFileCopyFlags, NO_GTYPE)
 _WRAP_ENUM(FileMonitorFlags, GFileMonitorFlags, NO_GTYPE)
+_WRAP_ENUM(FileMeasureFlags, GFileMeasureFlags, NO_GTYPE)
 
 
 /** File and directory handling.
@@ -219,7 +220,7 @@ public:
   void read_async(const SlotAsyncReady& slot, int io_priority = Glib::PRIORITY_DEFAULT);
   _IGNORE(g_file_read_async)
 
-  _WRAP_METHOD(Glib::RefPtr<FileInputStream> read_finish(const Glib::RefPtr<AsyncResult>& result),
+  _WRAP_METHOD(Glib::RefPtr<FileInputStream> read_finish(const Glib::RefPtr<AsyncResult>& res),
                g_file_read_finish,
                errthrow)
 
@@ -409,6 +410,7 @@ public:
    * name is to longa Gio::Error with FILENAME_TOO_LONG will be thrown. Other errors are possible too, and
    * depend on what kind of filesystem the file is on.
    *
+   * @param cancellable A Cancellable object which can be used to cancel the operation.
    * @param etag An optional entity tag for the current Glib::File.
    * @param make_backup <tt>true</tt> if a backup should be created.
    * @param flags A set of FileCreateFlags.
@@ -716,7 +718,7 @@ public:
    * be a comma-separated list of attribute or attribute wildcards. The wildcard "*"
    * means all attributes, and a wildcard like "standard::*" means all attributes in the standard
    * namespace. An example attribute query be "standard::*,owner::user".
-   * The standard attributes are available as defines, like #G_FILE_ATTRIBUTE_STANDARD_NAME.
+   * The standard attributes are available as defines, like G_FILE_ATTRIBUTE_STANDARD_NAME.
    *
    * The operation can be cancelled by
    * triggering the cancellable object from another thread. If the operation
@@ -749,7 +751,7 @@ public:
    * be a comma-separated list of attribute or attribute wildcards. The wildcard "*"
    * means all attributes, and a wildcard like "standard::*" means all attributes in the standard
    * namespace. An example attribute query be "standard::*,owner::user".
-   * The standard attributes are available as defines, like #G_FILE_ATTRIBUTE_STANDARD_NAME.
+   * The standard attributes are available as defines, like G_FILE_ATTRIBUTE_STANDARD_NAME.
    *
    * For symlinks, normally the information about the target of the
    * symlink is returned, rather than information about the symlink itself.
@@ -781,7 +783,7 @@ public:
    * directory, or symlink.
    *
    * @param flags: a set of FileQueryInfoFlags passed to query_info().
-   * @results The FileType of the file, or FILE_TYPE_UNKNOWN if the file does not exist.
+   * @result The FileType of the file, or FILE_TYPE_UNKNOWN if the file does not exist.
    *
    * @newin{2,18}
    */
@@ -1050,6 +1052,8 @@ public:
                g_file_set_display_name_finish,
                errthrow)
 
+  //TODO: Remove the bool results from this and other methods that thrown an exception.
+
   /** Deletes a file.
    * If the file is a directory, it will only be deleted if it is empty.
    * The operation can be cancelled by triggering the cancellable object from another thread.
@@ -1093,6 +1097,28 @@ public:
 
   _WRAP_METHOD(bool trash(const Glib::RefPtr<Cancellable>& cancellable{?}),
                g_file_trash,
+               errthrow)
+
+   /** Asynchronously sends the file to the Trash location, if possible.
+    *
+    * @param slot_ready A SlotAsyncReady to call when the request is satisfied
+    * @param cancellable A Cancellable object which can be used to cancel the operation
+    * @param io_priority The I/O priority of the request
+    * @newin{2,38}
+    */
+  void trash_async(const SlotAsyncReady& slot_ready, const Glib::RefPtr<Cancellable>& cancellable, int io_priority = Glib::PRIORITY_DEFAULT);
+
+   /** Asynchronously sends the file to the Trash location, if possible.
+    *
+    * @param slot_ready A SlotAsyncReady to call when the request is satisfied
+    * @param io_priority The I/O priority of the request
+    * @newin{2,38}
+    */
+  void trash_async(const SlotAsyncReady& slot_ready, int io_priority = Glib::PRIORITY_DEFAULT);
+  _IGNORE(g_file_trash_async)
+
+  _WRAP_METHOD(bool trash_finish(const Glib::RefPtr<AsyncResult>& result),
+               g_file_trash_finish,
                errthrow)
 
 
@@ -1261,6 +1287,29 @@ public:
   _WRAP_METHOD(bool make_directory(const Glib::RefPtr<Cancellable>& cancellable{?}),
                g_file_make_directory,
                errthrow)
+
+   /** Asynchronously creates a directory.
+    *
+    * @param slot_ready A SlotAsyncReady to call when the request is satisfied
+    * @param cancellable A Cancellable object which can be used to cancel the operation
+    * @param io_priority The I/O priority of the request
+    * @newin{2,38}
+    */
+  void make_directory_async(const SlotAsyncReady& slot_ready, const Glib::RefPtr<Cancellable>& cancellable, int io_priority = Glib::PRIORITY_DEFAULT);
+
+   /** Asynchronously creates a directory.
+    *
+    * @param slot_ready A SlotAsyncReady to call when the request is satisfied
+    * @param io_priority The I/O priority of the request
+    * @newin{2,38}
+    */
+  void make_directory_async(const SlotAsyncReady& slot_ready, int io_priority = Glib::PRIORITY_DEFAULT);
+  _IGNORE(g_file_make_directory_async)
+
+  _WRAP_METHOD(bool make_directory_finish(const Glib::RefPtr<AsyncResult>& result),
+               g_file_make_directory_finish,
+               errthrow)
+
 
   _WRAP_METHOD(bool make_directory_with_parents(const Glib::RefPtr<Cancellable>& cancellable{?}),
                g_file_make_directory_with_parents,
@@ -1721,6 +1770,101 @@ public:
    */
   Glib::RefPtr<FileMonitor> monitor(FileMonitorFlags flags = FILE_MONITOR_NONE);
   _IGNORE(g_file_monitor)
+
+
+ /** This slot type is used by measure_disk_usage() to make
+  * periodic progress reports when measuring the amount of disk spaced
+  * used by a directory.
+  *
+  * These calls are made on a best-effort basis and not all types of
+  * GFile will support them.  At the minimum, however, one call will
+  * always be made immediately.
+  *
+  * In the case that there is no support, @a reporting will be set to
+  * false (and the other values undefined) and no further calls will be
+  * made.  Otherwise, the @a reporting will be true and the other values
+  * all-zeros during the first (immediate) call.  In this way, you can
+  * know which type of progress UI to show without a delay.
+  *
+  * For measure_disk_usage() the callback is made directly.  For
+  * measure_disk_usage_async() the callback is made via the
+  * default main context of the calling thread (ie: the same way that the
+  * final async result would be reported).
+  *
+  * @a current_size is in the same units as requested by the operation (see
+  * FILE_DISK_USAGE_APPARENT_SIZE).
+  *
+  * The frequency of the updates is implementation defined, but is
+  * ideally about once every 200ms.
+  *
+  * The last progress callback may or may not be equal to the final
+  * result.  Always check the async result to get the final value.
+  *
+  * For instance,
+  * void on_file_measure_progress(bool reporting, guint64 current_size, guint64 num_dirs, guint64 num_files);
+  *
+  * @param reporting true if more reports will come.
+  * @param current_size The current cumulative size measurement.
+  * @param num_dirs The number of directories visited so far.
+  * @param num_files The number of non-directory files encountered.
+  *
+  * @newin{2,38}
+  */
+ typedef sigc::slot<void, bool, guint64, guint64, guint64> SlotFileMeasureProgress;
+
+  //We do not use the {callback} syntax with _WRAP_METHOD here, because it expects to use user_data rather than progress_data.
+  //We ignore the gboolean result, because we throw an exception if it is false.
+  /** Recursively measures the disk usage of the file.
+   *
+   * This is essentially an analog of the '<tt>du</tt>' command,
+   * but it also reports the number of directories and non-directory files
+   * encountered (including things like symbolic links).
+   *
+   * By default, errors are only reported against the toplevel file
+   * itself.  Errors found while recursing are silently ignored, unless
+   * FILE_DISK_USAGE_REPORT_ALL_ERRORS is given in @a flags.
+   *
+   * The returned size, @a disk_usage, is in bytes and should be formatted
+   * with g_format_size() in order to get something reasonable for showing
+   * in a user interface.
+   *
+   * @a slot_progress can be given to request periodic progress updates while scanning.
+   * See the documentation for SlotFileMeasureProgress for information about when and how the
+   * callback will be invoked.
+   *
+   * The operation can be cancelled by triggering the cancellable object from another thread.
+   * If the operation was cancelled, a Gio::Error with CANCELLED will be thrown.
+   *
+   * @param cancellable A Cancellable object which can be used to cancel the operation
+   * @param slot_progress A SlotFileMeasureProgress to call periodically while scanning.
+   * @param disk_usage The number of bytes of disk space used.
+   * @param num_dirs The number of directories encountered.
+   * @param num_files The number of non-directories encountered.
+   * @param flags Set of FileMeasureFlags.
+   */
+  void measure_disk_usage(const Glib::RefPtr<Cancellable>& cancellable, const SlotFileMeasureProgress& slot_progress, guint64& disk_usage, guint64& num_dirs, guint64& num_files, FileMeasureFlags flags = FILE_MEASURE_NONE);
+  _IGNORE(g_file_measure_disk_usage)
+
+  /** Recursively measures the disk usage of the file.
+   *
+   * This is the asynchronous version of measure_disk_usage().  See
+   * there for more information.
+   *
+   * When the operation is finished, @a slot_ready will be called.
+   * You can then call measure_disk_usage_finish() to get the result of the operation.
+   *
+   * @param slot_ready A SlotAsyncReady to call when the request is satisfied
+   * @param cancellable A Cancellable object which can be used to cancel the operation
+   * @param slot_progress The callback slot to be called with progress information
+   * @param flags Set of FileMeasureFlags
+   * @param io_priority The I/O priority of the request
+   */
+  void measure_disk_usage_async(const SlotAsyncReady& slot_ready, const Glib::RefPtr<Cancellable>& cancellable, const SlotFileMeasureProgress& slot_progress, FileMeasureFlags flags = FILE_MEASURE_NONE, int io_priority = Glib::PRIORITY_DEFAULT);
+  _IGNORE(g_file_measure_disk_usage_async)
+
+  _WRAP_METHOD(bool measure_disk_usage_finish(const Glib::RefPtr<AsyncResult>& result, guint64& disk_usage, guint64& num_dirs, guint64& num_files), g_file_measure_disk_usage_finish, errthrow)
+
+
 
  //TODO: The documentation for these start/stop/poll_mountable functions needs to be improved once we've figured out what they do and what the C documentation means. murrayc.
 
@@ -2207,7 +2351,7 @@ public:
    * @param new_etag A location of a new entity tag
    * for the document.
    */
-  void replace_contents_finish(const Glib::RefPtr<AsyncResult>& result, std::string& etag);
+  void replace_contents_finish(const Glib::RefPtr<AsyncResult>& result, std::string& new_etag);
 
   /** Finishes an asynchronous replace of the given file . See
    * replace_contents_async(). Sets @a new_etag to the new entity

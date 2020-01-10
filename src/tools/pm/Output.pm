@@ -73,7 +73,7 @@ sub output_wrap_failed($$$)
   my ($self, $cname, $error) = @_;
 
   my $str = sprintf("//gtkmmproc error: %s : %s", $cname, $error);
-  print STDERR "Output.pm: $cname : $error\n";
+  print STDERR "Output.pm: $main::source: $cname : $error\n";
   $self->append($str);
 }
 
@@ -170,6 +170,7 @@ sub output_wrap_vfunc_cc($$$$$$$$)
   {
     my $refreturn = "";
     $refreturn = "refreturn" if($$objCppfunc{rettype_needs_ref});
+    my $returnValue = $$objCppfunc{return_value};
 
     my ($conversions, $declarations, $initializations) =
       convert_args_cpp_to_c($objCppfunc, $objCFunc, 0, $line_num, $errthrow);
@@ -177,7 +178,7 @@ sub output_wrap_vfunc_cc($$$$$$$$)
     my $no_slot_copy = "";
     $no_slot_copy = "no_slot_copy" if ($$objCppfunc{no_slot_copy});
 
-    my $str = sprintf("_VFUNC_CC(%s,%s,%s,%s,\`%s\',\`%s\',%s,%s,%s,%s,%s,%s,%s)dnl\n",
+    my $str = sprintf("_VFUNC_CC(%s,%s,%s,%s,\`%s\',\`%s\',%s,%s,%s,%s,%s,%s,%s,%s)dnl\n",
       $$objCppfunc{name},
       $cname,
       $$objCppfunc{rettype},
@@ -190,7 +191,8 @@ sub output_wrap_vfunc_cc($$$$$$$$)
       $errthrow,
       $$objCppfunc{slot_type},
       $$objCppfunc{slot_name},
-      $no_slot_copy);
+      $no_slot_copy,
+      $returnValue);
 
     $self->append($str);
   }
@@ -206,7 +208,10 @@ sub output_wrap_vfunc_cc($$$$$$$$)
     my $conversions =
      convert_args_c_to_cpp($objCFunc, $objCppfunc, $line_num);
 
-    my $str = sprintf("_VFUNC_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',%s,%s,%s,%s,%s,%s)dnl\n",
+    my $returnValue = $$objCppfunc{return_value};
+    my $exceptionHandler = $$objCppfunc{exception_handler};
+
+    my $str = sprintf("_VFUNC_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',%s,%s,%s,%s,%s,%s,%s,%s)dnl\n",
       $$objCppfunc{name},
       $cname,
       $$objCppfunc{rettype},
@@ -219,7 +224,9 @@ sub output_wrap_vfunc_cc($$$$$$$$)
       $ifdef,
       $errthrow,
       $$objCppfunc{slot_type},
-      $$objCppfunc{c_data_param_name});
+      $$objCppfunc{c_data_param_name},
+      $returnValue,
+      $exceptionHandler);
 
     $self->append($str);
   }
@@ -229,10 +236,10 @@ sub output_wrap_vfunc_cc($$$$$$$$)
 # _SIGNAL_H(signame,rettype, `<cppargs>', ifdef)
 # _SIGNAL_PH(gtkname,crettype, cargs and names, ifdef, deprecated)
 # void output_wrap_default_signal_handler_h($filename, $line_num, $objCppfunc,
-#      $objCDefsFunc, $ifdef, $deprecated)
-sub output_wrap_default_signal_handler_h($$$$$$$)
+#      $objCDefsFunc, $ifdef, $deprecated, $exceptionHandler)
+sub output_wrap_default_signal_handler_h($$$$$$$$)
 {
-  my ($self, $filename, $line_num, $objCppfunc, $objCDefsFunc, $ifdef, $deprecated) = @_;
+  my ($self, $filename, $line_num, $objCppfunc, $objCDefsFunc, $ifdef, $deprecated, $exceptionHandler) = @_;
 
   # The default signal handler is a virtual function.
   # It's not hidden by deprecation, since that would break ABI.
@@ -248,21 +255,23 @@ sub output_wrap_default_signal_handler_h($$$$$$$)
   #The default callback, which will call on_* or the base default callback.
   #Declares the callback in the private *Class class and sets it in the class_init function.
   #This is hidden by deprecation.
-  $str = sprintf("_SIGNAL_PH(%s,%s,\`%s\',%s,%s)dnl\n",
+  $str = sprintf("_SIGNAL_PH(%s,%s,\`%s\',%s,%s,%s)dnl\n",
     $$objCDefsFunc{name},
     $$objCDefsFunc{rettype},
     $objCDefsFunc->args_types_and_names(),
     $ifdef,
-    $deprecated
+    $deprecated,
+    $exceptionHandler
    );
   $self->append($str);
 }
 
-# _SIGNAL_CC(signame, gtkname, rettype, crettype,`<cppargs>',`<cargs>', const, refreturn, ifdef)
-sub output_wrap_default_signal_handler_cc($$$$$$$$$)
+# _SIGNAL_CC(signame, gtkname, rettype, crettype,`<cppargs>',`<cargs>', const, refreturn, ifdef, exceptionHandler)
+sub output_wrap_default_signal_handler_cc($$$$$$$$$$$)
 {
   my ($self, $filename, $line_num, $objCppfunc, $objDefsSignal, $bImplement,
-      $bCustomCCallback, $bRefreturn, $ifdef, $deprecated) = @_;
+      $bCustomCCallback, $bRefreturn, $ifdef, $deprecated, $exceptionHandler) = @_;
+
   my $cname = $$objDefsSignal{name};
   # $cname = $1 if ($args[3] =~ /"(.*)"/); #TODO: What's this about?
 
@@ -272,6 +281,9 @@ sub output_wrap_default_signal_handler_cc($$$$$$$$$)
     my $refreturn = "";
     $refreturn = "refreturn" if($bRefreturn eq 1);
 
+    my ($conversions, $declarations, $initializations) =
+      convert_args_cpp_to_c($objCppfunc, $objDefsSignal, 0, $line_num);
+
     # The default signal handler is a virtual function.
     # It's not hidden by deprecation, since that would break ABI.
     my $str = sprintf("_SIGNAL_CC(%s,%s,%s,%s,\`%s\',\`%s\',%s,%s,%s)dnl\n",
@@ -280,10 +292,11 @@ sub output_wrap_default_signal_handler_cc($$$$$$$$$)
       $$objCppfunc{rettype},
       $$objDefsSignal{rettype},
       $objCppfunc->args_types_and_names(),
-      convert_args_cpp_to_c($objCppfunc, $objDefsSignal, 0, $line_num), #$objCppfunc->args_names_only(),
+      $conversions,
       $$objCppfunc{const},
       $refreturn,
-      $ifdef);
+      $ifdef
+      );
     $self->append($str);
   }
 
@@ -301,18 +314,22 @@ sub output_wrap_default_signal_handler_cc($$$$$$$$$)
 
   if($bCustomCCallback ne 1)
   {
+    my $conversions =
+      convert_args_c_to_cpp($objDefsSignal, $objCppfunc, $line_num);
+
     #This is hidden by deprecation.
-    my $str = sprintf("_SIGNAL_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',\`%s\',%s,%s)dnl\n",
+    my $str = sprintf("_SIGNAL_PCC(%s,%s,%s,%s,\`%s\',\`%s\',\`%s\',\`%s\',%s,%s,%s)dnl\n",
       $$objCppfunc{name},
       $cname,
       $$objCppfunc{rettype},
       $$objDefsSignal{rettype},
       $objDefsSignal->args_types_and_names(),
       $objDefsSignal->args_names_only(),
-      convert_args_c_to_cpp($objDefsSignal, $objCppfunc, $line_num),
+      $conversions,
       ${$objDefsSignal->get_param_names()}[0],
       $ifdef,
-      $deprecated);
+      $deprecated,
+      $exceptionHandler);
     $self->append($str);
   }
 }
@@ -327,17 +344,17 @@ sub output_wrap_meth($$$$$$$)
 
   my $cpp_param_names = $$objCppfunc{param_names};
   my $cpp_param_types = $$objCppfunc{param_types};
-  my $cpp_param_mappings = $$objCppfunc{param_mappings};
+  my $c_param_name_mappings = $$objCppfunc{param_mappings};
 
   my $num_args_list = $objCppfunc->get_num_possible_args_list();
 
   my $output_var_name;
   my $output_var_type;
 
-  if(defined($$cpp_param_mappings{"OUT"}))
+  if(defined($$c_param_name_mappings{"OUT"}))
   {
-    $output_var_name = $$cpp_param_names[$$cpp_param_mappings{"OUT"}];
-    $output_var_type = $$cpp_param_types[$$cpp_param_mappings{"OUT"}];
+    $output_var_name = $$cpp_param_names[$$c_param_name_mappings{"OUT"}];
+    $output_var_type = $$cpp_param_types[$$c_param_name_mappings{"OUT"}];
   }
 
   for(my $arg_list = 0; $arg_list < $num_args_list; $arg_list++)
@@ -561,15 +578,15 @@ sub output_wrap_create($$$)
   }
 }
 
-# void output_wrap_sig_decl($filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $merge_doxycomment_with_previous, $deprecated, $deprecation_docs)
+# void output_wrap_sig_decl($filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs, $exceptionHandler)
 # custom_signalproxy_name is "" when no type conversion is required - a normal templates SignalProxy will be used instead.
-sub output_wrap_sig_decl($$$$$$$$$$)
+sub output_wrap_sig_decl($$$$$$$$$$$)
 {
-  my ($self, $filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $merge_doxycomment_with_previous, $deprecated, $deprecation_docs) = @_;
+  my ($self, $filename, $line_num, $objCSignal, $objCppfunc, $signal_name, $bCustomCCallback, $ifdef, $commentblock, $deprecated, $deprecation_docs, $exceptionHandler) = @_;
 
 # _SIGNAL_PROXY(c_signal_name, c_return_type, `<c_arg_types_and_names>',
 #               cpp_signal_name, cpp_return_type, `<cpp_arg_types>',`<c_args_to_cpp>',
-#               refdoc_comment)
+#               refdoc_comment, exceptionHandler)
 
   # Get the signal name with underscores only (to look up docs -- they are
   # stored that way).
@@ -585,42 +602,46 @@ sub output_wrap_sig_decl($$$$$$$$$$)
   my $doxycomment = $objCppfunc->get_refdoc_comment($documentation);
 
   # If there was already a previous doxygen comment, we want to merge this
-  # one with the previous so it is one big comment. If it were two separate
-  # comments, doxygen would ignore the first one. If
-  # $merge_doxycomment_with_previous is nonzero, the first comment is
-  # already open but not yet closed.
-  if($merge_doxycomment_with_previous)
+  # one with the previous so it is one big comment. If
+  # $commentblock is not emtpy, it contains the previous doxygen comment without
+  # opening and closing tokens (/** and */).
+  if($commentblock ne "")
   {
     # Strip leading whitespace
     $doxycomment =~ s/^\s+//;
 
-    # We don't have something to add, so just close the comment.
+    # We don't have something to add, so just use $commentblock with
+    # opening and closing tokens added.
     if($doxycomment eq "")
     {
-      $doxycomment = "   */";
+      $doxycomment = '  /**' . $commentblock . "\n   */";
     }
     else
     {
-      # Append the new comment, but remove the first three leading characters
-      # (which are /**) that mark the beginning of the comment.
+      # Merge the two comments, but remove the first three characters from the
+      # second comment (/**) that mark the beginning of the comment.
       $doxycomment = substr($doxycomment, 3);
       $doxycomment =~ s/^\s+//;
-      $doxycomment = "   " . $doxycomment;
+      $doxycomment = '  /**' . $commentblock . "\n   *\n   " . $doxycomment;
     }
   }
 
-  my $str = sprintf("_SIGNAL_PROXY(%s,%s,\`%s\',%s,%s,\`%s\',\`%s\',\`%s\',\`%s\',%s)dnl\n",
+  my $conversions =
+    convert_args_c_to_cpp($objCSignal, $objCppfunc, $line_num);
+
+  my $str = sprintf("_SIGNAL_PROXY(%s,%s,\`%s\',%s,%s,\`%s\',\`%s\',\`%s\',%s,\`%s\',%s,%s)dnl\n",
     $signal_name,
     $$objCSignal{rettype},
     $objCSignal->args_types_and_names_without_object(),
     $$objCppfunc{name},
     $$objCppfunc{rettype},
     $objCppfunc->args_types_only(),
-    convert_args_c_to_cpp($objCSignal, $objCppfunc, $line_num),
+    $conversions,
     $bCustomCCallback, #When this is true, it will not write the *_callback implementation for you.
     $deprecated,
     $doxycomment,
-    $ifdef
+    $ifdef,
+    $exceptionHandler
   );
 
   $self->append($str);
@@ -652,17 +673,19 @@ sub output_wrap_enum($$$$$$$)
   my $value_suffix = "Enum";
   $value_suffix = "Flags" if($$objEnum{flags});
 
-  # Get the existing enum description from the parsed docs.
-  my $description = DocsParser::lookup_enum_description("$c_type");
+  # Get the enum documentation from the parsed docs.
+  my $enum_docs =
+    DocsParser::lookup_enum_documentation("$c_type", "$cpp_type", \@flags);
 
-  # Prepend the Doxygen marker ' * ' to all but the first line.
-  $description =~ s/\n/\n * /g;
-
+  # Remove initial Doxygen comment block start ('/**') from the enum docs
+  # to merge the passed in Doxygen comment block.
+  $enum_docs =~ s/\/\*\*\s+//g;
+  
   # Make sure indentation of passed in comment is correct.
   $comment =~ s/\n\s*\*/\n */g;
 
   # Merge the passed in comment to the existing enum documentation.
-  $comment = $comment . "\n * " . $description;
+  $comment = $comment . "\n * " . $enum_docs;
 
   my $str = sprintf("_ENUM(%s,%s,%s,\`%s\',\`%s\',\`%s\')dnl\n",
     $cpp_type,
@@ -674,6 +697,37 @@ sub output_wrap_enum($$$$$$$)
   );
 
   $self->append($str);
+}
+
+sub output_wrap_enum_docs_only($$$$$$$)
+{
+  my ($self, $filename, $line_num, $module_canonical, $cpp_type, $c_type,
+      $comment, @flags) = @_;
+ 
+  # Get the existing enum description from the parsed docs.
+  my $enum_docs =
+    DocsParser::lookup_enum_documentation("$c_type", "$cpp_type", \@flags);
+
+  if($enum_docs eq "")
+  {
+    $self->output_wrap_failed($c_type, "failed to find documentation.");
+    return;
+  }
+
+  # Include the enum docs in the module's enum docs group.
+  $enum_docs .= "\n * \@ingroup ${module_canonical}Enums\n";
+
+  # Remove initial Doxygen comment block start ('/**') from the enum docs
+  # to merge the passed in Doxygen comment block.
+  $enum_docs =~ s/\/\*\*\s+//g;
+  
+  # Merge the passed in comment to the existing enum documentation.
+  $comment = "\/\*\* " . $comment . "\n * " . $enum_docs . "\n */\n";
+
+  # Make sure indentation of passed in comment is correct.
+  $comment =~ s/\n\s*\*/\n */g;
+
+  $self->append($comment);
 }
 
 # void output_wrap_gerror($filename, $line_num, $cpp_type, $c_enum, $domain, @flags)
@@ -716,13 +770,89 @@ sub output_wrap_gerror($$$$$$$)
   $self->append($str);
 }
 
+# _PROPERTY_PROXY(name, cpp_type) and _CHILD_PROPERTY_PROXY(name, cpp_type)
+# void output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, $proxy_macro)
+sub output_wrap_any_property($$$$$$$$$$)
+{
+  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, $proxy_macro) = @_;
+
+  my $objDefsParser = $$self{objDefsParser};
+
+  # We use a suffix to specify a particular Glib::PropertyProxy* class.
+  my $proxy_suffix = "";
+
+  # Read/Write:
+  if($objProperty->get_construct_only() eq 1)
+  {
+    # construct-only functions can be read, but not written.
+    $proxy_suffix = "_ReadOnly";
+
+    if($objProperty->get_readable() ne 1)
+    {
+      $self->output_wrap_failed($name, "attempt to wrap write-only and construct-only property.");
+      return;
+    }
+  }
+  elsif($objProperty->get_readable() ne 1)
+  {
+    $proxy_suffix = "_WriteOnly";
+  }
+  elsif($objProperty->get_writable() ne 1)
+  {
+    $proxy_suffix = "_ReadOnly";
+  }
+
+  # Convert - to _ so we can use it in C++ method and variable names:
+  my $name_underscored = $name;
+  $name_underscored =~ tr/-/_/;
+
+  # Get the property documentation, if any, and add m4 quotes.
+  my $documentation = $objProperty->get_docs($deprecation_docs);
+  add_m4_quotes(\$documentation) if ($documentation ne "");
+
+  #Declaration:
+  if($deprecated ne "")
+  {
+    $self->append("\n_DEPRECATE_IFDEF_START\n");
+  }
+
+  my $str = sprintf("$proxy_macro(%s,%s,%s,%s,%s,`%s')dnl\n",
+    $name,
+    $name_underscored,
+    $cpp_type,
+    $proxy_suffix,
+    $deprecated,
+    $documentation
+  );
+  $self->append($str);
+  $self->append("\n");
+
+  # If the property is not already read-only, and the property can be read,
+  # then add a second const accessor for a read-only propertyproxy:
+  if( ($proxy_suffix ne "_ReadOnly") && ($objProperty->get_readable()) )
+  {
+    my $str = sprintf("$proxy_macro(%s,%s,%s,%s,%s,`%s')dnl\n",
+      $name,
+      $name_underscored,
+      $cpp_type,
+      "_ReadOnly",
+      $deprecated,
+      $documentation
+    );
+    $self->append($str);
+  }
+
+  if($deprecated ne "")
+  {
+    $self->append("\n_DEPRECATE_IFDEF_END");
+  }
+}
+
 # _PROPERTY_PROXY(name, cpp_type)
 # void output_wrap_property($filename, $line_num, $name, $cpp_type, $deprecated, $deprecation_docs)
 sub output_wrap_property($$$$$$$$)
 {
   my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs) = @_;
-
-  my $objDefsParser = $$self{objDefsParser};
 
   my $objProperty = GtkDefs::lookup_property($c_class, $name);
   if($objProperty eq 0) #If the lookup failed:
@@ -731,74 +861,24 @@ sub output_wrap_property($$$$$$$$)
   }
   else
   {
-    # We use a suffix to specify a particular Glib::PropertyProxy* class.
-    my $proxy_suffix = "";
+    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objProperty, "_PROPERTY_PROXY");
+  }
+}
 
-    # Read/Write:
-    if($objProperty->get_construct_only() eq 1)
-    {
-      # construct-only functions can be read, but not written.
-      $proxy_suffix = "_ReadOnly";
+# _CHILD_PROPERTY_PROXY(name, cpp_type)
+# void output_wrap_child_property($filename, $line_num, $name, $cpp_type, $deprecated, $deprecation_docs)
+sub output_wrap_child_property($$$$$$$$)
+{
+  my ($self, $filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs) = @_;
 
-      if($objProperty->get_readable() ne 1)
-      {
-        $self->output_wrap_failed($name, "attempt to wrap write-only and construct-only property.");
-        return;
-      }
-    }
-    elsif($objProperty->get_readable() ne 1)
-    {
-      $proxy_suffix = "_WriteOnly";
-    }
-    elsif($objProperty->get_writable() ne 1)
-    {
-       $proxy_suffix = "_ReadOnly";
-    }
-
-    # Convert - to _ so we can use it in C++ method and variable names:
-    my $name_underscored = $name;
-    $name_underscored =~ tr/-/_/;
-
-    # Get the property documentation, if any, and add m4 quotes.
-    my $documentation = $objProperty->get_docs($deprecation_docs);
-    add_m4_quotes(\$documentation) if ($documentation ne "");
-
-    #Declaration:
-    if($deprecated ne "")
-    {
-      $self->append("\n_DEPRECATE_IFDEF_START\n");
-    }
-
-    my $str = sprintf("_PROPERTY_PROXY(%s,%s,%s,%s,%s,`%s')dnl\n",
-      $name,
-      $name_underscored,
-      $cpp_type,
-      $proxy_suffix,
-      $deprecated,
-      $documentation
-    );
-    $self->append($str);
-    $self->append("\n");
-
-    # If the property is not already read-only, and the property can be read,
-    # then add a second const accessor for a read-only propertyproxy:
-    if( ($proxy_suffix ne "_ReadOnly") && ($objProperty->get_readable()) )
-    {
-      my $str = sprintf("_PROPERTY_PROXY(%s,%s,%s,%s,%s,`%s')dnl\n",
-        $name,
-        $name_underscored,
-        $cpp_type,
-        "_ReadOnly",
-        $deprecated,
-        $documentation
-      );
-      $self->append($str);
-    }
-
-    if($deprecated ne "")
-    {
-      $self->append("\n_DEPRECATE_IFDEF_END");
-    }
+  my $objChildProperty = GtkDefs::lookup_child_property($c_class, $name);
+  if($objChildProperty eq 0) #If the lookup failed:
+  {
+    $self->output_wrap_failed($name, "child property defs lookup failed.");
+  }
+  else
+  {
+    $self->output_wrap_any_property($filename, $line_num, $name, $cpp_type, $c_class, $deprecated, $deprecation_docs, $objChildProperty, "_CHILD_PROPERTY_PROXY");
   }
 }
 
@@ -817,19 +897,18 @@ sub add_m4_quotes($)
   $$text = "`" . $$text . "'";
 }
 
-# vpod output_temp_g1($filename, $section) e.g. output_temp_g1(button, gtk)
-sub output_temp_g1($$)
+# void output_temp_g1($module, $glibmm_version) e.g. output_temp_g1(gtkmm, 2.38.0)
+sub output_temp_g1($$$)
 {
-  my ($self, $section) = @_;
+  my ($self, $module, $glibmm_version) = @_;
 
   # Write out *.g1 temporary file
   open(FILE, '>', "$$self{tmpdir}/gtkmmproc_$$.g1");  # $$ is the Process ID
 
   print FILE "include(base.m4)dnl\n";
 
-  my $module = $section;
   my $module_canonical = Util::string_canonical($module); #In case there is a / character in the module.
-  print FILE "_START($$self{source},$module,$module_canonical)dnl\n";
+  print FILE "_START($$self{source},$module,$module_canonical,$glibmm_version)dnl\n";
   print FILE join("", @{$$self{out}});
   print FILE "_END()\n";
   close(FILE);
@@ -926,7 +1005,7 @@ sub convert_args_cpp_to_c($$$$$)
   my $cpp_param_names = $$objCppfunc{param_names};
   my $cpp_param_types = $$objCppfunc{param_types};
   my $cpp_param_flags = $$objCppfunc{param_flags};
-  my $cpp_param_mappings = $$objCppfunc{param_mappings};
+  my $c_param_name_mappings = $$objCppfunc{param_mappings};
   my $c_param_types = $$objCDefsFunc{param_types};
   my $c_param_names = $$objCDefsFunc{param_names};
 
@@ -945,11 +1024,11 @@ sub convert_args_cpp_to_c($$$$$)
   # See if there is an output parameter.  If so, temporarily decrement the
   # number of C++ arguments so that the possible GError addition works and
   # note the existence.
-  if(defined($$cpp_param_mappings{"OUT"}))
+  if(defined($$c_param_name_mappings{"OUT"}))
   {
     $num_cpp_args--;
     $has_output_param = 1;
-    $output_param_index = $$cpp_param_mappings{"OUT"};
+    $output_param_index = $$c_param_name_mappings{"OUT"};
   }
   else
   {
@@ -979,7 +1058,7 @@ sub convert_args_cpp_to_c($$$$$)
     # is an output parameter since it will be readded.
     my $cpp_index = $num_cpp_args - 1;
     $cpp_index++ if($has_output_param);
-    $$cpp_param_mappings{@$c_param_names[$num_c_args_expected]} = $cpp_index;
+    $$c_param_name_mappings{$$c_param_names[$num_c_args_expected]} = $cpp_index;
   }
 
   # If the method has a slot temporarily decrement the C arg count when
@@ -1005,6 +1084,22 @@ sub convert_args_cpp_to_c($$$$$)
   # the number of C++ arguments.
   $num_cpp_args++ if($has_output_param);
 
+  if ($index == 0)
+  {
+    # Check if the C param names in %$c_param_name_mappings exist.
+    foreach my $mapped_c_param_name (keys %$c_param_name_mappings)
+    {
+      next if $mapped_c_param_name eq "" || $mapped_c_param_name eq "OUT";
+
+      if (!grep($_ eq $mapped_c_param_name, @$c_param_names))
+      {
+        Output::error("convert_args_cpp_to_c(): There is no C argument called \"$mapped_c_param_name\"\n");
+        $objCDefsFunc->dump();
+        return ("", "", "");
+      }
+    }
+  }
+
   # Get the desired argument list combination.
   my $possible_arg_list = $$objCppfunc{possible_args_list}[$index];
 
@@ -1029,9 +1124,9 @@ sub convert_args_cpp_to_c($$$$$)
     # Account for a possible C++ output param in the C++ arg list.
     $iCParam-- if($has_output_param && $i > $output_param_index);
 
-    my $c_param_name = @$c_param_names[$iCParam];
+    my $c_param_name = $$c_param_names[$iCParam];
     my $cpp_param_index = $i;
-    $cpp_param_index = $$cpp_param_mappings{$c_param_name} if(defined($$cpp_param_mappings{$c_param_name}));
+    $cpp_param_index = $$c_param_name_mappings{$c_param_name} if(defined($$c_param_name_mappings{$c_param_name}));
 
     my $cppParamType = $$cpp_param_types[$cpp_param_index];
     $cppParamType =~ s/ &/&/g; #Remove space between type and &
@@ -1117,13 +1212,21 @@ sub convert_args_cpp_to_c($$$$$)
 
     if ($cppParamType ne $cParamType) #If a type conversion is needed.
     {
+      my $std_conversion = sprintf("_CONVERT(%s,%s,%s,%s)",
+            $cppParamType,
+            $cParamType,
+            $cppParamName,
+            $wrap_line_number);
 
-
-      push(@conversions, sprintf("_CONVERT(%s,%s,%s,%s)",
-                  $cppParamType,
-                  $cParamType,
-                  $cppParamName,
-                  $wrap_line_number) );
+      if (($$cpp_param_flags[$cpp_param_index] & FLAG_PARAM_OPTIONAL) &&
+       $cppParamType =~ /^(const\s+)?(std::string|Glib::ustring)&?/)
+      {
+        push(@conversions, "$cppParamName.empty() ? 0 : " . $std_conversion);
+      }
+      else
+      {
+        push(@conversions, $std_conversion);
+      }
     }
     else
     {
@@ -1205,6 +1308,7 @@ sub convert_args_c_to_cpp($$$)
   # Loop through the C++ parameters:
   my $i;
   my $cpp_param_max = $num_cpp_args;
+  my $num_c_args = scalar(@{$c_param_names});
 
   for ($i = 0; $i < $cpp_param_max; $i++)
   {
@@ -1218,7 +1322,13 @@ sub convert_args_c_to_cpp($$$)
       $cParamName = $cpp_index_param_mappings{$i};
 
       # Get the C index based on the C param name.
-      ++$c_index until $$c_param_names[$c_index] eq $cParamName;
+      ++$c_index until $c_index >= $num_c_args || $$c_param_names[$c_index] eq $cParamName;
+      if ($c_index >= $num_c_args)
+      {
+        Output::error("convert_args_c_to_cpp(): There is no C argument called \"$cParamName\"\n");
+        $objCDefsFunc->dump();
+        return "";
+      }
     }
     else
     {
@@ -1307,7 +1417,7 @@ sub get_ctor_properties($$$$$$)
   my $cpp_param_names = $$objCppfunc{param_names};
   my $cpp_param_types = $$objCppfunc{param_types};
   my $cpp_param_flags = $$objCppfunc{param_flags};
-  my $cpp_param_mappings = $$objCppfunc{param_mappings};
+  my $c_param_name_mappings = $$objCppfunc{param_mappings};
   my $c_param_types = $$objCDefsFunc{param_types};
   my $c_param_names = $$objCDefsFunc{param_names};
 
@@ -1327,6 +1437,21 @@ sub get_ctor_properties($$$$$$)
     return "";
   }
 
+  if ($index == 0)
+  {
+    # Check if the C param names in %$c_param_name_mappings exist.
+    foreach my $mapped_c_param_name (keys %$c_param_name_mappings)
+    {
+      next if $mapped_c_param_name eq "";
+
+      if (!grep($_ eq $mapped_c_param_name, @$c_param_names))
+      {
+        Output::error("get_ctor_properties(): There is no C argument called \"$mapped_c_param_name\"\n");
+        $objCDefsFunc->dump();
+        return ("", "", "");
+      }
+    }
+  }
 
   # Get the desired argument list combination.
   my $possible_arg_list = $$objCppfunc{possible_args_list}[$index];
@@ -1336,9 +1461,9 @@ sub get_ctor_properties($$$$$$)
 
   for ($i = 0; $i < $num_args; $i++)
   {
-    my $c_param_name = @$c_param_names[$i];
+    my $c_param_name = $$c_param_names[$i];
     my $cpp_param_index = $i;
-    $cpp_param_index = $$cpp_param_mappings{$c_param_name} if(defined($$cpp_param_mappings{$c_param_name}));
+    $cpp_param_index = $$c_param_name_mappings{$c_param_name} if(defined($$c_param_name_mappings{$c_param_name}));
 
     my $cppParamType = $$cpp_param_types[$cpp_param_index];
     $cppParamType =~ s/ &/&/g; #Remove space between type and &

@@ -23,6 +23,46 @@
 #include "generate_extra_defs.h"
 #include <algorithm>
 
+std::string get_property_with_node_name(GParamSpec* pParamSpec, const std::string& strObjectName, const std::string& strNodeName)
+{
+  std::string strResult;
+
+  //Name and type:
+  const std::string strName = g_param_spec_get_name(pParamSpec);
+  const std::string strTypeName = G_PARAM_SPEC_TYPE_NAME(pParamSpec);
+
+  const gchar* pchBlurb = g_param_spec_get_blurb(pParamSpec);
+  std::string strDocs = (pchBlurb) ? pchBlurb : "";
+  // Quick hack to get rid of nested double quotes:
+  std::replace(strDocs.begin(), strDocs.end(), '"', '\'');
+
+  strResult += "(" + strNodeName + " " + strName + "\n";
+  strResult += "  (of-object \"" + strObjectName + "\")\n";
+  strResult += "  (prop-type \"" + strTypeName + "\")\n";
+  strResult += "  (docs \"" + strDocs + "\")\n";
+
+  //Flags:
+  GParamFlags flags = pParamSpec->flags;
+  bool bReadable = (flags & G_PARAM_READABLE) == G_PARAM_READABLE;
+  bool bWritable = (flags & G_PARAM_WRITABLE) == G_PARAM_WRITABLE;
+  bool bConstructOnly = (flags & G_PARAM_CONSTRUCT_ONLY) == G_PARAM_CONSTRUCT_ONLY;
+
+  //#t and #f aren't documented, but I guess that it's correct based on the example in the .defs spec.
+  const std::string strTrue = "#t";
+  const std::string strFalse = "#f";
+
+  strResult += "  (readable " + (bReadable ? strTrue : strFalse) + ")\n";
+  strResult += "  (writable " + (bWritable ? strTrue : strFalse) + ")\n";
+  strResult += "  (construct-only " + (bConstructOnly ? strTrue : strFalse) + ")\n";
+
+  strResult += ")\n\n"; //close (strNodeName
+
+  return strResult;
+}
+
+// Until the glib bug https://bugzilla.gnome.org/show_bug.cgi?id=465631
+// is fixed, get_properties() must be called for a GObject before it's
+// called for a GInterface.
 std::string get_properties(GType gtype)
 {
   std::string strResult;
@@ -45,19 +85,21 @@ std::string get_properties(GType gtype)
   else if (G_TYPE_IS_INTERFACE(gtype))
   {
     gpointer pGInterface = g_type_default_interface_ref(gtype);
-    if(pGInterface) //We check because this fails for G_TYPE_VOLUME, for some reason.
+    if(pGInterface)
     {
       ppParamSpec = g_object_interface_list_properties(pGInterface, &iCount);
       g_type_default_interface_unref(pGInterface);
 
       if(!ppParamSpec)
       {
-        strResult +=  ";; Warning: g_object_interface_list_properties() returned NULL for " + std::string(g_type_name(gtype)) + "\n";
+        strResult += ";; Warning: g_object_interface_list_properties() returned NULL for " + std::string(g_type_name(gtype)) + "\n";
       }
     }
+    else
+      strResult += ";; Warning: g_type_default_interface_ref() returned NULL for " + std::string(g_type_name(gtype)) + "\n";
   }
 
-  //This extra check avoids an occasional crash, for instance for GVolume
+  //This extra check avoids an occasional crash
   if(!ppParamSpec)
     iCount = 0;
 
@@ -70,35 +112,7 @@ std::string get_properties(GType gtype)
     // The base classes' properties should not be generated).
     if(pParamSpec && pParamSpec->owner_type == gtype)
     {
-      //Name and type:
-      const std::string strName = g_param_spec_get_name(pParamSpec);
-      const std::string strTypeName = G_PARAM_SPEC_TYPE_NAME(pParamSpec);
-
-      const gchar* pchBlurb = g_param_spec_get_blurb(pParamSpec);
-      std::string strDocs = (pchBlurb) ? pchBlurb : "";
-      // Quick hack to get rid of nested double quotes:
-      std::replace(strDocs.begin(), strDocs.end(), '"', '\'');
-
-      strResult += "(define-property " + strName + "\n";
-      strResult += "  (of-object \"" + strObjectName + "\")\n";
-      strResult += "  (prop-type \"" + strTypeName + "\")\n";
-      strResult += "  (docs \"" + strDocs + "\")\n";
-
-      //Flags:
-      GParamFlags flags = pParamSpec->flags;
-      bool bReadable = (flags & G_PARAM_READABLE) == G_PARAM_READABLE;
-      bool bWritable = (flags & G_PARAM_WRITABLE) == G_PARAM_WRITABLE;
-      bool bConstructOnly = (flags & G_PARAM_CONSTRUCT_ONLY) == G_PARAM_CONSTRUCT_ONLY;
-
-      //#t and #f aren't documented, but I guess that it's correct based on the example in the .defs spec.
-      const std::string strTrue = "#t";
-      const std::string strFalse = "#f";
-
-      strResult += "  (readable " + (bReadable ? strTrue : strFalse) + ")\n";
-      strResult += "  (writable " + (bWritable ? strTrue : strFalse) + ")\n";
-      strResult += "  (construct-only " + (bConstructOnly ? strTrue : strFalse) + ")\n";
-
-      strResult += ")\n\n"; //close (define-property		
+      strResult += get_property_with_node_name(pParamSpec, strObjectName, "define-property");
     }
   }
 
@@ -211,7 +225,7 @@ std::string get_signals(GType gtype, GTypeIsAPointerFunc is_a_pointer_func)
           GType typeParamMangled = pParameters[i];
 
           //Parameter name:
-          //TODO: How can we get the real parameter name?
+          //We can't get the real parameter name from the GObject system. It's not registered with g_signal_new().
           gchar* pchNum = g_strdup_printf("%d", i);
           std::string strParamName = "p" + std::string(pchNum);
           g_free(pchNum);
@@ -219,15 +233,15 @@ std::string get_signals(GType gtype, GTypeIsAPointerFunc is_a_pointer_func)
 
           //Just like above, for the return type:
           std::string strTypeName = get_type_name_signal( typeParamMangled & ~G_SIGNAL_TYPE_STATIC_SCOPE, is_a_pointer_func ); //The type is mangled with a flag. Hacky.
-          //bool bReturnTypeHasStaticScope = (typeParamMangled & G_SIGNAL_TYPE_STATIC_SCOPE) == G_SIGNAL_TYPE_STATIC_SCOPE;
+          //bool bTypeHasStaticScope = (typeParamMangled & G_SIGNAL_TYPE_STATIC_SCOPE) == G_SIGNAL_TYPE_STATIC_SCOPE;
 
           strResult += "    '(\"" + strTypeName + "\" \"" + strParamName + "\")\n";
         }
 
-        strResult += "  )\n"; //close (properties
+        strResult += "  )\n"; //close (parameters
       }
 
-      strResult += ")\n\n"; //close (define=signal
+      strResult += ")\n\n"; //close (define-signal
     }
   }
 
@@ -242,17 +256,20 @@ std::string get_signals(GType gtype, GTypeIsAPointerFunc is_a_pointer_func)
 }
 
 
-
 std::string get_defs(GType gtype, GTypeIsAPointerFunc is_a_pointer_func)
 {
   std::string strObjectName = g_type_name(gtype);
-  std::string strDefs = ";; From " + strObjectName + "\n\n";
+  std::string strDefs;
 
   if(G_TYPE_IS_OBJECT(gtype) || G_TYPE_IS_INTERFACE(gtype))
   {
+    strDefs = ";; From " + strObjectName + "\n\n";
     strDefs += get_signals(gtype, is_a_pointer_func);
     strDefs += get_properties(gtype);
   }
+  else
+    strDefs = ";; " + strObjectName +
+      " is neither a GObject nor a GInterface. Not checked for signals and properties.\n\n";
 
   return strDefs;
 }

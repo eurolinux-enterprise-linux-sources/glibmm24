@@ -11,10 +11,10 @@
 #define GIOMM_MAJOR_VERSION 2
 
 /* Micro version number of giomm. */
-#define GIOMM_MICRO_VERSION 2
+#define GIOMM_MICRO_VERSION 0
 
 /* Minor version number of giomm. */
-#define GIOMM_MINOR_VERSION 36
+#define GIOMM_MINOR_VERSION 42
 
 /* Define if giomm is built as a static library */
 /* #undef GIOMM_STATIC_LIB */

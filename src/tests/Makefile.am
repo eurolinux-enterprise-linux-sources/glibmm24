@@ -20,12 +20,16 @@ AUTOMAKE_OPTIONS = subdir-objects
 check_PROGRAMS =				\
 	giomm_ioerror/test			\
 	giomm_ioerror_and_iodbuserror/test	\
+	giomm_memoryinputstream/test			\
 	giomm_simple/test			\
 	giomm_asyncresult_sourceobject/test	\
+	giomm_tls_client/test			\
 	glibmm_btree/test			\
+	glibmm_base64/test			\
 	glibmm_date/test			\
 	glibmm_buildfilename/test		\
 	glibmm_interface_implementation/test	\
+	glibmm_mainloop/test			\
 	glibmm_nodetree/test			\
 	glibmm_ustring_compose/test		\
 	glibmm_ustring_format/test		\
@@ -36,9 +40,10 @@ check_PROGRAMS =				\
 	glibmm_bool_vector/test			\
 	glibmm_bool_arrayhandle/test		\
 	glibmm_null_vectorutils/test		\
-	glibmm_null_containerhandle/test \
-	glibmm_refptr_sigc_bind/test
-	
+	glibmm_null_containerhandle/test	\
+	glibmm_refptr_sigc_bind/test		\
+	glibmm_bytearray/test
+
 TESTS =	$(check_PROGRAMS)
 
 glibmm_includes = -I$(top_builddir)/glib $(if $(srcdir:.=),-I$(top_srcdir)/glib)
@@ -61,12 +66,19 @@ giomm_ioerror_test_LDADD   = $(giomm_ldadd)
 giomm_ioerror_and_iodbuserror_test_SOURCES = giomm_ioerror_and_iodbuserror/main.cc
 giomm_ioerror_and_iodbuserror_test_LDADD   = $(giomm_ldadd)
 
+giomm_memoryinputstream_test_SOURCES = giomm_memoryinputstream/main.cc
+giomm_memoryinputstream_test_LDADD   = $(giomm_ldadd)
+
 giomm_simple_test_SOURCES  = giomm_simple/main.cc
 giomm_simple_test_LDADD    = $(giomm_ldadd)
 
 giomm_asyncresult_sourceobject_test_SOURCES  = giomm_asyncresult_sourceobject/main.cc
 giomm_asyncresult_sourceobject_test_LDADD    = $(giomm_ldadd)
 
+giomm_tls_client_test_SOURCES                = giomm_tls_client/main.cc
+giomm_tls_client_test_LDADD                  = $(giomm_ldadd)
+
+glibmm_base64_test_SOURCES               = glibmm_base64/main.cc
 glibmm_btree_test_SOURCES                = glibmm_btree/main.cc
 glibmm_buildfilename_test_SOURCES        = glibmm_buildfilename/main.cc
 glibmm_date_test_SOURCES                 = glibmm_date/main.cc
@@ -74,6 +86,7 @@ glibmm_date_test_SOURCES                 = glibmm_date/main.cc
 glibmm_interface_implementation_test_SOURCES = glibmm_interface_implementation/main.cc
 glibmm_interface_implementation_test_LDADD = $(giomm_ldadd)
 
+glibmm_mainloop_test_SOURCES             = glibmm_mainloop/main.cc
 glibmm_nodetree_test_SOURCES             = glibmm_nodetree/main.cc
 glibmm_ustring_compose_test_SOURCES      = glibmm_ustring_compose/main.cc
 glibmm_ustring_format_test_SOURCES       = glibmm_ustring_format/main.cc
@@ -89,3 +102,4 @@ glibmm_null_vectorutils_test_LDADD       = $(giomm_ldadd)
 glibmm_null_containerhandle_test_SOURCES = glibmm_null_containerhandle/main.cc
 glibmm_null_containerhandle_test_LDADD   = $(giomm_ldadd)
 glibmm_refptr_sigc_bind_test_SOURCES     = glibmm_refptr_sigc_bind/main.cc
+glibmm_bytearray_test_SOURCES            = glibmm_bytearray/main.cc

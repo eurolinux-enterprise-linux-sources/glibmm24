@@ -9,6 +9,7 @@ _CONV_ENUM(G,DataStreamByteOrder)
 _CONV_ENUM(G,DataStreamNewlineType)
 _CONV_ENUM(GDBus,CallFlags)
 _CONV_ENUM(GDBus,CapabilityFlags)
+_CONV_ENUM(GDBus, InterfaceSkeletonFlags)
 _CONV_ENUM(GDBus,MessageFlags)
 _CONV_ENUM(GDBus,MessageHeaderField)
 _CONV_ENUM(GDBus,MessageType)
@@ -41,6 +42,7 @@ _CONV_ENUM(G,SocketMsgFlags)
 _CONV_ENUM(G,SocketProtocol)
 _CONV_ENUM(G,SocketType)
 _CONV_ENUM(G,TlsCertificateFlags)
+_CONV_ENUM(G,TlsCertificateRequestFlags)
 _CONV_ENUM(G,TlsDatabaseVerifyFlags)
 _CONV_ENUM(G,TlsDatabaseLookupFlags)
 _CONV_ENUM(G,TlsInteractionResult)
@@ -98,6 +100,7 @@ _CONVERSION(`GCredentials*',`Glib::RefPtr<const Credentials>',`Glib::wrap($3)')
 
 # DBusConnection
 _CONVERSION(`const Glib::RefPtr<Connection>&',`GDBusConnection*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<const Connection>&',`GDBusConnection*',__CONVERT_CONST_REFPTR_TO_P)
 _CONVERSION(`GDBusConnection*',`Glib::RefPtr<Connection>',Glib::wrap($3))
 _CONVERSION(`GDBusConnection*',`Glib::RefPtr<const Connection>',Glib::wrap($3))
 _CONVERSION(`GDBusConnection*',`Glib::RefPtr<DBus::Connection>',Glib::wrap($3))
@@ -122,6 +125,9 @@ _CONVERSION(`GDBusInterfaceInfo*',`const Glib::RefPtr<InterfaceInfo>',`Glib::wra
 _CONVERSION(`GDBusInterface*',`Glib::RefPtr<Gio::DBus::Interface>',`Glib::wrap($3)')
 _CONVERSION(`Glib::RefPtr<Gio::DBus::Interface>',`GDBusInterface*',`Glib::unwrap($3)')
 _CONVERSION(`const Glib::RefPtr<Gio::DBus::Interface>&',`GDBusInterface*',`Glib::unwrap($3)')
+
+# DBusMethodInvocation
+_CONVERSION(`const Glib::RefPtr<MethodInvocation>&',`GDBusMethodInvocation*',`Glib::unwrap($3)')
 
 # DBusObject
 _CONVERSION(`GDBusObject*',`Glib::RefPtr<Gio::DBus::Object>',`Glib::wrap($3)')
@@ -214,6 +220,7 @@ _CONVERSION(`GMenuLinkIter*',`Glib::RefPtr<MenuLinkIter>',`Glib::wrap($3)')
 
 # MenuModel
 _CONVERSION(`GMenuModel*',`Glib::RefPtr<MenuModel>',`Glib::wrap($3)')
+_CONVERSION(`GMenuModel*',`Glib::RefPtr<const MenuModel>',`Glib::wrap($3)')
 _CONVERSION(`const Glib::RefPtr<MenuModel>&',`GMenuModel*',__CONVERT_CONST_REFPTR_TO_P)
 
 # MenuItem
@@ -230,6 +237,10 @@ _CONVERSION(`PasswordSave',`GPasswordSave',`($2)$3')
 
 #MountOperation
 #_CONVERSION(`GAskPasswordFlags',`AskPasswordFlags',`($2)$3')
+
+# Notification
+_CONVERSION(`GNotification*',`Glib::RefPtr<Notification>',`Glib::wrap($3)')
+_CONVERSION(`const Glib::RefPtr<Notification>&',`GNotification*',__CONVERT_CONST_REFPTR_TO_P)
 
 # OutputStream
 _CONVERSION(`GOutputStream*',`Glib::RefPtr<OutputStream>',`Glib::wrap($3)')
@@ -277,30 +288,23 @@ _CONVERSION(`GTlsCertificate*', `Glib::RefPtr<TlsCertificate>', `Glib::wrap($3)'
 _CONVERSION(`const Glib::RefPtr<const TlsCertificate>&', `GTlsCertificate*', `const_cast<GTlsCertificate*>(Glib::unwrap($3))')
 _CONVERSION(`const Glib::RefPtr<TlsCertificate>&',`GTlsCertificate*',`Glib::unwrap($3)')
 
+#TlsConnection:
+_CONVERSION(`const Glib::RefPtr<TlsConnection>&',`GTlsConnection*',`Glib::unwrap($3)')
+
 #TlsDatabase
 _CONVERSION(`GTlsDatabase*',`Glib::RefPtr<TlsDatabase>',`Glib::wrap($3)')
-_CONVERSION(`const Glib::RefPtr<TlsDatabase>&',`GTlsDatabase*',`Glib::unwrap($3)')
+_CONVERSION(`const Glib::RefPtr<TlsDatabase>&',`GTlsDatabase*',__CONVERT_REFPTR_TO_P)
 
 #TlsInteraction
 _CONVERSION(`const Glib::RefPtr<TlsInteraction>&',`GTlsInteraction*',`Glib::unwrap($3)')
 _CONVERSION(`GTlsInteraction*',`Glib::RefPtr<TlsInteraction>',`Glib::wrap($3)')
 
 #TlsPassword
-_CONVERSION(`const Glib::RefPtr<TlsPassword>&',`GTlsPassword*',`Glib::unwrap($3)')
+_CONVERSION(`const Glib::RefPtr<TlsPassword>&',`GTlsPassword*',__CONVERT_REFPTR_TO_P)
 
 #UnixFDList
 _CONVERSION(`GUnixFDList*',`Glib::RefPtr<UnixFDList>',`Glib::wrap($3)')
-_CONVERSION(`const Glib::RefPtr<UnixFDList>&',`GUnixFDList*',`Glib::unwrap($3)')
-
-#Variant
-_CONVERSION(`GVariant*',`Glib::VariantBase',`Glib::wrap($3, false)')
-_CONVERSION(`GVariant*',`Glib::VariantContainerBase',`Glib::VariantContainerBase($3, false)')
-_CONVERSION(`const Glib::VariantBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
-_CONVERSION(`const Glib::VariantContainerBase&',`GVariant*',`const_cast<GVariant*>(($3).gobj())')
-
-#VariantType
-_CONVERSION(`const GVariantType*',`Glib::VariantType',`Glib::wrap(const_cast<GVariantType*>($3), false)')
-_CONVERSION(`const Glib::VariantType&',`const GVariantType*',`$3.gobj()')
+_CONVERSION(`const Glib::RefPtr<UnixFDList>&',`GUnixFDList*',__CONVERT_REFPTR_TO_P)
 
 #Volume
 _CONVERSION(`GVolume*',`Glib::RefPtr<Volume>',`Glib::wrap($3)')

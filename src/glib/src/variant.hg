@@ -21,6 +21,7 @@ _DEFS(glibmm,glib)
 #include <glibmm/varianttype.h>
 #include <glibmm/variantiter.h>
 #include <glibmm/ustring.h>
+#include <glibmm/error.h>
 #include <utility>
 #include <vector>
 #include <map>
@@ -52,7 +53,7 @@ namespace Glib
  * Serialised Variant data can also be sent over the network.
  *
  * Variant is largely compatible with D-Bus.  Almost all types of
- * #GVariant instances can be sent over D-Bus.  See VariantType for
+ * Variant instances can be sent over D-Bus.  See VariantType for
  * exceptions.
  *
  * There is a Python-inspired text language for describing Variant
@@ -60,8 +61,13 @@ namespace Glib
  * with type inferencing.</a>.
  */
 
-//TODO: VariantBase class can be copied, so suggest how it can be dynamic casted to
-//derived types: See https://bugzilla.gnome.org/show_bug.cgi?id=644146
+//Note: We wrap this because it is thrown by GtkBuilder's functions.
+// See https://bugzilla.gnome.org/show_bug.cgi?id=708206
+// It would also be thrown by parse() if we wrap g_variant_parse().
+// Now (2014-01-30) it's also thrown by Gio::Action::parse_detailed_name().
+/** Exception class for Variant parse errors.
+ */
+_WRAP_GERROR(VariantParseError, GVariantParseError, G_VARIANT_PARSE_ERROR, NO_GTYPE)
 
 //TODO: Add this documentation from the API if we are confident of it for the C++ wrapper:
 // #GVariant is completely threadsafe.  A #GVariant instance can be
@@ -83,7 +89,7 @@ class VariantBase
 {
   _CLASS_OPAQUE_COPYABLE(VariantBase, GVariant, NONE, g_variant_ref_sink, g_variant_unref)
   _CUSTOM_CTOR_CAST()
-  _IGNORE(g_variant_ref, g_variant_ref_sink, g_variant_unref,
+  _IGNORE(g_variant_ref, g_variant_ref_sink, g_variant_take_ref, g_variant_unref,
     g_variant_get, g_variant_get_va)
 public:
 
@@ -203,6 +209,8 @@ public:
     */
    template<class V_CastTo>
    static V_CastTo cast_dynamic(const VariantBase& v) throw(std::bad_cast);
+
+   _IGNORE(g_variant_dict_new)
 
 private:
   /** Relational operators are deleted to prevent invalid conversion
@@ -360,7 +368,7 @@ public:
   void get_child(VariantBase& child, gsize index = 0) const;
   _IGNORE(g_variant_get_child, g_variant_get_child_value)
 
-#m4 _CONVERSION(`GVariant*',`VariantBase',`Glib::wrap($3, true)')
+#m4 _CONVERSION(`GVariant*',`VariantBase',`Glib::wrap($3)')
 
   _WRAP_METHOD(VariantBase get_child(gsize index = 0), g_variant_get_child_value)
 
@@ -448,6 +456,7 @@ public:
   //TODO: Documentation
   void get(VariantBase& variant) const;
 
+  //TODO: Deprecate this in favour of get(VariantBase&)?
   _WRAP_METHOD(VariantBase get() const, g_variant_get_variant)
 };
 
@@ -988,7 +997,7 @@ template<class T>
 Variant<T> Variant< Variant<T> >::get() const
 {
   GVariant* const gvariant = g_variant_get_variant(gobject_);
-  return Variant<T>(gvariant, true);
+  return Variant<T>(gvariant);
 }
 
 /*--------------------Variant< std::pair<K, V> >---------------------*/
@@ -1070,6 +1079,8 @@ Variant< std::vector<T> >::create(const std::vector<T>& data)
   Variant< std::vector<T> > result =
     Variant< std::vector<T> >(g_variant_new(
       reinterpret_cast<gchar*>(array_variant_type.gobj()), builder));
+
+  g_variant_builder_unref(builder);
 
   return result;
 }
@@ -1167,6 +1178,8 @@ Variant< std::map<K, V> >::create(const std::map<K, V>& data)
   // Create the variant using the builder.
   Variant< std::map<K, V> > result = Variant< std::map<K, V> >(g_variant_new(
     reinterpret_cast<gchar*>(array_variant_type.gobj()), builder));
+
+  g_variant_builder_unref(builder);
 
   return result;
 }

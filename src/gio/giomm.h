@@ -101,7 +101,9 @@
 #include <giomm/mountoperation.h>
 #include <giomm/networkaddress.h>
 #include <giomm/networkservice.h>
+#include <giomm/notification.h>
 #include <giomm/outputstream.h>
+#include <giomm/permission.h>
 #include <giomm/pollableinputstream.h>
 #include <giomm/pollableoutputstream.h>
 #include <giomm/proxy.h>
@@ -114,6 +116,7 @@
 #include <giomm/settings.h>
 #include <giomm/simpleaction.h>
 #include <giomm/simpleactiongroup.h>
+#include <giomm/simplepermission.h>
 #include <giomm/socket.h>
 #include <giomm/socketaddress.h>
 #include <giomm/socketaddressenumerator.h>
@@ -123,15 +126,11 @@
 #include <giomm/socketcontrolmessage.h>
 #include <giomm/socketlistener.h>
 #include <giomm/socketservice.h>
+#include <giomm/socketsource.h>
 #include <giomm/srvtarget.h>
 #include <giomm/tcpconnection.h>
 #include <giomm/themedicon.h>
 #include <giomm/threadedsocketservice.h>
-
-//TODO: Re-add these includes after the next stable release when the
-//development of these classes can continue without risking needing an API or
-//ABI break later.
-#if 0
 #include <giomm/tlscertificate.h>
 #include <giomm/tlsclientconnection.h>
 #include <giomm/tlsconnection.h>
@@ -139,8 +138,6 @@
 #include <giomm/tlsinteraction.h>
 #include <giomm/tlspassword.h>
 #include <giomm/tlsserverconnection.h>
-#endif
-
 #ifndef G_OS_WIN32
 # include <giomm/unixconnection.h>
 # include <giomm/unixcredentialsmessage.h>

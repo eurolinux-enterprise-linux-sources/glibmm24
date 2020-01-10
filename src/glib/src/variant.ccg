@@ -45,7 +45,7 @@ void VariantBase::get_normal_form(VariantBase& result) const
   GVariant* const g_value =
     g_variant_get_normal_form(const_cast<GVariant*>(gobj()));
 
-  //The C function never returns NULL, according to its docuemenation,
+  //The C function never returns NULL, according to its documenation,
   //so we don't need a bool return value.
   result.init(g_value); // g_value is already referenced.
 }
@@ -386,6 +386,8 @@ Variant<type_vec_ustring>::create(const type_vec_ustring& data)
   Variant<type_vec_ustring> result =
     Variant<type_vec_ustring>(g_variant_new(
       array_variant_type.get_string().c_str(), builder));
+
+  g_variant_builder_unref(builder);
 
   return result;
 }

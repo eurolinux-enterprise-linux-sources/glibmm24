@@ -377,6 +377,13 @@
   (gtype-id "G_TYPE_NETWORK_SERVICE")
 )
 
+(define-object Backend
+  (in-module "GNotification")
+  (parent "GObject")
+  (c-name "GNotificationBackend")
+  (gtype-id "G_TYPE_NOTIFICATION_BACKEND")
+)
+
 (define-object Stream
   (in-module "GOutput")
   (parent "GObject")
@@ -879,6 +886,18 @@
   )
 )
 
+(define-flags MeasureFlags
+  (in-module "GFile")
+  (c-name "GFileMeasureFlags")
+  (gtype-id "G_TYPE_FILE_MEASURE_FLAGS")
+  (values
+    '("none" "G_FILE_MEASURE_NONE")
+    '("report-any-error" "G_FILE_MEASURE_REPORT_ANY_ERROR")
+    '("apparent-size" "G_FILE_MEASURE_APPARENT_SIZE")
+    '("no-xdev" "G_FILE_MEASURE_NO_XDEV")
+  )
+)
+
 (define-enum MountFlags
   (in-module "GMount")
   (c-name "GMountMountFlags")
@@ -1281,6 +1300,7 @@
     '("do-not-connect-signals" "G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS")
     '("do-not-auto-start" "G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START")
     '("get-invalidated-properties" "G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES")
+    '("do-not-auto-start-at-construction" "G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION")
   )
 )
 
@@ -1330,6 +1350,10 @@
     '("selinux-security-context-unknown" "G_DBUS_ERROR_SELINUX_SECURITY_CONTEXT_UNKNOWN")
     '("adt-audit-data-unknown" "G_DBUS_ERROR_ADT_AUDIT_DATA_UNKNOWN")
     '("object-path-in-use" "G_DBUS_ERROR_OBJECT_PATH_IN_USE")
+    '("unknown-object" "G_DBUS_ERROR_UNKNOWN_OBJECT")
+    '("unknown-interface" "G_DBUS_ERROR_UNKNOWN_INTERFACE")
+    '("unknown-property" "G_DBUS_ERROR_UNKNOWN_PROPERTY")
+    '("property-read-only" "G_DBUS_ERROR_PROPERTY_READ_ONLY")
   )
 )
 
@@ -1448,6 +1472,8 @@
   (values
     '("none" "G_DBUS_SIGNAL_FLAGS_NONE")
     '("no-match-rule" "G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE")
+    '("match-arg0-namespace" "G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE")
+    '("match-arg0-path" "G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_PATH")
   )
 )
 
@@ -1469,7 +1495,9 @@
     '("invalid" "G_CREDENTIALS_TYPE_INVALID")
     '("linux-ucred" "G_CREDENTIALS_TYPE_LINUX_UCRED")
     '("freebsd-cmsgcred" "G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED")
+    '("netbsd-unpcbid" "G_CREDENTIALS_TYPE_NETBSD_UNPCBID")
     '("openbsd-sockpeercred" "G_CREDENTIALS_TYPE_OPENBSD_SOCKPEERCRED")
+    '("solaris-ucred" "G_CREDENTIALS_TYPE_SOLARIS_UCRED")
   )
 )
 
@@ -1601,6 +1629,15 @@
   )
 )
 
+(define-enum CertificateRequestFlags
+  (in-module "GTls")
+  (c-name "GTlsCertificateRequestFlags")
+  (gtype-id "G_TYPE_TLS_CERTIFICATE_REQUEST_FLAGS")
+  (values
+    '("none" "G_TLS_CERTIFICATE_REQUEST_NONE")
+  )
+)
+
 (define-enum ScopeFlags
   (in-module "GIOModule")
   (c-name "GIOModuleScopeFlags")
@@ -1634,6 +1671,35 @@
   (gtype-id "G_TYPE_TEST_DBUS_FLAGS")
   (values
     '("none" "G_TEST_DBUS_NONE")
+  )
+)
+
+(define-flags Flags
+  (in-module "GSubprocess")
+  (c-name "GSubprocessFlags")
+  (gtype-id "G_TYPE_SUBPROCESS_FLAGS")
+  (values
+    '("none" "G_SUBPROCESS_FLAGS_NONE")
+    '("stdin-pipe" "G_SUBPROCESS_FLAGS_STDIN_PIPE")
+    '("stdin-inherit" "G_SUBPROCESS_FLAGS_STDIN_INHERIT")
+    '("stdout-pipe" "G_SUBPROCESS_FLAGS_STDOUT_PIPE")
+    '("stdout-silence" "G_SUBPROCESS_FLAGS_STDOUT_SILENCE")
+    '("stderr-pipe" "G_SUBPROCESS_FLAGS_STDERR_PIPE")
+    '("stderr-silence" "G_SUBPROCESS_FLAGS_STDERR_SILENCE")
+    '("stderr-merge" "G_SUBPROCESS_FLAGS_STDERR_MERGE")
+    '("inherit-fds" "G_SUBPROCESS_FLAGS_INHERIT_FDS")
+  )
+)
+
+(define-enum Priority
+  (in-module "GNotification")
+  (c-name "GNotificationPriority")
+  (gtype-id "G_TYPE_NOTIFICATION_PRIORITY")
+  (values
+    '("normal" "G_NOTIFICATION_PRIORITY_NORMAL")
+    '("low" "G_NOTIFICATION_PRIORITY_LOW")
+    '("high" "G_NOTIFICATION_PRIORITY_HIGH")
+    '("urgent" "G_NOTIFICATION_PRIORITY_URGENT")
   )
 )
 
@@ -1875,6 +1941,34 @@
   (return-type "none")
   (parameters
     '("GVariant*" "parameter")
+  )
+)
+
+(define-function g_action_name_is_valid
+  (c-name "g_action_name_is_valid")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "action_name")
+  )
+)
+
+(define-function g_action_parse_detailed_name
+  (c-name "g_action_parse_detailed_name")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "detailed_name")
+    '("gchar**" "action_name")
+    '("GVariant**" "target_value")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_action_print_detailed_name
+  (c-name "g_action_print_detailed_name")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "action_name")
+    '("GVariant*" "target_value")
   )
 )
 
@@ -2245,6 +2339,25 @@
   )
 )
 
+(define-function g_app_info_monitor_get_type
+  (c-name "g_app_info_monitor_get_type")
+  (return-type "GType")
+)
+
+(define-function g_app_info_monitor_get
+  (c-name "g_app_info_monitor_get")
+  (return-type "GAppInfoMonitor*")
+)
+
+
+
+;; From gappinfoprivate.h
+
+(define-function g_app_info_monitor_fire
+  (c-name "g_app_info_monitor_fire")
+  (return-type "none")
+)
+
 
 
 ;; From gapplicationcommandline.h
@@ -2261,6 +2374,12 @@
   (parameters
     '("int*" "argc")
   )
+)
+
+(define-method get_options_dict
+  (of-object "GApplicationCommandLine")
+  (c-name "g_application_command_line_get_options_dict")
+  (return-type "GVariantDict*")
 )
 
 (define-method get_stdin
@@ -2430,12 +2549,59 @@
   )
 )
 
+(define-method get_resource_base_path
+  (of-object "GApplication")
+  (c-name "g_application_get_resource_base_path")
+  (return-type "const-gchar*")
+)
+
+(define-method set_resource_base_path
+  (of-object "GApplication")
+  (c-name "g_application_set_resource_base_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "resource_path")
+  )
+)
+
 (define-method set_action_group
   (of-object "GApplication")
   (c-name "g_application_set_action_group")
   (return-type "none")
   (parameters
     '("GActionGroup*" "action_group")
+  )
+)
+
+(define-method add_main_option_entries
+  (of-object "GApplication")
+  (c-name "g_application_add_main_option_entries")
+  (return-type "none")
+  (parameters
+    '("const-GOptionEntry*" "entries")
+  )
+)
+
+(define-method add_main_option
+  (of-object "GApplication")
+  (c-name "g_application_add_main_option")
+  (return-type "none")
+  (parameters
+    '("const-char*" "long_name")
+    '("char" "short_name")
+    '("GOptionFlags" "flags")
+    '("GOptionArg" "arg")
+    '("const-char*" "description")
+    '("const-char*" "arg_description")
+  )
+)
+
+(define-method add_option_group
+  (of-object "GApplication")
+  (c-name "g_application_add_option_group")
+  (return-type "none")
+  (parameters
+    '("GOptionGroup*" "group")
   )
 )
 
@@ -2517,6 +2683,37 @@
   (return-type "none")
 )
 
+(define-method mark_busy
+  (of-object "GApplication")
+  (c-name "g_application_mark_busy")
+  (return-type "none")
+)
+
+(define-method unmark_busy
+  (of-object "GApplication")
+  (c-name "g_application_unmark_busy")
+  (return-type "none")
+)
+
+(define-method send_notification
+  (of-object "GApplication")
+  (c-name "g_application_send_notification")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "id")
+    '("GNotification*" "notification")
+  )
+)
+
+(define-method withdraw_notification
+  (of-object "GApplication")
+  (c-name "g_application_withdraw_notification")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "id")
+  )
+)
+
 
 
 ;; From gapplicationimpl.h
@@ -2567,7 +2764,7 @@
   (c-name "g_application_impl_command_line")
   (return-type "int")
   (parameters
-    '("gchar**" "arguments")
+    '("const-gchar*-const*" "arguments")
     '("GVariant*" "platform_data")
   )
 )
@@ -2588,6 +2785,15 @@
   (of-object "GApplicationImpl")
   (c-name "g_application_impl_get_dbus_object_path")
   (return-type "const-gchar*")
+)
+
+(define-method set_busy_state
+  (of-object "GApplicationImpl")
+  (c-name "g_application_impl_set_busy_state")
+  (return-type "none")
+  (parameters
+    '("gboolean" "busy")
+  )
 )
 
 
@@ -2883,6 +3089,27 @@
   (parameters
     '("gboolean" "auto_grow")
   )
+)
+
+
+
+;; From gbytesicon.h
+
+(define-function g_bytes_icon_get_type
+  (c-name "g_bytes_icon_get_type")
+  (return-type "GType")
+)
+
+(define-method icon_new
+  (of-object "GBytes")
+  (c-name "g_bytes_icon_new")
+  (return-type "GIcon*")
+)
+
+(define-method get_bytes
+  (of-object "GBytesIcon")
+  (c-name "g_bytes_icon_get_bytes")
+  (return-type "GBytes*")
 )
 
 
@@ -3307,6 +3534,10 @@
     '("GError**" "error")
   )
 )
+
+
+
+;; From gcredentialsprivate.h
 
 
 
@@ -5242,6 +5473,12 @@
   (return-type "const-GDBusMethodInfo*")
 )
 
+(define-method get_property_info
+  (of-object "GDBusMethodInvocation")
+  (c-name "g_dbus_method_invocation_get_property_info")
+  (return-type "const-GDBusPropertyInfo*")
+)
+
 (define-method get_connection
   (of-object "GDBusMethodInvocation")
   (c-name "g_dbus_method_invocation_get_connection")
@@ -6368,6 +6605,31 @@
   )
 )
 
+(define-method list_actions
+  (of-object "GDesktopAppInfo")
+  (c-name "g_desktop_app_info_list_actions")
+  (return-type "const-gchar*-const*")
+)
+
+(define-method launch_action
+  (of-object "GDesktopAppInfo")
+  (c-name "g_desktop_app_info_launch_action")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "action_name")
+    '("GAppLaunchContext*" "launch_context")
+  )
+)
+
+(define-method get_action_name
+  (of-object "GDesktopAppInfo")
+  (c-name "g_desktop_app_info_get_action_name")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "action_name")
+  )
+)
+
 (define-function g_desktop_app_info_lookup_get_type
   (c-name "g_desktop_app_info_lookup_get_type")
   (return-type "GType")
@@ -6395,6 +6657,22 @@
     '("GDesktopAppLaunchCallback" "pid_callback")
     '("gpointer" "pid_callback_data")
     '("GError**" "error")
+  )
+)
+
+(define-function g_desktop_app_info_search
+  (c-name "g_desktop_app_info_search")
+  (return-type "gchar***")
+  (parameters
+    '("const-gchar*" "search_string")
+  )
+)
+
+(define-function g_desktop_app_info_get_implementations
+  (c-name "g_desktop_app_info_get_implementations")
+  (return-type "GList*")
+  (parameters
+    '("const-gchar*" "interface")
   )
 )
 
@@ -7567,6 +7845,28 @@
   )
 )
 
+(define-method trash_async
+  (of-object "GFile")
+  (c-name "g_file_trash_async")
+  (return-type "none")
+  (parameters
+    '("int" "io_priority")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method trash_finish
+  (of-object "GFile")
+  (c-name "g_file_trash_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("GError**" "error")
+  )
+)
+
 (define-method copy
   (of-object "GFile")
   (c-name "g_file_copy")
@@ -7627,6 +7927,28 @@
   (return-type "gboolean")
   (parameters
     '("GCancellable*" "cancellable")
+    '("GError**" "error")
+  )
+)
+
+(define-method make_directory_async
+  (of-object "GFile")
+  (c-name "g_file_make_directory_async")
+  (return-type "none")
+  (parameters
+    '("int" "io_priority")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method make_directory_finish
+  (of-object "GFile")
+  (c-name "g_file_make_directory_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
     '("GError**" "error")
   )
 )
@@ -7982,6 +8304,50 @@
   )
 )
 
+(define-method measure_disk_usage
+  (of-object "GFile")
+  (c-name "g_file_measure_disk_usage")
+  (return-type "gboolean")
+  (parameters
+    '("GFileMeasureFlags" "flags")
+    '("GCancellable*" "cancellable")
+    '("GFileMeasureProgressCallback" "progress_callback")
+    '("gpointer" "progress_data")
+    '("guint64*" "disk_usage")
+    '("guint64*" "num_dirs")
+    '("guint64*" "num_files")
+    '("GError**" "error")
+  )
+)
+
+(define-method measure_disk_usage_async
+  (of-object "GFile")
+  (c-name "g_file_measure_disk_usage_async")
+  (return-type "none")
+  (parameters
+    '("GFileMeasureFlags" "flags")
+    '("gint" "io_priority")
+    '("GCancellable*" "cancellable")
+    '("GFileMeasureProgressCallback" "progress_callback")
+    '("gpointer" "progress_data")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method measure_disk_usage_finish
+  (of-object "GFile")
+  (c-name "g_file_measure_disk_usage_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("guint64*" "disk_usage")
+    '("guint64*" "num_dirs")
+    '("guint64*" "num_files")
+    '("GError**" "error")
+  )
+)
+
 (define-method start_mountable
   (of-object "GFile")
   (c-name "g_file_start_mountable")
@@ -8144,6 +8510,21 @@
   (parameters
     '("const-char*" "contents")
     '("gsize" "length")
+    '("const-char*" "etag")
+    '("gboolean" "make_backup")
+    '("GFileCreateFlags" "flags")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method replace_contents_bytes_async
+  (of-object "GFile")
+  (c-name "g_file_replace_contents_bytes_async")
+  (return-type "none")
+  (parameters
+    '("GBytes*" "contents")
     '("const-char*" "etag")
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
@@ -9128,6 +9509,20 @@
   )
 )
 
+(define-method serialize
+  (of-object "GIcon")
+  (c-name "g_icon_serialize")
+  (return-type "GVariant*")
+)
+
+(define-function g_icon_deserialize
+  (c-name "g_icon_deserialize")
+  (return-type "GIcon*")
+  (parameters
+    '("GVariant*" "value")
+  )
+)
+
 
 
 ;; From ginetaddress.h
@@ -9349,6 +9744,15 @@
   (parameters
     '("GInetAddress*" "address")
     '("guint16" "port")
+  )
+)
+
+(define-function g_inet_socket_address_new_from_string
+  (c-name "g_inet_socket_address_new_from_string")
+  (return-type "GSocketAddress*")
+  (parameters
+    '("const-char*" "address")
+    '("guint" "port")
   )
 )
 
@@ -9674,6 +10078,11 @@
   (return-type "GType")
 )
 
+(define-function g_file_measure_flags_get_type
+  (c-name "g_file_measure_flags_get_type")
+  (return-type "GType")
+)
+
 (define-function g_mount_mount_flags_get_type
   (c-name "g_mount_mount_flags_get_type")
   (return-type "GType")
@@ -9954,6 +10363,11 @@
   (return-type "GType")
 )
 
+(define-function g_tls_certificate_request_flags_get_type
+  (c-name "g_tls_certificate_request_flags_get_type")
+  (return-type "GType")
+)
+
 (define-function g_io_module_scope_flags_get_type
   (c-name "g_io_module_scope_flags_get_type")
   (return-type "GType")
@@ -9966,6 +10380,16 @@
 
 (define-function g_test_dbus_flags_get_type
   (c-name "g_test_dbus_flags_get_type")
+  (return-type "GType")
+)
+
+(define-function g_subprocess_flags_get_type
+  (c-name "g_subprocess_flags_get_type")
+  (return-type "GType")
+)
+
+(define-function g_notification_priority_get_type
+  (c-name "g_notification_priority_get_type")
   (return-type "GType")
 )
 
@@ -10183,19 +10607,32 @@
 
 
 
-;; From gioscheduler.h
+;; From gioprivate.h
 
-(define-function g_io_scheduler_push_job
-  (c-name "g_io_scheduler_push_job")
+(define-method async_read_is_via_threads
+  (of-object "GInputStream")
+  (c-name "g_input_stream_async_read_is_via_threads")
+  (return-type "gboolean")
+)
+
+(define-method async_write_is_via_threads
+  (of-object "GOutputStream")
+  (c-name "g_output_stream_async_write_is_via_threads")
+  (return-type "gboolean")
+)
+
+(define-method set_cached_remote_address
+  (of-object "GSocketConnection")
+  (c-name "g_socket_connection_set_cached_remote_address")
   (return-type "none")
   (parameters
-    '("GIOSchedulerJobFunc" "job_func")
-    '("gpointer" "user_data")
-    '("GDestroyNotify" "notify")
-    '("gint" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GSocketAddress*" "address")
   )
 )
+
+
+
+;; From gioscheduler.h
 
 (define-function g_io_scheduler_cancel_all_jobs
   (c-name "g_io_scheduler_cancel_all_jobs")
@@ -10333,6 +10770,19 @@
 
 
 
+;; From giowin32-priv.h
+
+(define-function g_win32_output_stream_new_from_fd
+  (c-name "g_win32_output_stream_new_from_fd")
+  (return-type "GOutputStream*")
+  (parameters
+    '("gint" "fd")
+    '("gboolean" "close_fd")
+  )
+)
+
+
+
 ;; From gloadableicon.h
 
 (define-function g_loadable_icon_get_type
@@ -10384,6 +10834,22 @@
   (return-type "GType")
 )
 
+(define-method start
+  (of-object "GLocalDirectoryMonitor")
+  (c-name "g_local_directory_monitor_start")
+  (return-type "none")
+)
+
+(define-function g_local_directory_monitor_new_in_worker
+  (c-name "g_local_directory_monitor_new_in_worker")
+  (return-type "GLocalDirectoryMonitor*")
+  (parameters
+    '("const-char*" "pathname")
+    '("GFileMonitorFlags" "flags")
+    '("GError**" "error")
+  )
+)
+
 
 
 ;; From glocalfileenumerator.h
@@ -10411,6 +10877,22 @@
 (define-function g_local_file_monitor_get_type
   (c-name "g_local_file_monitor_get_type")
   (return-type "GType")
+)
+
+(define-method start
+  (of-object "GLocalFileMonitor")
+  (c-name "g_local_file_monitor_start")
+  (return-type "none")
+)
+
+(define-function g_local_file_monitor_new_in_worker
+  (c-name "g_local_file_monitor_new_in_worker")
+  (return-type "GLocalFileMonitor*")
+  (parameters
+    '("const-char*" "pathname")
+    '("GFileMonitorFlags" "flags")
+    '("GError**" "error")
+  )
 )
 
 
@@ -10610,6 +11092,12 @@
   (parameters
     '("gint" "position")
   )
+)
+
+(define-method remove_all
+  (of-object "GMenu")
+  (c-name "g_menu_remove_all")
+  (return-type "none")
 )
 
 (define-method insert
@@ -10862,6 +11350,15 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "detailed_action")
+  )
+)
+
+(define-method set_icon
+  (of-object "GMenuItem")
+  (c-name "g_menu_item_set_icon")
+  (return-type "none")
+  (parameters
+    '("GIcon*" "icon")
   )
 )
 
@@ -11616,6 +12113,245 @@
 
 
 
+;; From gnotificationbackend.h
+
+(define-function g_notification_backend_get_type
+  (c-name "g_notification_backend_get_type")
+  (return-type "GType")
+)
+
+(define-function g_notification_backend_new_default
+  (c-name "g_notification_backend_new_default")
+  (return-type "GNotificationBackend*")
+  (parameters
+    '("GApplication*" "application")
+  )
+)
+
+(define-method send_notification
+  (of-object "GNotificationBackend")
+  (c-name "g_notification_backend_send_notification")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "id")
+    '("GNotification*" "notification")
+  )
+)
+
+(define-method withdraw_notification
+  (of-object "GNotificationBackend")
+  (c-name "g_notification_backend_withdraw_notification")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "id")
+  )
+)
+
+
+
+;; From gnotification.h
+
+(define-function g_notification_get_type
+  (c-name "g_notification_get_type")
+  (return-type "GType")
+)
+
+(define-function g_notification_new
+  (c-name "g_notification_new")
+  (is-constructor-of "GNotification")
+  (return-type "GNotification*")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method set_title
+  (of-object "GNotification")
+  (c-name "g_notification_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method set_body
+  (of-object "GNotification")
+  (c-name "g_notification_set_body")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "body")
+  )
+)
+
+(define-method set_icon
+  (of-object "GNotification")
+  (c-name "g_notification_set_icon")
+  (return-type "none")
+  (parameters
+    '("GIcon*" "icon")
+  )
+)
+
+(define-method set_urgent
+  (of-object "GNotification")
+  (c-name "g_notification_set_urgent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "urgent")
+  )
+)
+
+(define-method set_priority
+  (of-object "GNotification")
+  (c-name "g_notification_set_priority")
+  (return-type "none")
+  (parameters
+    '("GNotificationPriority" "priority")
+  )
+)
+
+(define-method add_button
+  (of-object "GNotification")
+  (c-name "g_notification_add_button")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "label")
+    '("const-gchar*" "detailed_action")
+  )
+)
+
+(define-method add_button_with_target
+  (of-object "GNotification")
+  (c-name "g_notification_add_button_with_target")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "label")
+    '("const-gchar*" "action")
+    '("const-gchar*" "target_format")
+  )
+  (varargs #t)
+)
+
+(define-method add_button_with_target_value
+  (of-object "GNotification")
+  (c-name "g_notification_add_button_with_target_value")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "label")
+    '("const-gchar*" "action")
+    '("GVariant*" "target")
+  )
+)
+
+(define-method set_default_action
+  (of-object "GNotification")
+  (c-name "g_notification_set_default_action")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "detailed_action")
+  )
+)
+
+(define-method set_default_action_and_target
+  (of-object "GNotification")
+  (c-name "g_notification_set_default_action_and_target")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "action")
+    '("const-gchar*" "target_format")
+  )
+  (varargs #t)
+)
+
+(define-method set_default_action_and_target_value
+  (of-object "GNotification")
+  (c-name "g_notification_set_default_action_and_target_value")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "action")
+    '("GVariant*" "target")
+  )
+)
+
+
+
+;; From gnotification-private.h
+
+(define-method get_id
+  (of-object "GNotification")
+  (c-name "g_notification_get_id")
+  (return-type "const-gchar*")
+)
+
+(define-method get_title
+  (of-object "GNotification")
+  (c-name "g_notification_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method get_body
+  (of-object "GNotification")
+  (c-name "g_notification_get_body")
+  (return-type "const-gchar*")
+)
+
+(define-method get_icon
+  (of-object "GNotification")
+  (c-name "g_notification_get_icon")
+  (return-type "GIcon*")
+)
+
+(define-method get_priority
+  (of-object "GNotification")
+  (c-name "g_notification_get_priority")
+  (return-type "GNotificationPriority")
+)
+
+(define-method get_n_buttons
+  (of-object "GNotification")
+  (c-name "g_notification_get_n_buttons")
+  (return-type "guint")
+)
+
+(define-method get_button
+  (of-object "GNotification")
+  (c-name "g_notification_get_button")
+  (return-type "none")
+  (parameters
+    '("gint" "index")
+    '("gchar**" "label")
+    '("gchar**" "action")
+    '("GVariant**" "target")
+  )
+)
+
+(define-method get_button_with_action
+  (of-object "GNotification")
+  (c-name "g_notification_get_button_with_action")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "action")
+  )
+)
+
+(define-method get_default_action
+  (of-object "GNotification")
+  (c-name "g_notification_get_default_action")
+  (return-type "gboolean")
+  (parameters
+    '("gchar**" "action")
+    '("GVariant**" "target")
+  )
+)
+
+(define-method serialize
+  (of-object "GNotification")
+  (c-name "g_notification_serialize")
+  (return-type "GVariant*")
+)
+
+
+
 ;; From goutputstream.h
 
 (define-function g_output_stream_get_type
@@ -11645,6 +12381,32 @@
     '("gsize*" "bytes_written")
     '("GCancellable*" "cancellable")
     '("GError**" "error")
+  )
+)
+
+(define-method printf
+  (of-object "GOutputStream")
+  (c-name "g_output_stream_printf")
+  (return-type "gboolean")
+  (parameters
+    '("gsize*" "bytes_written")
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-method vprintf
+  (of-object "GOutputStream")
+  (c-name "g_output_stream_vprintf")
+  (return-type "gboolean")
+  (parameters
+    '("gsize*" "bytes_written")
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+    '("const-gchar*" "format")
+    '("va_list" "args")
   )
 )
 
@@ -12089,6 +12851,26 @@
 
 
 ;; From gpollfilemonitor.h
+
+
+
+;; From gpropertyaction.h
+
+(define-function g_property_action_get_type
+  (c-name "g_property_action_get_type")
+  (return-type "GType")
+)
+
+(define-function g_property_action_new
+  (c-name "g_property_action_new")
+  (is-constructor-of "GPropertyAction")
+  (return-type "GPropertyAction*")
+  (parameters
+    '("const-gchar*" "name")
+    '("gpointer" "object")
+    '("const-gchar*" "property_name")
+  )
+)
 
 
 
@@ -12858,6 +13640,16 @@
   )
 )
 
+(define-method read_user_value
+  (of-object "GSettingsBackend")
+  (c-name "g_settings_backend_read_user_value")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "key")
+    '("const-GVariantType*" "expected_type")
+  )
+)
+
 (define-method write
   (of-object "GSettingsBackend")
   (c-name "g_settings_backend_write")
@@ -13055,6 +13847,24 @@
 (define-method get_value
   (of-object "GSettings")
   (c-name "g_settings_get_value")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "key")
+  )
+)
+
+(define-method get_user_value
+  (of-object "GSettings")
+  (c-name "g_settings_get_user_value")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "key")
+  )
+)
+
+(define-method get_default_value
+  (of-object "GSettings")
+  (c-name "g_settings_get_default_value")
   (return-type "GVariant*")
   (parameters
     '("const-gchar*" "key")
@@ -13440,6 +14250,17 @@
   )
 )
 
+(define-method list_schemas
+  (of-object "GSettingsSchemaSource")
+  (c-name "g_settings_schema_source_list_schemas")
+  (return-type "none")
+  (parameters
+    '("gboolean" "recursive")
+    '("gchar***" "non_relocatable")
+    '("gchar***" "relocatable")
+  )
+)
+
 (define-function g_settings_schema_get_type
   (c-name "g_settings_schema_get_type")
   (return-type "GType")
@@ -13469,6 +14290,80 @@
   (return-type "const-gchar*")
 )
 
+(define-method get_key
+  (of-object "GSettingsSchema")
+  (c-name "g_settings_schema_get_key")
+  (return-type "GSettingsSchemaKey*")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method has_key
+  (of-object "GSettingsSchema")
+  (c-name "g_settings_schema_has_key")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_settings_schema_key_get_type
+  (c-name "g_settings_schema_key_get_type")
+  (return-type "GType")
+)
+
+(define-method ref
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_ref")
+  (return-type "GSettingsSchemaKey*")
+)
+
+(define-method unref
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_unref")
+  (return-type "none")
+)
+
+(define-method get_value_type
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_get_value_type")
+  (return-type "const-GVariantType*")
+)
+
+(define-method get_default_value
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_get_default_value")
+  (return-type "GVariant*")
+)
+
+(define-method get_range
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_get_range")
+  (return-type "GVariant*")
+)
+
+(define-method range_check
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_range_check")
+  (return-type "gboolean")
+  (parameters
+    '("GVariant*" "value")
+  )
+)
+
+(define-method get_summary
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_get_summary")
+  (return-type "const-gchar*")
+)
+
+(define-method get_description
+  (of-object "GSettingsSchemaKey")
+  (c-name "g_settings_schema_key_get_description")
+  (return-type "const-gchar*")
+)
+
 
 
 ;; From gsettingsschema-internal.h
@@ -13483,15 +14378,6 @@
   (of-object "GSettingsSchema")
   (c-name "g_settings_schema_get_value")
   (return-type "GVariantIter*")
-  (parameters
-    '("const-gchar*" "key")
-  )
-)
-
-(define-method has_key
-  (of-object "GSettingsSchema")
-  (c-name "g_settings_schema_has_key")
-  (return-type "gboolean")
   (parameters
     '("const-gchar*" "key")
   )
@@ -13534,15 +14420,6 @@
 (define-method type_check
   (of-object "GSettingsSchemaKey")
   (c-name "g_settings_schema_key_type_check")
-  (return-type "gboolean")
-  (parameters
-    '("GVariant*" "value")
-  )
-)
-
-(define-method range_check
-  (of-object "GSettingsSchemaKey")
-  (c-name "g_settings_schema_key_range_check")
   (return-type "gboolean")
   (parameters
     '("GVariant*" "value")
@@ -15312,6 +16189,431 @@
 
 
 
+;; From gsubprocess.h
+
+(define-function g_subprocess_get_type
+  (c-name "g_subprocess_get_type")
+  (return-type "GType")
+)
+
+(define-function g_subprocess_new
+  (c-name "g_subprocess_new")
+  (is-constructor-of "GSubprocess")
+  (return-type "GSubprocess*")
+  (parameters
+    '("GSubprocessFlags" "flags")
+    '("GError**" "error")
+    '("const-gchar*" "argv0")
+  )
+  (varargs #t)
+)
+
+(define-function g_subprocess_newv
+  (c-name "g_subprocess_newv")
+  (return-type "GSubprocess*")
+  (parameters
+    '("const-gchar*-const*" "argv")
+    '("GSubprocessFlags" "flags")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_stdin_pipe
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_stdin_pipe")
+  (return-type "GOutputStream*")
+)
+
+(define-method get_stdout_pipe
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_stdout_pipe")
+  (return-type "GInputStream*")
+)
+
+(define-method get_stderr_pipe
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_stderr_pipe")
+  (return-type "GInputStream*")
+)
+
+(define-method get_identifier
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_identifier")
+  (return-type "const-gchar*")
+)
+
+(define-method send_signal
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_send_signal")
+  (return-type "none")
+  (parameters
+    '("gint" "signal_num")
+  )
+)
+
+(define-method force_exit
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_force_exit")
+  (return-type "none")
+)
+
+(define-method wait
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait")
+  (return-type "gboolean")
+  (parameters
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+  )
+)
+
+(define-method wait_async
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait_async")
+  (return-type "none")
+  (parameters
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method wait_finish
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("GError**" "error")
+  )
+)
+
+(define-method wait_check
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait_check")
+  (return-type "gboolean")
+  (parameters
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+  )
+)
+
+(define-method wait_check_async
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait_check_async")
+  (return-type "none")
+  (parameters
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method wait_check_finish
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_wait_check_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_status
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_status")
+  (return-type "gint")
+)
+
+(define-method get_successful
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_successful")
+  (return-type "gboolean")
+)
+
+(define-method get_if_exited
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_if_exited")
+  (return-type "gboolean")
+)
+
+(define-method get_exit_status
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_exit_status")
+  (return-type "gint")
+)
+
+(define-method get_if_signaled
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_if_signaled")
+  (return-type "gboolean")
+)
+
+(define-method get_term_sig
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_get_term_sig")
+  (return-type "gint")
+)
+
+(define-method communicate
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate")
+  (return-type "gboolean")
+  (parameters
+    '("GBytes*" "stdin_buf")
+    '("GCancellable*" "cancellable")
+    '("GBytes**" "stdout_buf")
+    '("GBytes**" "stderr_buf")
+    '("GError**" "error")
+  )
+)
+
+(define-method communicate_async
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate_async")
+  (return-type "none")
+  (parameters
+    '("GBytes*" "stdin_buf")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method communicate_finish
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("GBytes**" "stdout_buf")
+    '("GBytes**" "stderr_buf")
+    '("GError**" "error")
+  )
+)
+
+(define-method communicate_utf8
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate_utf8")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "stdin_buf")
+    '("GCancellable*" "cancellable")
+    '("char**" "stdout_buf")
+    '("char**" "stderr_buf")
+    '("GError**" "error")
+  )
+)
+
+(define-method communicate_utf8_async
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate_utf8_async")
+  (return-type "none")
+  (parameters
+    '("const-char*" "stdin_buf")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method communicate_utf8_finish
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_communicate_utf8_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("char**" "stdout_buf")
+    '("char**" "stderr_buf")
+    '("GError**" "error")
+  )
+)
+
+
+
+;; From gsubprocesslauncher.h
+
+(define-function g_subprocess_launcher_get_type
+  (c-name "g_subprocess_launcher_get_type")
+  (return-type "GType")
+)
+
+(define-function g_subprocess_launcher_new
+  (c-name "g_subprocess_launcher_new")
+  (is-constructor-of "GSubprocessLauncher")
+  (return-type "GSubprocessLauncher*")
+  (parameters
+    '("GSubprocessFlags" "flags")
+  )
+)
+
+(define-method spawn
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_spawn")
+  (return-type "GSubprocess*")
+  (parameters
+    '("GError**" "error")
+    '("const-gchar*" "argv0")
+  )
+  (varargs #t)
+)
+
+(define-method spawnv
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_spawnv")
+  (return-type "GSubprocess*")
+  (parameters
+    '("const-gchar*-const*" "argv")
+    '("GError**" "error")
+  )
+)
+
+(define-method set_environ
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_environ")
+  (return-type "none")
+  (parameters
+    '("gchar**" "env")
+  )
+)
+
+(define-method setenv
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_setenv")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "variable")
+    '("const-gchar*" "value")
+    '("gboolean" "overwrite")
+  )
+)
+
+(define-method unsetenv
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_unsetenv")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "variable")
+  )
+)
+
+(define-method getenv
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_getenv")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "variable")
+  )
+)
+
+(define-method set_cwd
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_cwd")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "cwd")
+  )
+)
+
+(define-method set_flags
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_flags")
+  (return-type "none")
+  (parameters
+    '("GSubprocessFlags" "flags")
+  )
+)
+
+(define-method set_stdin_file_path
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_stdin_file_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method take_stdin_fd
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_take_stdin_fd")
+  (return-type "none")
+  (parameters
+    '("gint" "fd")
+  )
+)
+
+(define-method set_stdout_file_path
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_stdout_file_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method take_stdout_fd
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_take_stdout_fd")
+  (return-type "none")
+  (parameters
+    '("gint" "fd")
+  )
+)
+
+(define-method set_stderr_file_path
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_stderr_file_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method take_stderr_fd
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_take_stderr_fd")
+  (return-type "none")
+  (parameters
+    '("gint" "fd")
+  )
+)
+
+(define-method take_fd
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_take_fd")
+  (return-type "none")
+  (parameters
+    '("gint" "source_fd")
+    '("gint" "target_fd")
+  )
+)
+
+(define-method set_child_setup
+  (of-object "GSubprocessLauncher")
+  (c-name "g_subprocess_launcher_set_child_setup")
+  (return-type "none")
+  (parameters
+    '("GSpawnChildSetupFunc" "child_setup")
+    '("gpointer" "user_data")
+    '("GDestroyNotify" "destroy_notify")
+  )
+)
+
+
+
+;; From gsubprocesslauncher-private.h
+
+(define-method set_launcher
+  (of-object "GSubprocess")
+  (c-name "g_subprocess_set_launcher")
+  (return-type "none")
+  (parameters
+    '("GSubprocessLauncher*" "launcher")
+  )
+)
+
+
+
 ;; From gtask.h
 
 (define-function g_task_get_type
@@ -16360,6 +17662,53 @@
 (define-method ask_password_finish
   (of-object "GTlsInteraction")
   (c-name "g_tls_interaction_ask_password_finish")
+  (return-type "GTlsInteractionResult")
+  (parameters
+    '("GAsyncResult*" "result")
+    '("GError**" "error")
+  )
+)
+
+(define-method invoke_request_certificate
+  (of-object "GTlsInteraction")
+  (c-name "g_tls_interaction_invoke_request_certificate")
+  (return-type "GTlsInteractionResult")
+  (parameters
+    '("GTlsConnection*" "connection")
+    '("GTlsCertificateRequestFlags" "flags")
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+  )
+)
+
+(define-method request_certificate
+  (of-object "GTlsInteraction")
+  (c-name "g_tls_interaction_request_certificate")
+  (return-type "GTlsInteractionResult")
+  (parameters
+    '("GTlsConnection*" "connection")
+    '("GTlsCertificateRequestFlags" "flags")
+    '("GCancellable*" "cancellable")
+    '("GError**" "error")
+  )
+)
+
+(define-method request_certificate_async
+  (of-object "GTlsInteraction")
+  (c-name "g_tls_interaction_request_certificate_async")
+  (return-type "none")
+  (parameters
+    '("GTlsConnection*" "connection")
+    '("GTlsCertificateRequestFlags" "flags")
+    '("GCancellable*" "cancellable")
+    '("GAsyncReadyCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method request_certificate_finish
+  (of-object "GTlsInteraction")
+  (c-name "g_tls_interaction_request_certificate_finish")
   (return-type "GTlsInteractionResult")
   (parameters
     '("GAsyncResult*" "result")
@@ -17563,6 +18912,20 @@
   (of-object "GZlibDecompressor")
   (c-name "g_zlib_decompressor_get_file_info")
   (return-type "GFileInfo*")
+)
+
+
+
+;; From thumbnail-verify.h
+
+(define-function thumbnail_verify
+  (c-name "thumbnail_verify")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "thumbnail_path")
+    '("const-gchar*" "file_uri")
+    '("const-GLocalFileStat*" "file_stat_buf")
+  )
 )
 
 

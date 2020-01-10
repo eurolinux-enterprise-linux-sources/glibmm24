@@ -114,13 +114,15 @@ sub parse_and_build_output($)
     if ($token eq "_WRAP_METHOD")     { $self->on_wrap_method(); next;}
     if ($token eq "_WRAP_METHOD_DOCS_ONLY")     { $self->on_wrap_method_docs_only(); next;}
     if ($token eq "_WRAP_CORBA_METHOD")     { $self->on_wrap_corba_method(); next;} #Used in libbonobo*mm.
-    if ($token eq "_WRAP_SIGNAL") { $self->on_wrap_signal(0); next;}
+    if ($token eq "_WRAP_SIGNAL") { $self->on_wrap_signal(); next;}
     if ($token eq "_WRAP_PROPERTY") { $self->on_wrap_property(); next;}
+    if ($token eq "_WRAP_CHILD_PROPERTY") { $self->on_wrap_child_property(); next;}
     if ($token eq "_WRAP_VFUNC") { $self->on_wrap_vfunc(); next;}
     if ($token eq "_WRAP_CTOR")   { $self->on_wrap_ctor(); next;}
     if ($token eq "_WRAP_CREATE") { $self->on_wrap_create(); next;}
 
     if ($token eq "_WRAP_ENUM")   { $self->on_wrap_enum(); next;}
+    if ($token eq "_WRAP_ENUM_DOCS_ONLY")   { $self->on_wrap_enum_docs_only(); next;}
     if ($token eq "_WRAP_GERROR") { $self->on_wrap_gerror(); next;}
     if ($token eq "_IMPLEMENTS_INTERFACE") { $self->on_implements_interface(); next;}
 
@@ -332,40 +334,26 @@ sub on_comment_doxygen($)
 
     if ($_ eq "*/")
     {
-      push (@out,"\'*");
+      push (@out,"\'*/");
       $objOutputter->append(join("", @out));
 
-      # Find next non-whitespace token, but remember whitespace so that we
-      # can print it if the next real token is not _WRAP_SIGNAL
+      # Extract all following whitespace tokens.
       my @whitespace;
       my $next_token = $self->peek_token();
       while ($next_token !~ /\S/)
       {
         push(@whitespace, $self->extract_token());
-	$next_token = $self->peek_token();
+        $next_token = $self->peek_token();
       }
+      # Do not extract the following non-whitespace token so that
+      # parse_and_build_output() will process it.
 
-      # If the next token is a signal, do not close this comment, to merge
-      # this doxygen comment with the one from the signal.
-      if($next_token eq '_WRAP_SIGNAL')
-      {
-	# Extract token and process
-	$self->extract_token();
-	# Tell wrap_signal to merge automatically generated comment with
-	# already existing comment. This is why we do not close the comment
-	# here.
-        $self->on_wrap_signal(1);
-      }
-      else
-      {
-        # Something other than signal follows, so close comment normally
-        $objOutputter->append("/");
-        # And append whitespace we ignored so far
-        $objOutputter->append(join("", @whitespace));
-        # Do not extract the token so that parse_and_build_output() will
-        # process it.
-      }
-
+      # Append whitespace.
+      # extract_preceding_documentation() expects to find a preceding
+      # doxygen comment, if any, as two array elements, one with the whole
+      # comment, the following (possibly empty) with the following
+      # whitespace.
+      $objOutputter->append(join("", @whitespace));
       last;
     }
 
@@ -648,6 +636,7 @@ sub extract_bracketed_text($)
   my ($self) = @_;
 
   my $level = 1;
+  my $in_quotes = 0;
   my $str = "";
 
   # Move to the first "(":
@@ -657,14 +646,24 @@ sub extract_bracketed_text($)
       last if ($t eq "(");
     }
 
+  # TODO: Don't count "(" and ")" within double quotes.
+  # There may be .hg files with unpaired quotes that generate correct
+  # .h and .cc files. Don't want to break such code yet.
+  # See also TODO in string_split_commas().
+
   # Concatenate until the corresponding ")":
   while ( scalar(@tokens) )
     {
       my $t = $self->extract_token();
+      $in_quotes = !$in_quotes if ($t eq '"');
       $level++ if ($t eq "(");
       $level-- if ($t eq ")");
 
-      return $str if (!$level);
+      if (!$level)
+      {
+        $self->error("End of gmmproc directive within a quoted string.\n") if $in_quotes;
+        return $str;
+      }
       $str .= $t;
     }
 
@@ -682,15 +681,22 @@ sub string_split_commas($)
   my @out;
   my $level = 0;
   my $in_braces = 0;
+  my $in_quotes = 0;
   my $str = "";
-  my @in = split(/([,()<>{}])/, $in);
+  my @in = split(/([,"()<>{}])/, $in);
 
-  while ($#in > -1)
+  while (scalar(@in))
+  {
+    my $t = shift @in;
+
+    next if ($t eq "");
+
+    # TODO: Delete the test for scalar(@out) >= 2 when we can stop accepting
+    # .hg files with unpaired quotes, such as _WRAP_PROPERTY("text_column, int).
+    # See also TODO in extract_bracketed_text().
+    $in_quotes = !$in_quotes if ($t eq '"' and scalar(@out) >= 2);
+    if (!$in_quotes)
     {
-      my $t = shift @in;
-
-      next if ($t eq "");
-
       $in_braces++ if ($t eq "{");
       $in_braces-- if ($t eq "}");
 
@@ -701,18 +707,21 @@ sub string_split_commas($)
       # a parameter in a method declaration is an output param. 
       $level-- if ($t eq ")" or ($t eq ">" && !$in_braces));
 
-      # skip , inside functions  Ie.  void (*)(int,int)
-      if ( ($t eq ",") && !$level) 
-        {
-          push(@out, $str);
-          $str="";
-          next;
-        }
-
-      $str .= $t;
+      # Don't split at comma, if inside a function, e.g. void f1(int x, int y)
+      # or std::map<Glib::ustring, float> f2(),
+      # or inside a quoted string, e.g. deprecated "Use f1(), f2() or f3() instead.".
+      if ($t eq "," && !$level)
+      {
+        push(@out, $str);
+        $str = "";
+        next;
+      }
     }
 
-  push(@out,$str);
+    $str .= $t;
+  }
+
+  push(@out, $str);
   return @out;
 }
 
@@ -820,10 +829,10 @@ sub extract_preceding_documentation ($)
 
   my $comment = '';
 
-  if ($#$out >= 2)
+  if ($#$out >= 1)
   {
-    # steal the last three tokens
-    my @back = splice(@$out, -3);
+    # steal the last two tokens
+    my @back = splice(@$out, -2);
     local $_ = join('', @back);
 
     # Check for /*[*!] ... */ or //[/!] comments.  The closing */ _must_
@@ -1159,12 +1168,19 @@ sub on_wrap_create($)
 
 sub on_wrap_signal($$)
 {
-  my ($self, $merge_doxycomment_with_previous) = @_;
+  my ($self) = @_;
 
   if( !($self->check_for_eof()) )
   {
     return;
   }
+
+  my $commentblock = $self->extract_preceding_documentation();
+  # Remove leading and trailing m4 quotes, if any.
+  # M4 quotes will be added around the whole comment, after $commentblock has
+  # possibly been merged with a second comment block.
+  $commentblock =~ s/^`//;
+  $commentblock =~ s/'$//;
 
   my $str = $self->extract_bracketed_text();
   my @args = string_split_commas($str);
@@ -1182,6 +1198,7 @@ sub on_wrap_signal($$)
   my $ifdef;
   my $argDeprecated = "";
   my $deprecation_docs = "";
+  my $exceptionHandler = "";
 
   while($#args >= 2) # If optional arguments are there.
   {
@@ -1220,11 +1237,16 @@ sub on_wrap_signal($$)
     {
     	$ifdef = $1;
     }
+    
+    elsif($argRef =~ /^exception_handler\s+(.*)/) #If exception_handler at the start.
+    {
+        $exceptionHandler = $1;
+    }
   }
 
   $self->output_wrap_signal($argCppDecl, $argCName, $$self{filename}, $$self{line_num},
                             $bCustomDefaultHandler, $bNoDefaultHandler, $bCustomCCallback,
-                            $bRefreturn, $ifdef, $merge_doxycomment_with_previous, $argDeprecated, $deprecation_docs);
+                            $bRefreturn, $ifdef, $commentblock, $argDeprecated, $deprecation_docs, $exceptionHandler);
 }
 
 # void on_wrap_vfunc()
@@ -1248,6 +1270,8 @@ sub on_wrap_vfunc($)
 
   my $refreturn = 0;
   my $refreturn_ctype = 0;
+  my $returnValue = "";
+  my $exceptionHandler = "";
   my $custom_vfunc = 0;
   my $custom_vfunc_callback = 0;
   my $ifdef = "";
@@ -1268,6 +1292,19 @@ sub on_wrap_vfunc($)
     elsif($argRef eq "refreturn_ctype")
     {
       $refreturn_ctype = 1;
+    }
+    # Return value, if neither the underlying C class defines the vfunc
+    # nor the C++ vfunc is overridden in a user-defined subclass.
+    # (Default is the default value of the return type, e.g. false or 0.)
+    elsif($argRef =~ /^return_value\s+(.*)/)
+    {
+      $returnValue = $1;
+    }
+    # If exception handler is not defined, then Glib::exception_handlers_invoke
+    # method will be used for exception handling.
+    elsif($argRef =~ /^exception_handler\s+(.*)/)
+    {
+      $exceptionHandler = $1;
     }
     elsif($argRef eq "custom_vfunc")
     {
@@ -1309,7 +1346,7 @@ sub on_wrap_vfunc($)
   $self->output_wrap_vfunc($argCppDecl, $argCName, $$self{filename}, $$self{line_num},
                            $refreturn, $refreturn_ctype, $custom_vfunc,
                            $custom_vfunc_callback, $ifdef, $errthrow,
-                           $slot_name, $slot_callback, $no_slot_copy);
+                           $slot_name, $slot_callback, $no_slot_copy, $returnValue, $exceptionHandler);
 }
 
 sub on_wrap_enum($)
@@ -1333,6 +1370,32 @@ sub on_wrap_enum($)
       $$self{filename}, $$self{line_num}, $cpp_type, $c_type, $comment, @args);
 }
 
+sub on_wrap_enum_docs_only($)
+{
+  my ($self) = @_;
+
+  return unless ($self->check_for_eof());
+
+  my $outputter = $$self{objOutputter};
+  my $comment = $self->extract_preceding_documentation();
+
+  # get the arguments
+  my @args = string_split_commas($self->extract_bracketed_text());
+
+  my $cpp_type = string_trim(shift(@args));
+  my $c_type   = string_trim(shift(@args));
+
+  # Get the module name so the enum docs can be included in the module's
+  # Doxygen enum group.
+  my $module_canonical = Util::string_canonical($$self{module});
+
+  # The remaining elements in @args could be flags or s#^FOO_## substitutions.
+
+  $outputter->output_wrap_enum_docs_only(
+      $$self{filename}, $$self{line_num}, $module_canonical, $cpp_type, $c_type,
+      $comment, @args);
+}
+
 sub on_wrap_gerror($)
 {
   my ($self) = @_;
@@ -1352,12 +1415,9 @@ sub on_wrap_gerror($)
       $$self{filename}, $$self{line_num}, $cpp_type, $c_enum, $domain, @args);
 }
 
-sub on_wrap_property($)
+sub on_wrap_any_property($)
 {
   my ($self) = @_;
-  my $objOutputter = $$self{objOutputter};
-
-  return unless ($self->check_for_eof());
 
   my $str = $self->extract_bracketed_text();
   my @args = string_split_commas($str);
@@ -1397,10 +1457,32 @@ sub on_wrap_property($)
     }
   }
 
+  return ($filename, $line_num, $argPropertyName, $argCppType, $argDeprecated, $deprecation_docs);
+}
+
+sub on_wrap_property($)
+{
+  my ($self) = @_;
+  my $objOutputter = $$self{objOutputter};
+
+  return unless ($self->check_for_eof());
+
+  my ($filename, $line_num, $argPropertyName, $argCppType, $argDeprecated, $deprecation_docs) = $self->on_wrap_any_property();
 
   $objOutputter->output_wrap_property($filename, $line_num, $argPropertyName, $argCppType, $$self{c_class}, $argDeprecated, $deprecation_docs);
 }
 
+sub on_wrap_child_property($)
+{
+  my ($self) = @_;
+  my $objOutputter = $$self{objOutputter};
+
+  return unless ($self->check_for_eof());
+
+  my ($filename, $line_num, $argPropertyName, $argCppType, $argDeprecated, $deprecation_docs) = $self->on_wrap_any_property();
+
+  $objOutputter->output_wrap_child_property($filename, $line_num, $argPropertyName, $argCppType, $$self{c_class}, $argDeprecated, $deprecation_docs);
+}
 
 sub output_wrap_check($$$$$$)
 {
@@ -1423,12 +1505,12 @@ sub output_wrap_check($$$$$$)
 
 # void output_wrap($CppDecl, $signal_name, $filename, $line_num, $bCustomDefaultHandler,
 #                  $bNoDefaultHandler, $bCustomCCallback, $bRefreturn, $ifdef,
-#                  $merge_doxycomment_with_previous, $deprecated, $deprecation_docs)
-sub output_wrap_signal($$$$$$$$$$$)
+#                  $commentblock, $deprecated, $deprecation_docs, $exceptionHandler)
+sub output_wrap_signal($$$$$$$$$$$$)
 {
   my ($self, $CppDecl, $signal_name, $filename, $line_num, $bCustomDefaultHandler,
       $bNoDefaultHandler, $bCustomCCallback, $bRefreturn, $ifdef,
-      $merge_doxycomment_with_previous, $deprecated, $deprecation_docs) = @_;
+      $commentblock, $deprecated, $deprecation_docs, $exceptionHandler) = @_;
 
   #Some checks:
   return if ($self->output_wrap_check($CppDecl, $signal_name,
@@ -1461,31 +1543,31 @@ sub output_wrap_signal($$$$$$$$$$$)
   }
 
   $objOutputter->output_wrap_sig_decl($filename, $line_num, $objCSignal, $objCppSignal,
-    $signal_name, $bCustomCCallback, $ifdef, $merge_doxycomment_with_previous,
-    $deprecated, $deprecation_docs);
+    $signal_name, $bCustomCCallback, $ifdef, $commentblock,
+    $deprecated, $deprecation_docs, $exceptionHandler);
 
   if($bNoDefaultHandler eq 0)
   {
     $objOutputter->output_wrap_default_signal_handler_h($filename, $line_num,
-      $objCppSignal, $objCSignal, $ifdef, $deprecated);
+      $objCppSignal, $objCSignal, $ifdef, $deprecated, $exceptionHandler);
 
     my $bImplement = 1;
     if($bCustomDefaultHandler) { $bImplement = 0; }
     $objOutputter->output_wrap_default_signal_handler_cc($filename, $line_num,
       $objCppSignal, $objCSignal, $bImplement, $bCustomCCallback, $bRefreturn,
-      $ifdef, $deprecated);
+      $ifdef, $deprecated, $exceptionHandler);
   }
 }
 
 # void output_wrap_vfunc($CppDecl, $vfunc_name, $filename, $line_num,
 #                  $refreturn, $refreturn_ctype,
 #                  $custom_vfunc, $custom_vfunc_callback, $ifdef, $errthrow,
-#                  $slot_name, $slot_callback, $no_slot_copy)
-sub output_wrap_vfunc($$$$$$$$$$$$)
+#                  $slot_name, $slot_callback, $no_slot_copy, $returnValue, $exceptionHandler)
+sub output_wrap_vfunc($$$$$$$$$$$$$$)
 {
   my ($self, $CppDecl, $vfunc_name, $filename, $line_num, $refreturn, $refreturn_ctype,
       $custom_vfunc, $custom_vfunc_callback, $ifdef, $errthrow,
-      $slot_name, $slot_callback, $no_slot_copy) = @_;
+      $slot_name, $slot_callback, $no_slot_copy, $returnValue, $exceptionHandler) = @_;
 
   #Some checks:
   return if ($self->output_wrap_check($CppDecl, $vfunc_name, $filename, $line_num, '_WRAP_VFUNC'));
@@ -1516,6 +1598,8 @@ sub output_wrap_vfunc($$$$$$$$$$$$)
   # These macros are defined in vfunc.m4:
 
   $$objCppVfunc{rettype_needs_ref} = $refreturn;
+  $$objCppVfunc{return_value} = $returnValue;
+  $$objCppVfunc{exception_handler} = $exceptionHandler;
   $$objCppVfunc{name} .= "_vfunc"; #All vfuncs should have the "_vfunc" suffix, and a separate easily-named invoker method.
 
   # Store the slot information in the vfunc if specified.

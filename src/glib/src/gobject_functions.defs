@@ -34,6 +34,7 @@
   (values
     '("readable" "G_PARAM_READABLE")
     '("writable" "G_PARAM_WRITABLE")
+    '("readwrite" "G_PARAM_READWRITE")
     '("construct" "G_PARAM_CONSTRUCT")
     '("construct-only" "G_PARAM_CONSTRUCT_ONLY")
     '("lax-validation" "G_PARAM_LAX_VALIDATION")
@@ -41,6 +42,7 @@
     '("private" "G_PARAM_PRIVATE")
     '("static-nick" "G_PARAM_STATIC_NICK")
     '("static-blurb" "G_PARAM_STATIC_BLURB")
+    '("explicit-notify" "G_PARAM_EXPLICIT_NOTIFY")
     '("deprecated" "G_PARAM_DEPRECATED")
   )
 )
@@ -165,6 +167,12 @@
   (of-object "GBinding")
   (c-name "g_binding_get_target_property")
   (return-type "const-gchar*")
+)
+
+(define-method unbind
+  (of-object "GBinding")
+  (c-name "g_binding_unbind")
+  (return-type "none")
 )
 
 (define-function g_object_bind_property
@@ -688,6 +696,11 @@
   (return-type "GType")
 )
 
+(define-function g_variant_dict_get_type
+  (c-name "g_variant_dict_get_type")
+  (return-type "GType")
+)
+
 (define-function g_key_file_get_type
   (c-name "g_key_file_get_type")
   (return-type "GType")
@@ -725,6 +738,11 @@
 
 (define-function g_markup_parse_context_get_type
   (c-name "g_markup_parse_context_get_type")
+  (return-type "GType")
+)
+
+(define-function g_mapped_file_get_type
+  (c-name "g_mapped_file_get_type")
   (return-type "GType")
 )
 
@@ -2104,6 +2122,12 @@
   )
 )
 
+(define-method get_default_value
+  (of-object "GParamSpec")
+  (c-name "g_param_spec_get_default_value")
+  (return-type "const-GValue*")
+)
+
 (define-function g_param_type_register_static
   (c-name "g_param_type_register_static")
   (return-type "GType")
@@ -3207,12 +3231,30 @@
   )
 )
 
+(define-method add_instance_private
+  (of-object "GType")
+  (c-name "g_type_add_instance_private")
+  (return-type "gint")
+  (parameters
+    '("gsize" "private_size")
+  )
+)
+
 (define-method get_private
   (of-object "GTypeInstance")
   (c-name "g_type_instance_get_private")
   (return-type "gpointer")
   (parameters
     '("GType" "private_type")
+  )
+)
+
+(define-function g_type_class_adjust_private_offset
+  (c-name "g_type_class_adjust_private_offset")
+  (return-type "none")
+  (parameters
+    '("gpointer" "g_class")
+    '("gint*" "private_size_or_offset")
   )
 )
 
@@ -3231,6 +3273,14 @@
   (return-type "gpointer")
   (parameters
     '("GType" "private_type")
+  )
+)
+
+(define-function g_type_class_get_instance_private_offset
+  (c-name "g_type_class_get_instance_private_offset")
+  (return-type "gint")
+  (parameters
+    '("gpointer" "g_class")
   )
 )
 
@@ -3358,6 +3408,15 @@
   (parameters
     '("GTypeInstance*" "instance")
     '("GType" "iface_type")
+  )
+)
+
+(define-function g_type_check_instance_is_fundamentally_a
+  (c-name "g_type_check_instance_is_fundamentally_a")
+  (return-type "gboolean")
+  (parameters
+    '("GTypeInstance*" "instance")
+    '("GType" "fundamental_type")
   )
 )
 
@@ -3681,6 +3740,15 @@
 (define-method set_instance
   (of-object "GValue")
   (c-name "g_value_set_instance")
+  (return-type "none")
+  (parameters
+    '("gpointer" "instance")
+  )
+)
+
+(define-method init_from_instance
+  (of-object "GValue")
+  (c-name "g_value_init_from_instance")
   (return-type "none")
   (parameters
     '("gpointer" "instance")

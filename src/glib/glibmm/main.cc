@@ -32,6 +32,7 @@
 #include <glibmm/wrap.h>
 #include <glibmm/iochannel.h>
 #include <algorithm>
+#include <map> // Needed until the next ABI break.
 
 namespace
 {
@@ -45,6 +46,27 @@ void time64_to_time_val(gint64 time64, Glib::TimeVal& time_val)
   time_val = Glib::TimeVal(seconds, microseconds);
 }
 #endif //GLIBMM_DISABLE_DEPRECATED
+
+//TODO: At the next ABI break, replace ExtraSourceData by new data members in Source.
+// Then the mutex is not necessary, but to keep the code thread-safe, use the
+// g_atomic_*() functions on these data elements.
+// These are new data members that can't be added to Glib::Source now,
+// because it would break ABI.
+struct ExtraSourceData
+{
+  ExtraSourceData()
+  : ref_count(1), keep_wrapper(2)
+  {}
+  int ref_count;
+  // When both Source::unreference() and SourceCallbackData::destroy_notify_callback()
+  // have decreased keep_wrapper, it's time to delete the C++ wrapper.
+  int keep_wrapper;
+};
+
+std::map<const Glib::Source*, ExtraSourceData> extra_source_data;
+// Source instances may be used in different threads.
+// Accesses to extra_source_data must be thread-safe.
+Glib::Threads::Mutex extra_source_data_mutex;
 
 class SourceConnectionNode
 {
@@ -120,8 +142,8 @@ sigc::slot_base* SourceConnectionNode::get_slot()
 /* We use the callback data member of GSource to store both a pointer to our
  * wrapper and a pointer to the connection node that is currently being used.
  * The one and only SourceCallbackData object of a Glib::Source is constructed
- * in the ctor of Glib::Source and destroyed after the GSource object when the
- * reference counter of the GSource object reaches zero!
+ * in the ctor of Glib::Source and destroyed when the GSource object is destroyed,
+ * which may occur before the reference counter of the GSource object reaches zero!
  */
 struct SourceCallbackData
 {
@@ -159,7 +181,16 @@ void SourceCallbackData::destroy_notify_callback(void* data)
     SourceConnectionNode::destroy_notify_callback(self->node);
 
   if(self->wrapper)
-    Glib::Source::destroy_notify_callback(self->wrapper);
+  {
+    Glib::Threads::Mutex::Lock lock(extra_source_data_mutex);
+    if (--extra_source_data[self->wrapper].keep_wrapper == 0)
+    {
+      // No other reference exists to the wrapper. Delete it!
+      extra_source_data.erase(self->wrapper);
+      lock.release();
+      Glib::Source::destroy_notify_callback(self->wrapper);
+    }
+  }
 
   delete self;
 }
@@ -169,7 +200,7 @@ void SourceCallbackData::destroy_notify_callback(void* data)
  */
 static SourceCallbackData* glibmm_source_get_callback_data(GSource* source)
 {
-  g_return_val_if_fail(source->callback_funcs->get != 0, 0);
+  g_return_val_if_fail(source->callback_funcs != 0, 0);
 
   GSourceFunc func;
   void* user_data = 0;
@@ -194,9 +225,9 @@ static gboolean glibmm_dummy_source_callback(void*)
   return 0;
 }
 
-/* Only used by SignalTimeout::connect() and SignalIdle::connect().
- * These don't use Glib::Source, to avoid the unnecessary overhead
- * of a completely unused wrapper object.
+/* Only used by SignalTimeout::connect(), SignalTimeout::connect_seconds()
+ * and SignalIdle::connect(). These don't use Glib::Source, to avoid the
+ * unnecessary overhead of a completely unused wrapper object.
  */
 static gboolean glibmm_source_callback(void* data)
 {
@@ -286,6 +317,28 @@ static void glibmm_signal_connect_once(const sigc::slot<void>& slot, int priorit
   conn_node->install(source);
   g_source_attach(source, context);
   g_source_unref(source); // GMainContext holds a reference
+}
+
+gboolean glibmm_main_context_invoke_callback(void* data)
+{
+  sigc::slot_base *const slot = reinterpret_cast<sigc::slot_base*>(data);
+
+  try
+  {
+    // Recreate the specific slot from the generic slot node.
+    return (*static_cast<sigc::slot<bool>*>(slot))();
+  }
+  catch(...)
+  {
+    Glib::exception_handlers_invoke();
+  }
+  return 0;
+}
+
+void glibmm_main_context_invoke_destroy_notify_callback(void* data)
+{
+  sigc::slot_base *const slot = reinterpret_cast<sigc::slot_base*>(data);
+  delete slot;
 }
 
 } // anonymous namespace
@@ -624,6 +677,15 @@ void MainContext::remove_poll(PollFD& fd)
   g_main_context_remove_poll(gobj(), fd.gobj());
 }
 
+void MainContext::invoke(const sigc::slot<bool>& slot, int priority)
+{
+  // Make a copy of slot on the heap.
+  sigc::slot_base* const slot_copy = new sigc::slot<bool>(slot);
+
+  g_main_context_invoke_full(gobj(), priority, glibmm_main_context_invoke_callback,
+    slot_copy, glibmm_main_context_invoke_destroy_notify_callback);
+}
+
 SignalTimeout MainContext::signal_timeout()
 {
   return SignalTimeout(gobj());
@@ -821,12 +883,35 @@ GSource* Source::gobj_copy() const
 
 void Source::reference() const
 {
-  g_source_ref(gobject_);
+  Glib::Threads::Mutex::Lock lock(extra_source_data_mutex);
+  ++extra_source_data[this].ref_count;
 }
 
 void Source::unreference() const
 {
-  g_source_unref(gobject_);
+  Glib::Threads::Mutex::Lock lock(extra_source_data_mutex);
+  if (--extra_source_data[this].ref_count == 0)
+  {
+    GSource* const tmp_gobject = gobject_;
+
+    if (--extra_source_data[this].keep_wrapper == 0)
+    {
+      // The last reference from a RefPtr<Source> has been deleted, and
+      // SourceCallbackData::destroy_notify_callback() has been called while
+      // extra_source_data[this].keep_wrapper was > 1.
+      // Delete the wrapper!
+      extra_source_data.erase(this);
+      lock.release();
+      destroy_notify_callback(const_cast<Source*>(this));
+    }
+    else
+      lock.release();
+
+    // Drop the one and only GSource reference held by the C++ wrapper.
+    // If the GSource instance is attached to a main context, the GMainContext
+    // holds a reference until the source is detached (destroyed).
+    g_source_unref(tmp_gobject);
+  }
 }
 
 Source::Source()
@@ -864,6 +949,8 @@ Source::~Source()
     gobject_ = 0;
 
     g_source_unref(tmp_gobject);
+
+    // The constructor does not add this to extra_source_data. No need to erase.
   }
 }
 
@@ -975,6 +1062,40 @@ void Source::destroy_notify_callback(void* data)
     // No exception checking: if the dtor throws, you're out of luck anyway.
     delete self;
   }
+}
+
+// static
+sigc::connection Source::attach_signal_source(const sigc::slot_base& slot, int priority,
+  GSource* source, GMainContext* context, GSourceFunc callback_func)
+{
+  SourceConnectionNode* const conn_node = new SourceConnectionNode(slot);
+  const sigc::connection connection(*conn_node->get_slot());
+
+  if (priority != G_PRIORITY_DEFAULT)
+    g_source_set_priority(source, priority);
+
+  g_source_set_callback(source, callback_func, conn_node,
+                        &SourceConnectionNode::destroy_notify_callback);
+
+  conn_node->install(source);
+  g_source_attach(source, context);
+  g_source_unref(source); // GMainContext holds a reference
+
+  return connection;
+}
+
+// static
+sigc::slot_base* Source::get_slot_from_connection_node(void* data)
+{
+  return static_cast<SourceConnectionNode*>(data)->get_slot();
+}
+
+// static
+sigc::slot_base* Source::get_slot_from_callback_data(void* data)
+{
+  SourceCallbackData* const callback_data = static_cast<SourceCallbackData*>(data);
+  g_return_val_if_fail(callback_data->node != 0, 0);
+  return callback_data->node->get_slot();
 }
 
 
@@ -1140,6 +1261,11 @@ IOSource::IOSource(const Glib::RefPtr<IOChannel>& channel, IOCondition condition
 :
   Source(g_io_create_watch(channel->gobj(), (GIOCondition) condition),
          (GSourceFunc) &glibmm_iosource_callback)
+{}
+
+IOSource::IOSource(GSource* cast_item, GSourceFunc callback_func)
+:
+  Source(cast_item, callback_func)
 {}
 
 IOSource::~IOSource()

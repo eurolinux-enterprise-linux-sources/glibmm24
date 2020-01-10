@@ -51,6 +51,7 @@
     '("partial-input" "G_CONVERT_ERROR_PARTIAL_INPUT")
     '("bad-uri" "G_CONVERT_ERROR_BAD_URI")
     '("not-absolute-path" "G_CONVERT_ERROR_NOT_ABSOLUTE_PATH")
+    '("no-memory" "G_CONVERT_ERROR_NO_MEMORY")
   )
 )
 
@@ -290,6 +291,7 @@
     '("do-not-use-this-unsupported-flag" "G_MARKUP_DO_NOT_USE_THIS_UNSUPPORTED_FLAG")
     '("treat-cdata-as-text" "G_MARKUP_TREAT_CDATA_AS_TEXT")
     '("prefix-error-position" "G_MARKUP_PREFIX_ERROR_POSITION")
+    '("ignore-qualified" "G_MARKUP_IGNORE_QUALIFIED")
   )
 )
 
@@ -355,6 +357,7 @@
   (c-name "GOptionFlags")
   (gtype-id "G_TYPE_OPTION_FLAGS")
   (values
+    '("none" "G_OPTION_FLAG_NONE")
     '("hidden" "G_OPTION_FLAG_HIDDEN")
     '("in-main" "G_OPTION_FLAG_IN_MAIN")
     '("reverse" "G_OPTION_FLAG_REVERSE")
@@ -582,6 +585,7 @@
   (c-name "GSpawnFlags")
   (gtype-id "G_TYPE_SPAWN_FLAGS")
   (values
+    '("default" "G_SPAWN_DEFAULT")
     '("leave-descriptors-open" "G_SPAWN_LEAVE_DESCRIPTORS_OPEN")
     '("do-not-reap-child" "G_SPAWN_DO_NOT_REAP_CHILD")
     '("search-path" "G_SPAWN_SEARCH_PATH")
@@ -590,6 +594,7 @@
     '("child-inherits-stdin" "G_SPAWN_CHILD_INHERITS_STDIN")
     '("file-and-argv-zero" "G_SPAWN_FILE_AND_ARGV_ZERO")
     '("search-path-from-envp" "G_SPAWN_SEARCH_PATH_FROM_ENVP")
+    '("cloexec-pipes" "G_SPAWN_CLOEXEC_PIPES")
   )
 )
 
@@ -623,6 +628,17 @@
   )
 )
 
+(define-flags SubprocessFlags
+  (in-module "GTest")
+  (c-name "GTestSubprocessFlags")
+  (gtype-id "G_TYPE_TEST_SUBPROCESS_FLAGS")
+  (values
+    '("stdin" "G_TEST_SUBPROCESS_INHERIT_STDIN")
+    '("stdout" "G_TEST_SUBPROCESS_INHERIT_STDOUT")
+    '("stderr" "G_TEST_SUBPROCESS_INHERIT_STDERR")
+  )
+)
+
 (define-enum LogType
   (in-module "GTest")
   (c-name "GTestLogType")
@@ -638,6 +654,18 @@
     '("min-result" "G_TEST_LOG_MIN_RESULT")
     '("max-result" "G_TEST_LOG_MAX_RESULT")
     '("message" "G_TEST_LOG_MESSAGE")
+    '("start-suite" "G_TEST_LOG_START_SUITE")
+    '("stop-suite" "G_TEST_LOG_STOP_SUITE")
+  )
+)
+
+(define-enum FileType
+  (in-module "GTest")
+  (c-name "GTestFileType")
+  (gtype-id "G_TYPE_TEST_FILE_TYPE")
+  (values
+    '("dist" "G_TEST_DIST")
+    '("built" "G_TEST_BUILT")
   )
 )
 
@@ -867,6 +895,29 @@
     '("sharada" "G_UNICODE_SCRIPT_SHARADA")
     '("sora-sompeng" "G_UNICODE_SCRIPT_SORA_SOMPENG")
     '("takri" "G_UNICODE_SCRIPT_TAKRI")
+    '("bassa-vah" "G_UNICODE_SCRIPT_BASSA_VAH")
+    '("caucasian-albanian" "G_UNICODE_SCRIPT_CAUCASIAN_ALBANIAN")
+    '("duployan" "G_UNICODE_SCRIPT_DUPLOYAN")
+    '("elbasan" "G_UNICODE_SCRIPT_ELBASAN")
+    '("grantha" "G_UNICODE_SCRIPT_GRANTHA")
+    '("khojki" "G_UNICODE_SCRIPT_KHOJKI")
+    '("khudawadi" "G_UNICODE_SCRIPT_KHUDAWADI")
+    '("linear-a" "G_UNICODE_SCRIPT_LINEAR_A")
+    '("mahajani" "G_UNICODE_SCRIPT_MAHAJANI")
+    '("manichaean" "G_UNICODE_SCRIPT_MANICHAEAN")
+    '("mende-kikakui" "G_UNICODE_SCRIPT_MENDE_KIKAKUI")
+    '("modi" "G_UNICODE_SCRIPT_MODI")
+    '("mro" "G_UNICODE_SCRIPT_MRO")
+    '("nabataean" "G_UNICODE_SCRIPT_NABATAEAN")
+    '("old-north-arabian" "G_UNICODE_SCRIPT_OLD_NORTH_ARABIAN")
+    '("old-permic" "G_UNICODE_SCRIPT_OLD_PERMIC")
+    '("pahawh-hmong" "G_UNICODE_SCRIPT_PAHAWH_HMONG")
+    '("palmyrene" "G_UNICODE_SCRIPT_PALMYRENE")
+    '("pau-cin-hau" "G_UNICODE_SCRIPT_PAU_CIN_HAU")
+    '("psalter-pahlavi" "G_UNICODE_SCRIPT_PSALTER_PAHLAVI")
+    '("siddham" "G_UNICODE_SCRIPT_SIDDHAM")
+    '("tirhuta" "G_UNICODE_SCRIPT_TIRHUTA")
+    '("warang-citi" "G_UNICODE_SCRIPT_WARANG_CITI")
   )
 )
 
@@ -1248,7 +1299,7 @@
 (define-method remove_range
   (of-object "GPtrArray")
   (c-name "g_ptr_array_remove_range")
-  (return-type "none")
+  (return-type "GPtrArray*")
   (parameters
     '("guint" "index_")
     '("guint" "length")
@@ -1260,6 +1311,16 @@
   (c-name "g_ptr_array_add")
   (return-type "none")
   (parameters
+    '("gpointer" "data")
+  )
+)
+
+(define-method insert
+  (of-object "GPtrArray")
+  (c-name "g_ptr_array_insert")
+  (return-type "none")
+  (parameters
+    '("gint" "index_")
     '("gpointer" "data")
   )
 )
@@ -2321,19 +2382,91 @@
 
 ;; From gbsearcharray.h
 
-(define-function if
-  (c-name "if")
-  (return-type "else")
+(define-function g_bsearch_array_create
+  (c-name "g_bsearch_array_create")
+  (return-type "GBSearchArray*")
   (parameters
-    '("cmp-<" "0")
+    '("const-GBSearchConfig*" "bconfig")
   )
 )
 
-(define-function MIN
-  (c-name "MIN")
-  (return-type "return")
+(define-method get_nth
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_get_nth")
+  (return-type "gpointer")
   (parameters
-    '("barray->n_nodes-+" "1")
+    '("const-GBSearchConfig*" "bconfig")
+    '("guint" "nth")
+  )
+)
+
+(define-method get_index
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_get_index")
+  (return-type "guint")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("gconstpointer" "node_in_array")
+  )
+)
+
+(define-method remove
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_remove")
+  (return-type "GBSearchArray*")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("guint" "index_")
+  )
+)
+
+(define-method grow
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_grow")
+  (return-type "GBSearchArray*")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("guint" "index")
+  )
+)
+
+(define-method insert
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_insert")
+  (return-type "GBSearchArray*")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("gconstpointer" "key_node")
+  )
+)
+
+(define-method replace
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_replace")
+  (return-type "GBSearchArray*")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("gconstpointer" "key_node")
+  )
+)
+
+(define-method free
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_free")
+  (return-type "none")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+  )
+)
+
+(define-method lookup_fuzzy
+  (of-object "GBSearchArray")
+  (c-name "g_bsearch_array_lookup_fuzzy")
+  (return-type "gpointer")
+  (parameters
+    '("const-GBSearchConfig*" "bconfig")
+    '("gconstpointer" "key_node")
+    '("const-guint" "sibling_or_after")
   )
 )
 
@@ -4349,7 +4482,7 @@
 (define-method insert
   (of-object "GHashTable")
   (c-name "g_hash_table_insert")
-  (return-type "none")
+  (return-type "gboolean")
   (parameters
     '("gpointer" "key")
     '("gpointer" "value")
@@ -4359,7 +4492,7 @@
 (define-method replace
   (of-object "GHashTable")
   (c-name "g_hash_table_replace")
-  (return-type "none")
+  (return-type "gboolean")
   (parameters
     '("gpointer" "key")
     '("gpointer" "value")
@@ -4369,7 +4502,7 @@
 (define-method add
   (of-object "GHashTable")
   (c-name "g_hash_table_add")
-  (return-type "none")
+  (return-type "gboolean")
   (parameters
     '("gpointer" "key")
   )
@@ -4490,6 +4623,15 @@
   (of-object "GHashTable")
   (c-name "g_hash_table_get_values")
   (return-type "GList*")
+)
+
+(define-method get_keys_as_array
+  (of-object "GHashTable")
+  (c-name "g_hash_table_get_keys_as_array")
+  (return-type "gpointer*")
+  (parameters
+    '("guint*" "length")
+  )
 )
 
 (define-method init
@@ -5359,14 +5501,6 @@
   )
 )
 
-(define-function g_io_channel_win32_new_messages
-  (c-name "g_io_channel_win32_new_messages")
-  (return-type "GIOChannel*")
-  (parameters
-    '("guint" "hwnd")
-  )
-)
-
 (define-function g_io_channel_win32_new_fd
   (c-name "g_io_channel_win32_new_fd")
   (return-type "GIOChannel*")
@@ -5512,6 +5646,16 @@
   (return-type "gchar*")
   (parameters
     '("gsize*" "length")
+    '("GError**" "error")
+  )
+)
+
+(define-method save_to_file
+  (of-object "GKeyFile")
+  (c-name "g_key_file_save_to_file")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "filename")
     '("GError**" "error")
   )
 )
@@ -5988,6 +6132,23 @@
   (return-type "GMainContext*")
   (parameters
     '("guint" "next_id")
+  )
+)
+
+(define-function g_dir_open_with_errno
+  (c-name "g_dir_open_with_errno")
+  (return-type "GDir*")
+  (parameters
+    '("const-gchar*" "path")
+    '("guint" "flags")
+  )
+)
+
+(define-function g_dir_new_from_dirp
+  (c-name "g_dir_new_from_dirp")
+  (return-type "GDir*")
+  (parameters
+    '("gpointer" "dirp")
   )
 )
 
@@ -7533,6 +7694,69 @@
   )
 )
 
+(define-function g_error
+  (c-name "g_error")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_critical
+  (c-name "g_critical")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_message
+  (c-name "g_message")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_warning
+  (c-name "g_warning")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_info
+  (c-name "g_info")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_debug
+  (c-name "g_debug")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function g_print
+  (c-name "g_print")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "format")
+  )
+  (varargs #t)
+)
+
 (define-function g_set_print_handler
   (c-name "g_set_print_handler")
   (return-type "GPrintFunc")
@@ -7881,6 +8105,16 @@
   (parameters
     '("gint*" "argc")
     '("gchar***" "argv")
+    '("GError**" "error")
+  )
+)
+
+(define-method parse_strv
+  (of-object "GOptionContext")
+  (c-name "g_option_context_parse_strv")
+  (return-type "gboolean")
+  (parameters
+    '("gchar***" "arguments")
     '("GError**" "error")
   )
 )
@@ -8737,6 +8971,12 @@
   (of-object "GRegex")
   (c-name "g_regex_get_has_cr_or_lf")
   (return-type "gboolean")
+)
+
+(define-method get_max_lookbehind
+  (of-object "GRegex")
+  (c-name "g_regex_get_max_lookbehind")
+  (return-type "gint")
 )
 
 (define-method get_string_number
@@ -10128,15 +10368,6 @@
   )
 )
 
-(define-function g_access
-  (c-name "g_access")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
-
 (define-function g_chmod
   (c-name "g_chmod")
   (return-type "int")
@@ -10183,14 +10414,6 @@
   )
 )
 
-(define-function g_chdir
-  (c-name "g_chdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "path")
-  )
-)
-
 (define-function g_stat
   (c-name "g_stat")
   (return-type "int")
@@ -10209,24 +10432,8 @@
   )
 )
 
-(define-function g_unlink
-  (c-name "g_unlink")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
-
 (define-function g_remove
   (c-name "g_remove")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
-
-(define-function g_rmdir
-  (c-name "g_rmdir")
   (return-type "int")
   (parameters
     '("const-gchar*" "filename")
@@ -10529,6 +10736,14 @@
   )
 )
 
+(define-function g_str_is_ascii
+  (c-name "g_str_is_ascii")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "str")
+  )
+)
+
 (define-function g_strcasecmp
   (c-name "g_strcasecmp")
   (return-type "gint")
@@ -10711,6 +10926,35 @@
   (parameters
     '("gchar*" "dest")
     '("const-char*" "src")
+  )
+)
+
+(define-function g_str_to_ascii
+  (c-name "g_str_to_ascii")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "str")
+    '("const-gchar*" "from_locale")
+  )
+)
+
+(define-function g_str_tokenize_and_fold
+  (c-name "g_str_tokenize_and_fold")
+  (return-type "gchar**")
+  (parameters
+    '("const-gchar*" "string")
+    '("const-gchar*" "translit_locale")
+    '("gchar***" "ascii_alternates")
+  )
+)
+
+(define-function g_str_match_string
+  (c-name "g_str_match_string")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "search_term")
+    '("const-gchar*" "potential_hit")
+    '("gboolean" "accept_alternates")
   )
 )
 
@@ -11055,6 +11299,21 @@
   )
 )
 
+(define-method append_c_inline
+  (of-object "GString")
+  (c-name "g_string_append_c_inline")
+  (return-type "GString*")
+  (parameters
+    '("gchar" "c")
+  )
+)
+
+(define-method down
+  (of-object "GString")
+  (c-name "g_string_down")
+  (return-type "GString*")
+)
+
 (define-method up
   (of-object "GString")
   (c-name "g_string_up")
@@ -11104,6 +11363,11 @@
   (varargs #t)
 )
 
+(define-function g_test_subprocess
+  (c-name "g_test_subprocess")
+  (return-type "gboolean")
+)
+
 (define-function g_test_run
   (c-name "g_test_run")
   (return-type "int")
@@ -11141,6 +11405,32 @@
 
 (define-function g_test_fail
   (c-name "g_test_fail")
+  (return-type "none")
+)
+
+(define-function g_test_incomplete
+  (c-name "g_test_incomplete")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "msg")
+  )
+)
+
+(define-function g_test_skip
+  (c-name "g_test_skip")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "msg")
+  )
+)
+
+(define-function g_test_failed
+  (c-name "g_test_failed")
+  (return-type "gboolean")
+)
+
+(define-function g_test_set_nonfatal_assertions
+  (c-name "g_test_set_nonfatal_assertions")
   (return-type "none")
 )
 
@@ -11207,6 +11497,16 @@
   (parameters
     '("guint64" "usec_timeout")
     '("GTestTrapFlags" "test_trap_flags")
+  )
+)
+
+(define-function g_test_trap_subprocess
+  (c-name "g_test_trap_subprocess")
+  (return-type "none")
+  (parameters
+    '("const-char*" "test_path")
+    '("guint64" "usec_timeout")
+    '("GTestSubprocessFlags" "test_flags")
   )
 )
 
@@ -11464,6 +11764,34 @@
     '("int" "line")
     '("const-char*" "func")
   )
+)
+
+(define-function g_test_build_filename
+  (c-name "g_test_build_filename")
+  (return-type "gchar*")
+  (parameters
+    '("GTestFileType" "file_type")
+    '("const-gchar*" "first_path")
+  )
+  (varargs #t)
+)
+
+(define-function g_test_get_dir
+  (c-name "g_test_get_dir")
+  (return-type "const-gchar*")
+  (parameters
+    '("GTestFileType" "file_type")
+  )
+)
+
+(define-function g_test_get_filename
+  (c-name "g_test_get_filename")
+  (return-type "const-gchar*")
+  (parameters
+    '("GTestFileType" "file_type")
+    '("const-gchar*" "first_path")
+  )
+  (varargs #t)
 )
 
 
@@ -12082,6 +12410,10 @@
 
 
 
+;; From gtranslit-data.h
+
+
+
 ;; From gtrashstack.h
 
 (define-function g_trash_stack_push
@@ -12114,15 +12446,6 @@
   (return-type "guint")
   (parameters
     '("GTrashStack**" "stack_p")
-  )
-)
-
-(define-function g_trash_stack_push
-  (c-name "g_trash_stack_push")
-  (return-type "none")
-  (parameters
-    '("GTrashStack**" "stack_p")
-    '("gpointer" "data_p")
   )
 )
 
@@ -12949,6 +13272,11 @@
 ;; has a function pointer parameter and that is not handled correctly by
 ;; h2def.py.
 
+(define-function g_get_system_config_dirs
+  (c-name "g_get_system_config_dirs")
+  (return-type "const-gchar*-const*")
+)
+
 (define-function g_get_user_runtime_dir
   (c-name "g_get_user_runtime_dir")
   (return-type "const-gchar*")
@@ -13069,15 +13397,6 @@
   (return-type "guint")
   (parameters
     '("gulong" "number")
-  )
-)
-
-(define-function g_bit_nth_lsf
-  (c-name "g_bit_nth_lsf")
-  (return-type "gint")
-  (parameters
-    '("gulong" "mask")
-    '("gint" "nth_bit")
   )
 )
 
@@ -13261,6 +13580,23 @@
   (parameters
     '("const-gchar*" "string")
   )
+)
+
+(define-function g_variant_new_take_string
+  (c-name "g_variant_new_take_string")
+  (return-type "GVariant*")
+  (parameters
+    '("gchar*" "string")
+  )
+)
+
+(define-function g_variant_new_printf
+  (c-name "g_variant_new_printf")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "format_string")
+  )
+  (varargs #t)
 )
 
 (define-function g_variant_new_object_path
@@ -13768,6 +14104,11 @@
   (return-type "GQuark")
 )
 
+(define-function g_variant_parse_error_quark
+  (c-name "g_variant_parse_error_quark")
+  (return-type "GQuark")
+)
+
 (define-function g_variant_builder_new
   (c-name "g_variant_builder_new")
   (is-constructor-of "GVariantBuilder")
@@ -13935,6 +14276,15 @@
   )
 )
 
+(define-function g_variant_parse_error_print_context
+  (c-name "g_variant_parse_error_print_context")
+  (return-type "gchar*")
+  (parameters
+    '("GError*" "error")
+    '("const-gchar*" "source_str")
+  )
+)
+
 (define-function g_variant_compare
   (c-name "g_variant_compare")
   (return-type "gint")
@@ -13942,6 +14292,105 @@
     '("gconstpointer" "one")
     '("gconstpointer" "two")
   )
+)
+
+(define-method dict_new
+  (of-object "GVariant")
+  (c-name "g_variant_dict_new")
+  (return-type "GVariantDict*")
+)
+
+(define-method init
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_init")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "from_asv")
+  )
+)
+
+(define-method lookup
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_lookup")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "key")
+    '("const-gchar*" "format_string")
+  )
+  (varargs #t)
+)
+
+(define-method lookup_value
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_lookup_value")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "key")
+    '("const-GVariantType*" "expected_type")
+  )
+)
+
+(define-method contains
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_contains")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "key")
+  )
+)
+
+(define-method insert
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_insert")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "key")
+    '("const-gchar*" "format_string")
+  )
+  (varargs #t)
+)
+
+(define-method insert_value
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_insert_value")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "key")
+    '("GVariant*" "value")
+  )
+)
+
+(define-method remove
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_remove")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "key")
+  )
+)
+
+(define-method clear
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_clear")
+  (return-type "none")
+)
+
+(define-method end
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_end")
+  (return-type "GVariant*")
+)
+
+(define-method ref
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_ref")
+  (return-type "GVariantDict*")
+)
+
+(define-method unref
+  (of-object "GVariantDict")
+  (c-name "g_variant_dict_unref")
+  (return-type "none")
 )
 
 
@@ -14452,6 +14901,11 @@
   )
 )
 
+(define-function g_win32_get_command_line
+  (c-name "g_win32_get_command_line")
+  (return-type "gchar**")
+)
+
 (define-function g_win32_get_package_installation_subdirectory_utf8
   (c-name "g_win32_get_package_installation_subdirectory_utf8")
   (return-type "gchar*")
@@ -14460,6 +14914,28 @@
     '("const-gchar*" "dll_name")
     '("const-gchar*" "subdir")
   )
+)
+
+
+
+;; From valgrind.h
+
+(define-function VALGRIND_PRINTF
+  (c-name "VALGRIND_PRINTF")
+  (return-type "int")
+  (parameters
+    '("const-char*" "format")
+  )
+  (varargs #t)
+)
+
+(define-function VALGRIND_PRINTF_BACKTRACE
+  (c-name "VALGRIND_PRINTF_BACKTRACE")
+  (return-type "int")
+  (parameters
+    '("const-char*" "format")
+  )
+  (varargs #t)
 )
 
 
