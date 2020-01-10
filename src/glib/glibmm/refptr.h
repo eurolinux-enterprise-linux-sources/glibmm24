@@ -14,8 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <glibmmconfig.h>
@@ -43,7 +42,7 @@ namespace Glib
  * RefPtr<> can store any class that has reference() and unreference() methods,
  * and whose destructor is noexcept (the default for destructors).
  * In gtkmm, that is anything derived from Glib::ObjectBase, such as
- * Gdk::Pixmap.
+ * Gdk::Pixbuf.
  *
  * See the "Memory Management" section in the "Programming with gtkmm"
  * book for further information.
@@ -88,7 +87,7 @@ private:
 public:
   /** Default constructor
    *
-   * Afterwards it will be null and use of -> will cause a segmentation fault.
+   * Afterwards it will be null and use of -> will invoke undefined behaviour.
    */
   inline RefPtr() noexcept;
 
@@ -137,7 +136,7 @@ public:
   template <class T_CastFrom>
   inline RefPtr& operator=(RefPtr<T_CastFrom>&& src) noexcept;
 
-  /** Copy from different, but castable type).
+  /** Copy from different, but castable type.
    *
    * Increments the reference count.
    */
@@ -156,6 +155,12 @@ public:
    * <code>refptr->memberfun()</code>.
    */
   inline T_CppObject* operator->() const noexcept;
+
+  /** Returns the stored pointer.
+   *
+   * @newin{2,56}
+   */
+  inline T_CppObject* get() const noexcept;
 
   /** Test whether the RefPtr<> points to any underlying instance.
    *
@@ -394,6 +399,12 @@ inline bool
 RefPtr<T_CppObject>::operator!=(const RefPtr& src) const noexcept
 {
   return (pCppObject_ != src.pCppObject_);
+}
+
+template <class T_CppObject>
+inline T_CppObject* RefPtr<T_CppObject>::get() const noexcept
+{
+  return pCppObject_;
 }
 
 template <class T_CppObject>

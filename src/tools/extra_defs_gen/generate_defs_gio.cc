@@ -13,8 +13,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "generate_extra_defs.h"
@@ -38,6 +37,11 @@ main(int, char**)
 {
   // g_type_init() is deprecated as of 2.36.
   // g_type_init();
+
+  // Until the glib bug https://bugzilla.gnome.org/show_bug.cgi?id=465631
+  // is fixed, get_defs() must be called for a GObject before it's
+  // called for a GInterface.
+  (void)get_defs(G_TYPE_APPLICATION);
 
   std::cout << get_defs(G_TYPE_ASYNC_RESULT) << get_defs(G_TYPE_ACTION)
             << get_defs(G_TYPE_ACTION_GROUP) << get_defs(G_TYPE_APPLICATION)

@@ -11,8 +11,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <glibmmconfig.h> // May define GLIBMM_DISABLE_DEPRECATED
@@ -33,7 +32,6 @@
 
 namespace
 {
-#ifdef GLIBMM_DISABLE_DEPRECATED
 void
 time64_to_time_val(gint64 time64, Glib::TimeVal& time_val)
 {
@@ -43,7 +41,6 @@ time64_to_time_val(gint64 time64, Glib::TimeVal& time_val)
     static_cast<long>(time64 - static_cast<gint64>(seconds) * G_GINT64_CONSTANT(1000000));
   time_val = Glib::TimeVal(seconds, microseconds);
 }
-#endif // GLIBMM_DISABLE_DEPRECATED
 
 // TODO: At the next ABI break, replace ExtraSourceData by new data members in Source.
 // Then the mutex is not necessary, but to keep the code thread-safe, use the
@@ -357,14 +354,14 @@ PollFD::PollFD()
   gobject_.revents = 0;
 }
 
-PollFD::PollFD(int fd)
+PollFD::PollFD(PollFD::fd_t fd)
 {
   gobject_.fd = fd;
   gobject_.events = 0;
   gobject_.revents = 0;
 }
 
-PollFD::PollFD(int fd, IOCondition events)
+PollFD::PollFD(PollFD::fd_t fd, IOCondition events)
 {
   gobject_.fd = fd;
   gobject_.events = events;
@@ -490,7 +487,7 @@ inline SignalIO::SignalIO(GMainContext* context) : context_(context)
 
 sigc::connection
 SignalIO::connect(
-  const sigc::slot<bool, IOCondition>& slot, int fd, IOCondition condition, int priority)
+  const sigc::slot<bool, IOCondition>& slot, PollFD::fd_t fd, IOCondition condition, int priority)
 {
   const auto source = IOSource::create(fd, condition);
 
@@ -1032,7 +1029,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 gint64
 Source::get_time() const
 {
-  return g_source_get_time(const_cast<GSource*>(gobject_));
+  if (g_source_get_context(const_cast<GSource*>(gobject_)))
+    return g_source_get_time(const_cast<GSource*>(gobject_));
+  else
+    return g_get_monotonic_time();
 }
 
 inline // static
@@ -1168,7 +1168,7 @@ TimeoutSource::connect(const sigc::slot<bool>& slot)
 
 TimeoutSource::TimeoutSource(unsigned int interval) : interval_(interval)
 {
-  expiration_.assign_current_time();
+  time64_to_time_val(get_time(), expiration_);
   expiration_.add_milliseconds(std::min<unsigned long>(G_MAXLONG, interval_));
 }
 
@@ -1180,11 +1180,7 @@ bool
 TimeoutSource::prepare(int& timeout)
 {
   Glib::TimeVal current_time;
-#ifndef GLIBMM_DISABLE_DEPRECATED
-  get_current_time(current_time);
-#else
   time64_to_time_val(get_time(), current_time);
-#endif // GLIBMM_DISABLE_DEPRECATED
 
   Glib::TimeVal remaining = expiration_;
   remaining.subtract(current_time);
@@ -1221,11 +1217,7 @@ bool
 TimeoutSource::check()
 {
   Glib::TimeVal current_time;
-#ifndef GLIBMM_DISABLE_DEPRECATED
-  get_current_time(current_time);
-#else
   time64_to_time_val(get_time(), current_time);
-#endif // GLIBMM_DISABLE_DEPRECATED
 
   return (expiration_ <= current_time);
 }
@@ -1237,11 +1229,7 @@ TimeoutSource::dispatch(sigc::slot_base* slot)
 
   if (again)
   {
-#ifndef GLIBMM_DISABLE_DEPRECATED
-    get_current_time(expiration_);
-#else
     time64_to_time_val(get_time(), expiration_);
-#endif // GLIBMM_DISABLE_DEPRECATED
     expiration_.add_milliseconds(std::min<unsigned long>(G_MAXLONG, interval_));
   }
 
@@ -1295,7 +1283,7 @@ IdleSource::dispatch(sigc::slot_base* slot)
 
 // static
 Glib::RefPtr<IOSource>
-IOSource::create(int fd, IOCondition condition)
+IOSource::create(PollFD::fd_t fd, IOCondition condition)
 {
   return Glib::RefPtr<IOSource>(new IOSource(fd, condition));
 }
@@ -1312,7 +1300,7 @@ IOSource::connect(const sigc::slot<bool, IOCondition>& slot)
   return connect_generic(slot);
 }
 
-IOSource::IOSource(int fd, IOCondition condition) : poll_fd_(fd, condition)
+IOSource::IOSource(PollFD::fd_t fd, IOCondition condition) : poll_fd_(fd, condition)
 {
   add_poll(poll_fd_);
 }

@@ -2,6 +2,7 @@ package Property;
 
 use strict;
 use warnings;
+use DocsParser;
 
 BEGIN {
      use Exporter   ();
@@ -27,6 +28,7 @@ our @EXPORT_OK;
 #       bool writable;
 #       bool construct_only;
 #       bool deprecated; # optional
+#       string default_value; # optional
 #       string docs;
 #    }
 
@@ -48,10 +50,11 @@ sub new
   $$self{writable} = ($1 eq "#t")       if ($def =~ s/\(writable (\S+)\)//);
   $$self{construct_only} = ($1 eq "#t") if ($def =~ s/\(construct-only (\S+)\)//);
   $$self{deprecated} = ($1 eq "#t")     if ($def =~ s/\(deprecated (\S+)\)//);
+  $$self{default_value} = $1            if ($def =~ s/\(default-value "(.*?)"\)//);
   $$self{entity_type} = 'property';
 
   # Property documentation:
-  my $propertydocs = $1                     if ($def =~ s/\(docs "([^"]*)"\)//);
+  my $propertydocs = $1                 if ($def =~ s/\(docs "([^"]*)"\)//);
   # Add a full-stop if there is not one already:
   if(defined($propertydocs))
   {
@@ -118,10 +121,18 @@ sub get_deprecated($)
   return $$self{deprecated}; # undef, 0 or 1
 }
 
+sub get_default_value($)
+{
+  my ($self) = @_;
+  return $$self{default_value}; # undef or a string (possibly empty)
+}
+
 sub get_docs($$)
 {
   my ($self, $deprecation_docs, $newin) = @_;
   my $text = $$self{docs};
+
+  DocsParser::convert_docs_to_cpp("$$self{class}:$$self{name}", \$text);
 
   #Add note about deprecation if we have specified that in our _WRAP_PROPERTY()
   #or_WRAP_CHILD_PROPERTY() call:
@@ -133,6 +144,11 @@ sub get_docs($$)
   if ($newin ne "")
   {
     $text .= "\n   *\n   * \@newin{$newin}";
+  }
+
+  if ($text ne "")
+  {
+    DocsParser::add_m4_quotes(\$text);
   }
 
   return $text;

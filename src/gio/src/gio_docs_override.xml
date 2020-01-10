@@ -1,4 +1,19 @@
 <root>
+<!-- These are preprocessor defines. Don't substitute. -->
+<substitute_enumerator_name from="G_MAXSSIZE" to="G_MAXSSIZE" />
+<substitute_enumerator_name from="G_MAXINT" to="G_MAXINT" />
+<substitute_enumerator_name from="G_CONVERT_ERROR" to="G_CONVERT_ERROR" />
+<substitute_enumerator_name from="G_DBUS_ERROR" to="G_DBUS_ERROR" />
+<substitute_enumerator_name from="G_RESOURCE_ERROR" to="G_RESOURCE_ERROR" />
+<substitute_enumerator_name from="G_RESOLVER_ERROR" to="G_RESOLVER_ERROR" />
+<substitute_enumerator_name from="G_TLS_ERROR" to="G_TLS_ERROR" />
+<substitute_enumerator_name from_prefix="G_FILE_ATTRIBUTE_" to_prefix="G_FILE_ATTRIBUTE_" />
+<substitute_enumerator_name from_prefix="G_MENU_ATTRIBUTE_" to_prefix="G_MENU_ATTRIBUTE_" />
+<substitute_enumerator_name from_prefix="G_MENU_LINK_" to_prefix="G_MENU_LINK_" />
+<substitute_enumerator_name from_prefix="G_VARIANT_TYPE_" to_prefix="G_VARIANT_TYPE_" />
+<substitute_enumerator_name from_prefix="G_TLS_DATABASE_PURPOSE_AUTHENTICATE_" to_prefix="G_TLS_DATABASE_PURPOSE_AUTHENTICATE_" />
+<substitute_enumerator_name from_prefix="G_KEY_FILE_DESKTOP_KEY_" to_prefix="G_KEY_FILE_DESKTOP_KEY_" />
+
 <function name="g_file_make_symbolic_link">
 <description>
 Creates a symbolic link.
@@ -1712,6 +1727,88 @@ errors that can happen due to races when you execute the operation.
 </parameters>
 <return> %TRUE if the file exists (and can be detected without error), %FALSE otherwise (or if cancelled).
 </return>
+</function>
+
+<function name="g_dbus_proxy_call">
+<parameters>
+<parameter name="proxy">
+<parameter_description> A #GDBusProxy.
+</parameter_description>
+</parameter>
+<parameter name="method_name">
+<parameter_description> Name of method to invoke.
+</parameter_description>
+</parameter>
+<parameter name="parameters">
+<parameter_description> A #GVariant tuple with parameters for the signal or %NULL if not passing parameters.
+</parameter_description>
+</parameter>
+<parameter name="flags">
+<parameter_description> Flags from the #GDBusCallFlags enumeration.
+</parameter_description>
+</parameter>
+<parameter name="timeout_msec">
+<parameter_description> The timeout in milliseconds (with %G_MAXINT meaning
+&quot;infinite&quot;) or -1 to use the proxy default timeout.
+</parameter_description>
+</parameter>
+<parameter name="cancellable">
+<parameter_description> A #GCancellable or %NULL.
+</parameter_description>
+</parameter>
+<parameter name="callback">
+<parameter_description> A #GAsyncReadyCallback to call when the request is satisfied. Use another overload
+without this parameter if your don't care about the result of the method invocation.
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> The data to pass to @callback.
+</parameter_description>
+</parameter>
+</parameters>
+</function>
+
+<function name="g_dbus_proxy_call_with_unix_fd_list">
+<parameters>
+<parameter name="proxy">
+<parameter_description> A #GDBusProxy.
+</parameter_description>
+</parameter>
+<parameter name="method_name">
+<parameter_description> Name of method to invoke.
+</parameter_description>
+</parameter>
+<parameter name="parameters">
+<parameter_description> A #GVariant tuple with parameters for the signal or %NULL if not passing parameters.
+</parameter_description>
+</parameter>
+<parameter name="flags">
+<parameter_description> Flags from the #GDBusCallFlags enumeration.
+</parameter_description>
+</parameter>
+<parameter name="timeout_msec">
+<parameter_description> The timeout in milliseconds (with %G_MAXINT meaning
+&quot;infinite&quot;) or -1 to use the proxy default timeout.
+</parameter_description>
+</parameter>
+<parameter name="fd_list">
+<parameter_description> A #GUnixFDList or %NULL.
+</parameter_description>
+</parameter>
+<parameter name="cancellable">
+<parameter_description> A #GCancellable or %NULL.
+</parameter_description>
+</parameter>
+<parameter name="callback">
+<parameter_description> A #GAsyncReadyCallback to call when the request is satisfied. Use another overload
+without this parameter if your don't care about the result of the method invocation.
+</parameter_description>
+</parameter>
+<parameter name="user_data">
+<parameter_description> The data to pass to @callback.
+</parameter_description>
+</parameter>
+</parameters>
 </function>
 
 </root>

@@ -14,8 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <glibmmconfig.h>
@@ -49,12 +48,14 @@ class Mutex;
 class PollFD
 {
 public:
-  PollFD();
-  explicit PollFD(int fd);
-  PollFD(int fd, IOCondition events);
+  using fd_t = decltype(GPollFD::fd);
 
-  void set_fd(int fd) { gobject_.fd = fd; }
-  int get_fd() const { return gobject_.fd; }
+  PollFD();
+  explicit PollFD(fd_t fd);
+  PollFD(fd_t fd, IOCondition events);
+
+  void set_fd(fd_t fd) { gobject_.fd = fd; }
+  fd_t get_fd() const { return gobject_.fd; }
 
   void set_events(IOCondition events) { gobject_.events = events; }
   IOCondition get_events() const { return static_cast<IOCondition>(gobject_.events); }
@@ -305,7 +306,7 @@ public:
    * @param priority The priority of the new event source.
    * @return A connection handle, which can be used to disconnect the handler.
    */
-  sigc::connection connect(const sigc::slot<bool, IOCondition>& slot, int fd, IOCondition condition,
+  sigc::connection connect(const sigc::slot<bool, IOCondition>& slot, PollFD::fd_t fd, IOCondition condition,
     int priority = PRIORITY_DEFAULT);
 
   /** Connects an I/O handler that watches an I/O channel.
@@ -789,10 +790,9 @@ protected:
   void remove_poll(PollFD& poll_fd);
 
 #ifndef GLIBMM_DISABLE_DEPRECATED
-  /** Gets the "current time" to be used when checking this source. The advantage of calling this
-   * function over calling get_current_time() directly is that when checking multiple sources, GLib
-   * can cache a single value instead of having to repeatedly get the system time.
-   * @param current_time Glib::TimeVal in which to store current time.
+  /** Gets the "current time" to be used when checking this source.
+   *
+   * @param[out] current_time Glib::TimeVal in which to store current time.
    *
    * @deprecated Use get_time() instead.
    */
@@ -887,13 +887,13 @@ class IOSource : public Glib::Source
 public:
   using CppObjectType = Glib::IOSource;
 
-  static Glib::RefPtr<IOSource> create(int fd, IOCondition condition);
+  static Glib::RefPtr<IOSource> create(PollFD::fd_t fd, IOCondition condition);
   static Glib::RefPtr<IOSource> create(
     const Glib::RefPtr<IOChannel>& channel, IOCondition condition);
   sigc::connection connect(const sigc::slot<bool, IOCondition>& slot);
 
 protected:
-  IOSource(int fd, IOCondition condition);
+  IOSource(PollFD::fd_t fd, IOCondition condition);
   IOSource(const Glib::RefPtr<IOChannel>& channel, IOCondition condition);
 
   /** Wrap an existing GSource object and install the given callback function.

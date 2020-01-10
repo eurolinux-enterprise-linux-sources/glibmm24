@@ -1,3 +1,726 @@
+2018-03-31  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	2.56.0
+
+2018-03-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::DesktopAppInfo: Add get_locale_string()
+
+2018-03-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::Application: Add set_option_context_*()
+
+	Add set_option_context_parameter_string(), set_option_context_summary(),
+	set_option_context_description().
+
+2018-03-21  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::Application: Add property_resource_base_path_string()
+
+	property_resource_base_path() has the wrong return type, bool instead of
+	std::string. It can't be fixed without breaking API/ABI. For now, deprecate
+	property_resource_base_path() and add hand-coded
+	property_resource_base_path_string() with the correct type. Bug 787496
+
+2018-03-21  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::RefPtr: Add get()
+
+	Analogous to std::shared_ptr::get(). Bug 495762
+
+2018-03-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Module: Remove obsolete _IGNORE() directives
+
+2018-03-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::AppInfo: Change some parameter names
+
+2018-03-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::DataInputStream: Deprecate read_until() and friends
+
+	Deprecate read_until(), read_until_async() and read_until_finish().
+	The corresponding glib functions have been deprecated.
+
+2018-03-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::TlsClientConnection: Deprecate set/get/property_use_ssl3()
+
+	The corresponding glib functions have been deprecated.
+
+2018-03-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib, Gio: Regenerate docs.xml and .defs files
+
+	* tools/extra_defs_gen/generate_defs_gio.cc: Add an initial call to
+	get_defs(G_TYPE_APPLICATION) to make sure the first call to get_defs()
+	requests info on a GObject, not a GInterface.
+
+2018-03-02  Pavlo Solntsev  <pavlo.solntsev@gmail.com>
+
+	member.m4: Add _MEMBER_SET_STR, setter for strings
+
+	Introduce a macro to generate appropriate setter for a structure which
+	has gchar* as a member. Bug 793778
+
+2018-02-15  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::DataInputStream: Disable deprecation warnings from glib
+
+	g_data_input_stream_read_until(), _read_until_async() and _read_until_finish()
+	have been deprecated in glib/gio. They can't be deprecated in the stable
+	glibmm-2-54 branch now. This patch makes it possible to build glibmm-2.54.x
+	against the newest glib.
+
+2018-01-25  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::TimeoutSource: Use monotonic time consistently
+
+	* glib/glibmm/main.[cc|h]: Use Source::get_time() consistently.
+	Remove a misleading sentence from the documentation of
+	Source::get_current_time(). Bug 792524
+
+2018-01-18  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::TlsClientConnection: Disable deprecation warnings from glib
+
+	g_tls_client_connection_[set|get]_use_ssl3() and the use-ssl3 property
+	have been deprecated in glib/gio. They can't be deprecated in the stable
+	glibmm-2-54 branch now. This patch makes it possible to build glibmm-2.54.x
+	against the newest glib.
+
+2018-01-15  Daniel Boles  <dboles@src.gnome.org>
+
+	Variant: Slightly elaborate Variant<Variant> docs
+
+	Point out get_n_children() for checking nullable status, and copy the
+	doc for Variant<VariantBase> to Variant< Variant<T> >.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=778219
+
+2017-12-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Threads::Private: Fix gobj()
+
+	Bug 791711
+
+2017-11-20  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::VariantBase::cast_dynamic(): Remove noexcept(false)
+
+	noexcept(false) has the same meaning as no noexcept specification, but
+	Doxygen adds "noexcept" instead of "noexcept(false)" in the detailed
+	description of the method, which is confusing. Bug 789329
+
+2017-10-23  Daniel Boles  <dboles@src.gnome.org>
+
+	Variant: Fix typo: unclosed monospace tag
+
+2017-10-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc, _WRAP_METHOD_DOCS_ONLY: Optionally suppress @return section
+
+	Add an optional 'voidreturn' parameter that can be specified if the wrapped
+	C function returns a value, but the corresponding C++ method returns void.
+	Bug 787978
+
+2017-09-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::Action: Add exception specs to errthrow
+
+2017-09-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::KeyFile, OptionContext, Regex: Add exception specs to errthrow
+
+2017-09-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: _WRAP_METHOD: Accept optional list of exceptions in errthrow
+
+	In _WRAP_METHOD[_DOCS_ONLY], the errthrow parameter can now contain an
+	optional list of exceptions with default value Glib::Error.
+	Corresponding @throws Doxygen commands are included in the documentation,
+	if the documentation does not contain other @throws commands (e.g.
+	from *_docs_override.xml). Bug 787979
+
+2017-09-24  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::DataInputStream: Fix the documentation of read_line_utf8()
+
+	Hand-code the documentation of read_line_utf8() and read_line_finish_utf8().
+	Use Glib::convert_return_gchar_ptr_to_stdstring() to set the output
+	parameter. It handles the case when the char* is NULL.
+	Minor fixes in the documentation of several other methods.
+
+2017-09-24  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Suppress the @return section if return type is void
+
+	If the wrapped C function returns a value, but the corresponding C++ method
+	returns void, _WRAP_METHOD() suppresses the @return section in the
+	documentation. Bug 787978
+
+2017-09-20  Murray Cumming  <murrayc@murrayc.com>
+
+	tests: Avoid unused function warnings from G_DECLARE_INTERFACE()
+
+2017-09-19  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	tests/glibmm_variant: Use C++14 features conditionally
+
+	* glib/src/variant.hg: Add (void) to intentionally unused variables,
+	thus avoiding warnings when the test case is built with clang++.
+	* tests/glibmm_variant/main.cc: Use std::get<Number>(std::tuple)
+	(not std::get<Type>()) when compiling with only C++11 support.
+	Bug 787648
+
+2017-09-19  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Variant: Avoid warnings from clang++
+
+	Bug 787648
+
+2017-09-18  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	2.54.1
+
+2017-09-18  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Variant<std::tuple>: Don't use std::index_sequence from C++14
+
+	std::index_sequence and std::index_sequence_for are new in C++14,
+	but this version of glibmm requires only C++11.
+	The code that replaces std::index_sequence has been provided by
+	Jonathan Wakely <zilla@kayari.org>. Bug 787648
+
+2017-09-17  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Convert all property documentation to C++
+
+	Bug 787698
+
+2017-09-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::Application docs: Add a note to property_resource_base_path()
+
+	The type of property_resource_base_path() shall be std::string (is bool).
+	Fixing this would break API and ABI. A fix has to wait until the next
+	API/ABI break. For now, add a note to the documentation. Bug 787496
+
+2017-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	2.54.0
+
+2017-09-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::ActionGroup, Settings: Add detail_name to some _WRAP_SIGNAL()s
+
+	* gio/src/actiongroup.hg: signal_action_added(), signal_action_removed(),
+	signal_action_enabled_changed() and signal_action_state_changed() accept
+	an 'action_name' parameter.
+	* gio/src/settings.hg: signal_writable_changed() accepts a 'key' parameter.
+
+2017-09-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Regenerate gio_signals.defs and gio_signals.defs.patch
+
+2017-09-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	generate_extra_defs.cc: Write signal flags to .defs files
+
+	Bug 785895
+
+2017-09-13  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Write signal flags to generated documentation
+
+	Bug 785895
+
+2017-09-12  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Warn for unmatched deprecations in signals and properties
+
+	Warn if a signal or a property is deprecated in the _WRAP_* macro,
+	but not in the .defs file. (Warnings if a signal or a property is
+	deprecated in the .defs file, but not in the _WRAP_* macro have been
+	added previously.)
+
+2017-09-08  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Variant: Improved support for D-Bus object paths and signatures
+
+	* glib/glibmm/filelist.am: Add variantdbusstring.h and variantdbusstring.cc.
+	* glib/glibmm/variantdbusstring.[cc|h]: New files. String classes meant
+	only for Variants with D-Bus object paths or D-Bus signatures.
+	* glib/src/variant.[ccg|hg]: Add specializations for
+	Variant<Glib::DBusObjectPathString>, Variant<Glib::DBusSignatureString>
+	and Variant<std::vector<Glib::DBusObjectPathString>>.
+	* glib/src/varianttype.[ccg|hg]: Add VARIANT_TYPE_OBJECT_PATH_ARRAY.
+	* tests/glibmm_variant/main.cc: Add test_object_path().
+
+	Make it possible to create a composite Variant containing variant type
+	o (D-Bus object path) or g (D-Bus signature). Bug 785700
+
+2017-09-08  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	tests/glibmm_variant: Add test of Variant<std::tuple>
+
+	Bug 777791
+
+2017-09-08  Alexander Rössler  <alexander.roessler@zuehlke.com>
+
+	Glib::Variant: Add template specialization for std::tuple
+
+	Bug 777791
+
+2017-09-08  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Regenerate glib_signals.defs and gio_signals.defs
+
+2017-09-08  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	generate_extra_defs.cc: Write default values of properties to .defs files
+
+	Bug 785895
+
+2017-09-08  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Write default values of properties to generated documentation
+
+	Bug 785895
+
+2017-09-07  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Accept curly braces in default values in _WRAP macros
+
+	In C++11 default values of function arguments can contain curly braces,
+	such as const Glib::RefPtr<SomeClass>& x = {}. Bug 783216 comment 13
+
+2017-09-07  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Remove obsolete TODO comments
+
+2017-09-07  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Fix _WRAP_ENUM for enumerators with apostrophes
+
+	* tools/enum.pl: Handle enumerator values like 'B', 1u << 2, (gint)(1u << 31).
+	Suppress repeated long warnings.
+	* tools/pm/Output.pm: Handle enumerator values like 'B'. (1u << 2 and
+	(gint)(1u << 31) require no fix.)
+
+2017-09-07  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib, Gio: docs_override.xml: Add substitute_enumerator_name elements
+
+	Don't modify names of preprocessor macros.
+
+2017-09-07  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gmmproc: Add new elements types for the docs_override.xml files
+
+	* tools/pm/DocsParser.pm: Add handling of substitute_type_name and
+	substitute_enumerator_name elements in docs_override.xml files.
+	This is a small part of the fix for enum class and enums inside classes,
+	discussed in bug 86864, which is implemented in full in the next ABI-
+	reaking version of glibmm. This particular part does not break ABI,
+	it just improves the generated documentation.
+
+2017-09-04  Murray Cumming  <murrayc@murrayc.com>
+
+	2.52.1
+
+2017-09-01  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::VariantIter: Fix typos in copyright notice
+
+2017-08-30  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Update the Free Software Foundation address in copyright notices
+
+	Bug 786824
+
+2017-08-30  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gio/src/filelist.am: Really include all .hg files in giomm_files_hg
+
+	Due to an extra blank some files were not processed by gmmproc.
+
+2017-08-15  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio: Exclude DesktopAppInfo from wrap_init.cc on MacOS
+
+	Modify the conditional inclusion of desktopappinfo.h in giomm.h and
+	wrap_init.cc. It shall not be included when running under MacOS. This should
+	have been fixed by commit fe99895f8d3b61409c416f1244a29f2aa3478f96.
+	Bug 781947
+
+2017-08-15  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	gio/src/filelist.am: Always include all .hg files in giomm_files_hg
+
+	Commit 0bc35fb4fa28ee8564fecab4e21011dc42e74ed1 fixed giomm_files_hg,
+	but in the wrong way. giomm_files_hg shall always include all .hg files,
+	regardless of which ones are used on the present platform.
+
+2017-07-30  Daniel Boles  <dboles.src@gmail.com>
+
+	miscutils: Update docs of get_*_name() from GLib
+
+	plus some minor tweaks that don't quite seem worth changing upstream.
+
+	This adds some useful extra context for get_(prg|user|real)name().
+
+2017-06-27  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::TlsDatabase: Fix memory leak in a vfunc
+
+	create_certificate_handle_vfunc() shall delete the returned character array
+	after it has been copied to a Glib::ustring, or else it leaks memory.
+	Bug 783360
+
+2017-06-23  Murray Cumming  <murrayc@murrayc.com>
+
+	2.52.0
+
+2017-05-31  Daniel Boles  <dboles.src@gmail.com>
+
+	RefPtr: Clarify comment about undefined behaviour
+
+	Dereferencing a null pointer does not necessarily cause a segfault:
+	it is undefined behaviour, which means anything, or nothing, may happen.
+	Avoid setting an expectation that a segfault will reliably occur here.
+
+2017-05-31  Daniel Boles  <dboles.src@gmail.com>
+
+	ActionMap: Revert accidental changes to Slot decls
+
+	I cherry-picked a commit from master that should only have updated
+	documentation, but because the way of declaring slots has been changed
+	in libsigc++, it ended up changing them here too. That was unintentional
+
+2017-05-29  Daniel Boles  <dboles@src.gnome.org>
+
+	Variant: Use own get_n_children() instead of C API
+
+	This looks much less ugly.
+
+2017-05-18  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Gio::UnixSocketAddress::create(): Remove a default value
+
+	Remove the default value of the 'type' parameter. As there is another
+	create() with one parameter, the default value makes a call to
+	create("pathname") ambiguous. Bug 782592
+
+2017-05-12  Vyacheslav Yurkov  <uvv.mail@gmail.com>
+
+	Gio::DBus::Proxy: Wrap call() and call_sync() methods. Bug 781818
+
+2017-05-08  Murray Cumming  <murrayc@murrayc.com>
+
+	2.51.7
+
+2017-05-08  Murray Cumming  <murrayc@murrayc.com>
+
+	gio/src/filelist.am: Really use desktopappinfo.hg to fix the build.
+
+	This fixes a build breakage, when building from a fresh checkout,
+	introduced by commit dd671f29ff9a005776ebd9e7cf20fdc5e44c14b8 .
+
+2017-05-05  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::VariantType: Deprecate first() and next(). Add get_item_types()
+
+	Bug 775741
+
+2017-05-05  Daniel Boles  <dboles@src.gnome.org>
+
+	ActionMap: Improve add_action_with_parameter docs
+
+	• Clarify why the old overload has been deprecated: it simply does not
+	work for the desired result because the parameter_type was not passed
+
+	• Elaborate on the purpose of the parameter_type in the new overload.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774444
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	ActionMap: Really fix add_action_with_parameter()
+
+	I replaced the old line that both created an Action without a parameter
+	and added it, only with a line that creates an Action with a
+	parameter... but did not add it. Of course, we need to do that, too.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774444
+
+2017-05-04  U-eagle\daniel.boles  <daniel.boles@eagle-ws29.eagle.local>
+
+	Gio::SimpleAction: Move set_state to original pos
+
+	If I’d realised there was a specific commit that protected this, I would
+	have reverted it, rather than doing it manually in my previous commit.
+
+	Completes reversion of commit b7431bca6ccbd9f918b5ef73bae65a1c7828e7e0 –
+	“Gio::SimpleAction: Make set_state() protected.”
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=777953
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::SimpleAction: Make set_state() public
+
+	This is needed to apply the requested state in a custom handler for
+	signal_change_state(). It was protected on an assumption that when the C
+	doc for g_simple_action_set_state() said “This should only be called by
+	the implementor of the action”, it meant the implementor of a subclass.
+
+	But the C docs for signal change-state are clear that it means the
+	implementor of the signal handler. Without such a user being able to
+	call set_state(), they can’t apply the new state, unless they subclass
+	SimpleAction, which is a lot to require for such a simple case as this.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=777953
+
+2017-05-04  Murray Cumming  <murrayc@murrayc.com>
+
+	ActionMap: Add back add_action_with_parameter() without parameter_type.
+
+	To avoid breaking ABI due to this commit that added a parameter:
+	https://git.gnome.org/browse/glibmm/commit/?h=glibmm-2-52&id=19ea8885ef17743c7c6e436e770b3b3835ca5016
+	Bug #774444
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	ActionMap—Reorder add_action_with_parameter’s args
+
+	This matches e.g. simpleaction.hg and is what I originally intended.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774444
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::ActionMap: trivially move an _IGNORE
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::ActionMap: Improve declaration order/spacing
+
+	This puts several things in more logical places and adds a couple of
+	line breaks that make it easier to see the key sections in the header.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774444
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::ActionMap: Fix add_action_with_parameter()
+
+	It was not registering the parameter type for the action on create, so
+	when activating the action later and passing a parameter, an assertion
+	failed about the expected and passed parameter types/counts not matching
+	and the parameter was not usable.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774444
+
+2017-05-04  Daniel Boles  <dboles@src.gnome.org>
+
+	SettingsSchemaKey: Add missing value/range methods
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774903
+
+2017-04-30  John Ralls  <jralls@ceridwen.us>
+
+	Bug 781947 - Build fails on MacOS because glib doesn't have gdesktopinfo.
+
+	Disable building desktopapinfo.cpp with the same test used in glib.
+
+2017-04-29  Kjell Ahlstedt  <kjellahlstedt@gmail.com>
+
+	Glib::Object: Suppress deprecation warning for g_object_newv()
+
+	g_object_newv() is deprecated in favor of g_object_new_with_properties(),
+	which is new in glib 2.54.
+
+2017-04-04  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Variant: Replace more throw(std::bad_cast) with noexcept(false).
+
+	This is necessary for C++17 which completely removes dynamic
+	exception specifications.
+	See https://bugzilla.redhat.com/show_bug.cgi?id=1438766
+
+2017-04-04  Murray Cumming  <murrayc@murrayc.com>
+
+	C++11: Variant: Replace throw(std::bad_cast) with noexcept(false).
+
+	This is necessary for C++17 which completely removes dynamic
+	exception specifications.
+	See https://bugzilla.redhat.com/show_bug.cgi?id=1438766
+
+2017-03-22  Murray Cumming  <murrayc@murrayc.com>
+
+	2.51.6
+
+	This is the first 2.51.* version of glibmm-2.4.
+	There were previously some 2.51 versions of glibmm-2.52, which
+	installed in parallel with glibmm-2.4,
+	but there will not be any stable version of glibmm-2.52.
+	There might instead be a stable version of glibmm-2.54 eventually.
+
+2017-03-13  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::Application::get_default(): Add refreturn
+
+	Bug 779936
+
+2017-02-14  Daniel Boles  <dboles@src.gnome.org>
+
+	SimpleAction—doc—Erase wrong line & duplicate word
+
+	In case anyone is as easily confused as me…
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=778575
+
+2017-02-13  Daniel Boles  <dboles@src.gnome.org>
+
+	Glib::Variant—Improve documentation of get_maybe()
+
+	Clarify what is set and returned, and use lower case “nothing” to match
+	how that must be written in GVariant text format, à la GSettings, etc.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=778219
+
+2017-02-13  Daniel Boles  <dboles@src.gnome.org>
+
+	Glib::Variant—Explain how to create “maybe” types
+
+	It’s not exactly intuitive why the *_maybe() methods are kept in
+	ContainerBase, nor that Variant<VariantBase> inherits from the former
+	and is the way to get a maybe-typed Variant in glibmm. Let’s fix that!
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=778219
+
+2017-02-13  Daniel Boles  <dboles@src.gnome.org>
+
+	Glib::Variant—Cosmetically tweak braces & newlines
+
+	Donʼt use braces for single-line blocks, and do if the other side of an
+	if/else already did. Also, get rid of a couple of extraneous newlines.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=778219
+
+2017-02-05  Daniel Boles  <dboles@src.gnome.org>
+
+	Glib::Variant: Fix a copy-pasted typo in func docs
+
+2017-02-02  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::Action: Remove unneeded #includes in ccg
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=777953
+
+2017-02-02  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::Action: #include <glibmm/variant.h> in hg
+
+	Currently, it is included indirectly, via 3 other headers. This is
+	brittle. Without that, users of action.h would have to manually include
+	variant.h to use methods returning the forward-declared VariantBase,
+	which isn’t very helpful. Plus, the header uses types like Variant<>
+	templates and VariantContainerBase, which were never forward-declared.
+
+	Including it directly makes the dependency more obvious and less brittle
+	and spares us from having to write a bunch more forward-declarations.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=777953
+
+2017-01-04  Chun-wei Fan  <fanchunwei@src.gnome.org>
+
+	Visual Studio builds: "Install" the .pdb files
+
+	Since we generate the .pdb files during the build, we should copy them to
+	make debugging glibmm on Windows easier.
+
+2016-12-27  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::ActionMap: Fix some trivial documentation bugs
+
+2016-12-26  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::ActionMap: Add function to ActivateSlot doc
+
+	It's used in add_action_with_bool() too.
+
+2016-12-26  Daniel Boles  <dboles@src.gnome.org>
+
+	Gio::ActionMap: Clarify doc of ActivateWithParameterSlot
+
+	This brings it in line with the existing doc comment for ActivateSlot.
+
+2016-12-12  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Glib::Dispatcher: Don't cast a HANDLE to an int on Windows
+
+	* glib/glibmm/dispatcher.cc: When a Windows HANDLE must be cast, cast it
+	to Glib::PollFD::fd_t instead of int. Bug 772074
+
+2016-12-12  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	PollFD: autodeduce type of fd field
+
+	* glib/glibmm/main.[h|cc]: file descriptor to poll can be either of gint,
+	or gint64 type, depending on the platform. glibmm should follow this
+	rule as well.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=772074
+
+2016-12-05  Kjell Ahlstedt  <kjell.ahlstedt@bredband.net>
+
+	Gio::DBus::Proxy: Fix memory leak in get_cached_property_names()
+
+	Bug 775210
+
+2016-11-30  djb  <db0451@gmail.com>
+
+	Gio::Settings: Make set_enum() + set_flags() usable
+
+	The _WRAP_METHOD calls had the names typo'd as get_enum() + get_flags().
+	Keep and deprecate the misnamed methods.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774647
+
+2016-11-19  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Gio::SettingsSchemaSource: do an extra reference() for returning value
+
+	* gio/src/settingsschemasource.hg: method get_default() returns
+	transfer-none value, what means that we need to increase refcount
+	before wrapping the pointer by RefPtr class.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=774593
+
+2016-11-08  Murray Cumming  <murrayc@murrayc.com>
+
+	ustring: Add cbegin() and cend().
+
+	As in std::string since C++11.
+
+2016-11-05  Marcin Kolny  <marcin.kolny@gmail.com>
+
+	Gio::Settings: fix type of 'key' parameter of writable-change-event signal
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=773977
+
+2016-11-05  Murray Cumming  <murrayc@murrayc.com>
+
+	Examples: Avoid a warning about unused code.
+
+	This useful warning seems to be new in g++ 6:
+
+	thread/dispatcher2.cc:88:1: error: ‘{anonymous}::ThreadTimer::~ThreadTimer()’ defined but not used [-Werror=unused-function]
+	ThreadTimer::~ThreadTimer()
+
 2016-09-20  Murray Cumming  <murrayc@murrayc.com>
 
 	2.49.7

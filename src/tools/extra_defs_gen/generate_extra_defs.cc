@@ -13,12 +13,28 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "generate_extra_defs.h"
 #include <algorithm>
+#include <regex>
+#include <sstream>
+
+namespace
+{
+void add_signal_flag_if(std::string& strFlags, const char* strFlag,
+  const GSignalQuery& signalQuery, GSignalFlags flag)
+{
+  if (signalQuery.signal_flags & flag)
+  {
+    if (!strFlags.empty())
+      strFlags += ", ";
+    strFlags += strFlag;
+  }
+}
+
+} // anonymous namespace
 
 std::string
 get_property_with_node_name(
@@ -57,6 +73,55 @@ get_property_with_node_name(
   strResult += "  (construct-only " + (bConstructOnly ? strTrue : strFalse) + ")\n";
   if (bDeprecated)
     strResult += "  (deprecated #t)\n"; // Default: not deprecated
+
+  // Default value:
+  const GValue* defValue = g_param_spec_get_default_value(pParamSpec);
+  std::string defString;
+  bool defValueExists = false;
+  if (G_VALUE_HOLDS_STRING(defValue))
+  {
+    defValueExists = true;
+    const char* defCString = g_value_get_string(defValue);
+    if (defCString)
+    {
+      // Replace newlines with \n.
+      // A string default value can contain newline characters.
+      // gmmproc removes all newlines when it reads .defs files.
+      defString = std::regex_replace(defCString, std::regex("\n"), "\\n");
+    }
+    else
+      defString = ""; // A NULL string pointer becomes an empty string.
+  }
+  else if (G_VALUE_HOLDS_FLOAT(defValue) || G_VALUE_HOLDS_DOUBLE(defValue))
+  {
+    // g_value_transform() can transform a floating point value to a terrible
+    // string, especially if the value is huge.
+    defValueExists = true;
+    const double defDouble = G_VALUE_HOLDS_FLOAT(defValue) ?
+      g_value_get_float(defValue) : g_value_get_double(defValue);
+    std::ostringstream defStringStream;
+    defStringStream << defDouble;
+    defString = defStringStream.str();
+  }
+  else
+  {
+    GValue defStringValue = G_VALUE_INIT;
+    g_value_init(&defStringValue, G_TYPE_STRING);
+
+    if (g_value_transform(defValue, &defStringValue))
+    {
+      const char* defCString = g_value_get_string(&defStringValue);
+      if (defCString)
+      {
+        defValueExists = true;
+        defString = defCString;
+      }
+    }
+    g_value_unset(&defStringValue);
+  }
+
+  if (defValueExists)
+    strResult += "  (default-value \"" + defString + "\")\n";
 
   strResult += ")\n\n"; // close (strNodeName
 
@@ -210,24 +275,21 @@ get_signals(GType gtype, GTypeIsAPointerFunc is_a_pointer_func)
       // G_SIGNAL_TYPE_STATIC_SCOPE;
       strResult += "  (return-type \"" + strReturnTypeName + "\")\n";
 
-      // When:
-      {
-        bool bWhenFirst = (signalQuery.signal_flags & G_SIGNAL_RUN_FIRST) == G_SIGNAL_RUN_FIRST;
-        bool bWhenLast = (signalQuery.signal_flags & G_SIGNAL_RUN_LAST) == G_SIGNAL_RUN_LAST;
+      // Flags:
+      std::string strFlags;
+      add_signal_flag_if(strFlags, "Run First", signalQuery, G_SIGNAL_RUN_FIRST);
+      add_signal_flag_if(strFlags, "Run Last", signalQuery, G_SIGNAL_RUN_LAST);
+      add_signal_flag_if(strFlags, "Run Cleanup", signalQuery, G_SIGNAL_RUN_CLEANUP);
+      add_signal_flag_if(strFlags, "No Recurse", signalQuery, G_SIGNAL_NO_RECURSE);
+      add_signal_flag_if(strFlags, "Action", signalQuery, G_SIGNAL_ACTION);
+      add_signal_flag_if(strFlags, "No Hooks", signalQuery, G_SIGNAL_NO_HOOKS);
+      add_signal_flag_if(strFlags, "Must Collect", signalQuery, G_SIGNAL_MUST_COLLECT);
+      strResult += "  (flags \"" + strFlags + "\")\n";
 
-        std::string strWhen = "unknown";
+      if (signalQuery.signal_flags & G_SIGNAL_DETAILED)
+        strResult += "  (detailed #t)\n"; // Default: not detailed
 
-        if (bWhenFirst && bWhenLast)
-          strWhen = "both";
-        else if (bWhenFirst)
-          strWhen = "first";
-        else if (bWhenLast)
-          strWhen = "last";
-
-        strResult += "  (when \"" + strWhen + "\")\n";
-      }
-      bool bDeprecated = (signalQuery.signal_flags & G_SIGNAL_DEPRECATED) == G_SIGNAL_DEPRECATED;
-      if (bDeprecated)
+      if (signalQuery.signal_flags & G_SIGNAL_DEPRECATED)
         strResult += "  (deprecated #t)\n"; // Default: not deprecated
 
       // Loop through the list of parameters:

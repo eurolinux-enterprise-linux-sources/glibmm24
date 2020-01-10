@@ -296,6 +296,9 @@ AS_VAR_COPY([$1], [pkg_cv_][$1])
 AS_VAR_IF([$1], [""], [$5], [$4])dnl
 ])dnl PKG_CHECK_VAR
 
+# Increment this whenever this file is changed.
+#serial 1
+
 dnl GLIB_GSETTINGS
 dnl Defines GSETTINGS_SCHEMAS_INSTALL which controls whether
 dnl the schema should be compiled
@@ -957,7 +960,7 @@ AC_DEFUN([MM_PREREQ],
 [dnl
 m4_assert([$# >= 1])[]dnl
 AC_REQUIRE([_MM_PRE_INIT])[]dnl
-_MM_PREREQ([mm-common], [0.9.10], [$1], m4_defn([AC_PACKAGE_NAME]))[]dnl
+_MM_PREREQ([mm-common], [0.9.11], [$1], m4_defn([AC_PACKAGE_NAME]))[]dnl
 ])
 
 

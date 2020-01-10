@@ -1,5 +1,3 @@
-// -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-
 /* Copyright (C) 2012 The giomm Development Team
  *
  * This library is free software; you can redistribute it and/or
@@ -13,8 +11,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <giomm/action.h>
@@ -32,6 +29,15 @@ ActionMap::add_action(const Glib::ustring& name)
 }
 
 Glib::RefPtr<SimpleAction>
+ActionMap::add_action(const Glib::ustring& name, const ActivateSlot& slot)
+{
+  auto action = add_action(name);
+  action->signal_activate().connect(sigc::hide(slot));
+  return action;
+}
+
+_DEPRECATE_IFDEF_START
+Glib::RefPtr<SimpleAction>
 ActionMap::add_action_with_parameter(
   const Glib::ustring& name, const ActivateWithParameterSlot& slot)
 {
@@ -39,12 +45,15 @@ ActionMap::add_action_with_parameter(
   action->signal_activate().connect(slot);
   return action;
 }
+_DEPRECATE_IFDEF_END
 
 Glib::RefPtr<SimpleAction>
-ActionMap::add_action(const Glib::ustring& name, const ActivateSlot& slot)
+ActionMap::add_action_with_parameter(
+  const Glib::ustring& name, const Glib::VariantType& parameter_type, const ActivateWithParameterSlot& slot)
 {
-  auto action = add_action(name);
-  action->signal_activate().connect(sigc::hide(slot));
+  auto action = SimpleAction::create(name, parameter_type);
+  action->signal_activate().connect(slot);
+  add_action(action);
   return action;
 }
 

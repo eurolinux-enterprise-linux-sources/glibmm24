@@ -1,3 +1,192 @@
+2.56.0 (stable):
+
+Glib:
+* Threads::Private: Fix gobj().
+  (Kjell Ahlstedt) Bug #791711 (octoploid)
+* TimeoutSource: Use monotonic time consistently.
+  (Kjell Ahlstedt) Bug #792524 (Dainis Jonitis)
+* Add RefPtr::get().
+  (Kjell Ahlstedt) Bug #495762 (Hubert Figuiere)
+
+Gio:
+* TlsClientConnection: Deprecate set/get/property_use_ssl3().
+  (Kjell Ahlstedt)
+* DataInputStream: Deprecate read_until().
+  (Kjell Ahlstedt)
+* Application: Add property_resource_base_path_string().
+  This is a replacement for property_resource_base_path() which can't be
+  fixed without breaking ABI.
+  (Kjell Ahlstedt) Bug #787496 (Daniel Boles)
+* Application: Add three set_option_context_*() methods.
+  (Kjell Ahlstedt)
+* DesktopAppInfo: Add get_locale_string().
+  (Kjell Ahlstedt)
+
+Documentation:
+* Slightly elaborate Glib::Variant<Variant> docs.
+  (Daniel Boles) Bug #778219
+
+tests:
+* glibmm_variant: Don't use C++14 features when a C++11 compiler is used.
+  (Kjell Ahlstedt, Jonathan Wakely) Bug #787648 (Armin K.)
+* glibmm_interface_move test: Avoid unused function warnings.
+  (Murray Cumming)
+
+gmmproc:
+* _WRAP_METHOD: Accept optional list of exceptions in errthrow.
+  (Kjell Ahlstedt) Bug #787979 (Daniel Boles)
+* _WRAP_METHOD: Suppress the @return section in generated documentation
+  if return type is void.
+  (Kjell Ahlstedt) Bug #787978 (Daniel Boles)
+* Add _MEMBER_SET_STR macro, setter for strings.
+  (Pavlo Solntsev) Bug #793778
+
+
+2.54.1 (stable):
+
+Glib:
+* Variant: Don't use std::index_sequence from C++14.
+  (Kjell Ahlstedt, Jonathan Wakely) Bug #787648 (Armin K.)
+
+Documentation:
+* Note that Gio::Application::property_resource_base_path() shall not
+  be used. It has a bug that's hard to fix without breaking ABI.
+  (Kjell Ahlstedt) Bug #787496 (Daniel Boles)
+
+gmmproc:
+* Convert all property documentation to C++.
+  (Kjell Ahlstedt) Bug #787698 (Daniel Boles)
+
+2.54.0 (stable):
+
+Glib:
+* Added DBusObjectPathString and DBusSignatureString, for Variants with D-Bus object paths or D-Bus signatures,
+  and add Variant specializations for Variant<Glib::DBusObjectPathString>,
+  Variant<Glib::DBusSignatureString> and Variant<std::vector<Glib::DBusObjectPathString>>.
+  (Kjell Ahlstedt) Bug #785700
+* Variant: Add template specialization for std::tuple.
+  (Alexander Rössler) Bug #777791
+
+Gio:
+* ActionGroup: Add optional action_name parameters to some signals.
+  (Kjell Ahlstedt)
+* Settings: Add optional key parameter to the writable_changed signal.
+  (Kjell Ahlstedt)
+
+gmmproc:
+* Write signal flags to generated documentation
+  (Kjell Ahlstedt) Bug #785895 (Daniel Boles)
+* Write default values of properties to generated documentation
+  (Kjell Ahlstedt) Bug #785895 (Daniel Boles)
+* Warn for unmatched deprecations in signals and properties.
+  (Kjell Ahlstedt)
+* Accept curly braces in default values in _WRAP macros.
+  (Kjell Ahlstedt) Bug #783216 comment #13 (Daniel Boles)
+* Fix _WRAP_ENUM for enumerators with apostrophes.
+  (Kjell Ahlstedt)
+* Add new elements types for the docs_override:
+  substitute_type_name and substitute_enumerator_name.
+  (Kjell Ahlstedt) Bug #86864
+
+
+2.52.1 (stable):
+
+Gio:
+* TlsDatabase: Fix memory leak in a vfunc.
+  (Kjell Ahlstedt) Bug #783360
+
+Documentation:
+* Update docs of get_*_name().
+  (Daniel Boles)
+
+Build:
+* MacOS: Really correct build without gdesktopinfo.
+  (Kjell Ahlstedt) Bug #781947
+
+2.52.0 (stable):
+
+Gio:
+* UnixSocketAddress::create(): Remove the default value for the type
+  parameter to avoid ambiguity.
+  (Kjell Ahlstedt) Bug #782592
+
+Gio::DBus
+* Proxy: Wrap call() and call_sync() methods.
+  (Vyacheslav Yurkov) Bug #781818
+
+Documentation:
+* RefPtr: Clarify comment about undefined behaviour.
+  (Daniel Boles)
+
+2.51.7 (unstable):
+
+Glib:
+* SettingsSchemaKey: Add missing value/range methods.
+  (Daniel Boles) Bug #774903
+* Variant: Replace throw(std::bad_cast) with noexcept(false),
+  to fix the build with C++17.
+  See https://bugzilla.redhat.com/show_bug.cgi?id=1438766
+  (Murray Cumming)
+* VariantType: Deprecate first() and next(). Add get_item_types()
+  (Kjell Ahlstedt) Bug #775741
+
+Gio:
+* ActionMap: Add add_action_with_parameter() that takes a parameter type,
+  and deprecated the existing method, because it cannot work.
+  (Daniel Boles) Bug #774444
+* SimpleAction: Make set_state() public.
+  (Daniel Boles) Bug #777953
+
+Build:
+* MacOS: Correct build without gdesktopinfo.
+  (John Ralls) Bug #781947
+* Glib::Object: Suppress deprecation warning for g_object_newv() with glib 2.54.
+  (Kjell Ahlstedt)
+
+
+2.51.6 (unstable):
+
+This is version 2.51.6 of glibmm-2.24. Ignore versions 2.51.1 to 2.51.5 of
+unstable glibmm-2.52. Unstable glibmm-2.52 is now unstable glibmm-2.54,
+leaving the 2.51/52 version numbers again for use by stable glibmm-2.52.
+
+Glib:
+* Dispatcher:
+  - autodeduce the type of the fd field.
+  (Marcin Kolny) Bug #772074
+  - Don't cast a HANDLE to an int on Windows.
+  (Kjell Ahlstedt) Bug #772074
+* ustring: Add cbegin() and cend().
+  (Murray Cumming)
+
+Gio:
+* Action: Include variant.h in the heaer.
+  (Daniel Boles) Bug #777953
+* Application: get_default(): Correct the reference counting.
+  (Kjell Ahlstedt) Bug #779936
+* Settings:
+  - Really add set_enum() and set_flags().
+  (djb) Bug #774647
+  - Writable-change-event signal: Correct the type of the key parameter.
+  (Marcin Kolny) Bug #773977
+* SettingsSchemaSource: get_default(): Correct the refcounting.
+  (Marcin Kolny) Bug #774593
+
+Gio::DBus:
+* Proxy: Fix memory leak in get_cached_property_names().
+  (Kjell Ahlstedt) Bug #775210
+
+Documentation:
+* Glib::Variant: Improve documentation of maybe types.
+  (Daniel Boles) Bug #778219
+* Gio::ActionMap: Clarify doc of ActivateWithParameterSlot
+  (Daniel Boles)
+
+Build:
+* Visual Studio builds: "Install" the .pdb files
+  (Chun-wei Fan)
+
+
 2.50.0:
 
 No changes since 2.49.7.

@@ -5,7 +5,7 @@
 %global libsigc_version 2.9.1
 
 Name:           glibmm24
-Version:        2.50.0
+Version:        2.56.0
 Release:        1%{?dist}
 Summary:        C++ interface for the GLib library
 
@@ -24,6 +24,8 @@ BuildRequires:  perl(Getopt::Long)
 
 Requires:       glib2%{?_isa} >= %{glib2_version}
 Requires:       libsigc++20%{?_isa} >= %{libsigc_version}
+
+Patch0:         no-regex-replace.patch
 
 %description
 glibmm is the official C++ interface for the popular cross-platform
@@ -52,6 +54,7 @@ This package contains the full API documentation for %{name}.
 
 %prep
 %setup -q -n glibmm-%{version}
+%patch0 -p1 -b .no-regex-replace
 
 
 %build
@@ -92,6 +95,10 @@ find $RPM_BUILD_ROOT -type f -name "*.la" -exec rm -f {} ';'
 
 
 %changelog
+* Fri Jun 08 2018 Ray Strode <rstrode@redhat.com> - 2.56.0-1
+- Update to 2.56.0
+  Resolves: #1567380
+
 * Tue Sep 20 2016 Kalev Lember <klember@redhat.com> - 2.50.0-1
 - Update to 2.50.0
 - Resolves: #1386875

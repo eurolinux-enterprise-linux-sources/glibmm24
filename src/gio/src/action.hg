@@ -11,13 +11,13 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 _CONFIGINCLUDE(giommconfig.h)
 
 #include <glibmm/interface.h>
+#include <glibmm/variant.h>
 #include <glibmm/varianttype.h>
 #include <gio/gio.h>
 
@@ -28,13 +28,6 @@ _PINCLUDE(gio/gio.h)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct _GActionInterface GActionInterface;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
-namespace Glib
-{
-
-class VariantBase;
-
-}
 
 namespace Gio
 {
@@ -191,7 +184,7 @@ public:
   static void parse_detailed_name(const Glib::ustring& detailed_name, Glib::ustring& action_name, T_Value& target_value);
 
   _WRAP_METHOD(static void parse_detailed_name_variant(const Glib::ustring& detailed_name,
-    Glib::ustring& action_name{>>}, Glib::VariantBase& target_value{>>}), g_action_parse_detailed_name, errthrow)
+    Glib::ustring& action_name{>>}, Glib::VariantBase& target_value{>>}), g_action_parse_detailed_name, errthrow "Glib::VariantParseError", errthrow)
 
   /** Formats a detailed action name from the action's action_name and @a target_value.
    *

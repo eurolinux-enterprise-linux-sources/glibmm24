@@ -163,7 +163,7 @@ am__objects_6 = arrayhandle.lo base64.lo class.lo containers.lo \
 	signalproxy.lo signalproxy_connectionnode.lo \
 	streamiochannel.lo stringutils.lo threadpool.lo timer.lo \
 	timeval.lo ustring.lo utility.lo value.lo value_custom.lo \
-	vectorutils.lo wrap.lo
+	variantdbusstring.lo vectorutils.lo wrap.lo
 am__objects_7 = $(am__objects_6)
 am__objects_8 = $(am__objects_5) $(am__objects_7)
 am_libglibmm_@GLIBMM_API_VERSION@_la_OBJECTS = $(am__objects_8)
@@ -449,7 +449,7 @@ glibmm_files_any_hg = \
 	varianttype.hg
 
 glibmm_files_used_hg = $(glibmm_files_any_hg)
-glibmm_files_hg = $(glibmm_files_any_hg)
+glibmm_files_hg = $(glibmm_files_used_hg)
 glibmm_files_ccg = $(glibmm_files_hg:.hg=.ccg)
 glibmm_files_cc_m4 = value_basictypes.cc.m4 variant_basictypes.cc.m4
 glibmm_files_h_m4 = value_basictypes.h.m4 \
@@ -491,6 +491,7 @@ glibmm_files_extra_cc = \
 	utility.cc			\
 	value.cc			\
 	value_custom.cc			\
+	variantdbusstring.cc \
 	vectorutils.cc			\
 	wrap.cc
 
@@ -535,6 +536,7 @@ glibmm_files_extra_h = \
 	utility.h			\
 	value.h				\
 	value_custom.h			\
+	variantdbusstring.h \
 	vectorutils.h			\
 	weakref.h			\
 	wrap.h				\
@@ -721,6 +723,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/valuearray.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant_basictypes.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variantdbusstring.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variantdict.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variantiter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/varianttype.Plo@am__quote@

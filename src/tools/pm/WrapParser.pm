@@ -13,8 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 package WrapParser;
 use strict;
@@ -711,7 +710,6 @@ sub string_split_commas($;$)
   $ignore_quotes = 2 unless defined $ignore_quotes;
   my @out;
   my $level = 0;
-  my $in_braces = 0;
   my $in_quotes = 0;
   my $str = "";
   my @in = split(/([,"()<>{}])/, $in);
@@ -728,15 +726,12 @@ sub string_split_commas($;$)
     $in_quotes = !$in_quotes if ($t eq '"' and scalar(@out) >= $ignore_quotes);
     if (!$in_quotes)
     {
-      $in_braces++ if ($t eq "{");
-      $in_braces-- if ($t eq "}");
+      $level++ if ($t eq "(" or $t eq "<" or $t eq "{");
 
-      $level++ if ($t eq "(" or $t eq "<");
-
-      # In the case of a '>' decrease the level if it is not in a {...}
-      # because if it is found in a {...} it is most likely indicating that
-      # a parameter in a method declaration is an output param.
-      $level-- if ($t eq ")" or ($t eq ">" && !$in_braces));
+      # In the case of a '>' decrease the level if it is not in a {...} without
+      # a preceding '<', because then it is most likely indicating that
+      # a parameter in a method declaration is an output parameter (name{>>}).
+      $level-- if ($t eq ")" or $t eq "}" or ($t eq ">" && $str !~ /{[^<}]*$/));
 
       # Don't split at comma, if inside a function, e.g. void f1(int x, int y)
       # or std::map<Glib::ustring, float> f2(),
@@ -951,6 +946,7 @@ sub on_wrap_method($)
   $$objCfunc{throw_any_errors} = 0;
   $$objCfunc{constversion} = 0;
   $$objCfunc{deprecated} = "";
+  my $errthrow_docs = "";
   my $deprecation_docs = "";
   my $newin = "";
   my $ifdef;
@@ -962,9 +958,10 @@ sub on_wrap_method($)
     {
       $$objCfunc{rettype_needs_ref} = 1;
     }
-    elsif($argRef eq "errthrow")
+    elsif($argRef =~ /^errthrow(.*)/) #If errthrow is at the start.
     {
       $$objCfunc{throw_any_errors} = 1;
+      $errthrow_docs = ($1 ne "") ? string_unquote(string_trim($1)) : "Glib::Error";
     }
     elsif($argRef eq "constversion")
     {
@@ -1015,7 +1012,7 @@ sub on_wrap_method($)
   else
   {
     $commentblock = DocsParser::lookup_documentation($argCFunctionName,
-      $deprecation_docs, $newin, $objCppfunc);
+      $deprecation_docs, $newin, $objCppfunc, $errthrow_docs);
   }
 
   $objOutputter->output_wrap_meth($filename, $line_num, $objCppfunc, $objCfunc, $argCppMethodDecl, $commentblock, $ifdef);
@@ -1065,22 +1062,30 @@ sub on_wrap_method_docs_only($)
   }
 
   $$objCfunc{throw_any_errors} = 0;
+  my $errthrow_docs = "";
   my $newin = "";
+  my $voidreturn = 0;
   while($#args >= 1) # If the optional ref/err arguments are there.
   {
     my $argRef = string_trim(pop @args);
-    if($argRef eq "errthrow")
+    if($argRef =~ /^errthrow(.*)/) #If errthrow is at the start.
     {
       $$objCfunc{throw_any_errors} = 1;
+      $errthrow_docs = ($1 ne "") ? string_unquote(string_trim($1)) : "Glib::Error";
     }
     elsif($argRef =~ /^newin(.*)/) #If newin is at the start.
     {
       $newin = string_unquote(string_trim($1));
     }
+    elsif($argRef eq "voidreturn")
+    {
+      $voidreturn = 1;
+    }
   }
 
   my $commentblock = "";
-  $commentblock = DocsParser::lookup_documentation($argCFunctionName, "", $newin);
+  $commentblock = DocsParser::lookup_documentation($argCFunctionName, "", $newin,
+    undef, $errthrow_docs, $voidreturn);
   $objOutputter->output_wrap_meth_docs_only($filename, $line_num, $commentblock);
 }
 
@@ -1667,13 +1672,26 @@ sub output_wrap_signal($$$$$$$$$$$$$$$$$)
     $objCSignal = GtkDefs::lookup_signal($$self{c_class}, $signal_name);
 
     # Check for failed lookup.
-    if($objCSignal eq 0)
+    if (!$objCSignal)
     {
       print STDERR "$signal_name\n";
         $objOutputter->output_wrap_failed($signal_name,
           " signal defs lookup failed");
       return;
     }
+  }
+
+  # Check detailed.
+  my $defs_detailed = $objCSignal->get_detailed();
+    if ($defs_detailed && !$detail_name)
+  {
+    print STDERR "Warning, $main::source: The $signal_name signal" .
+      " is marked 'detailed' in the .defs file, but not in _WRAP_SIGNAL.\n";
+  }
+  elsif (!$defs_detailed && $detail_name)
+  {
+    print STDERR "Warning, $main::source: The $signal_name signal" .
+      " is marked 'detailed' in _WRAP_SIGNAL, but not in the .defs file.\n";
   }
 
   Output::check_deprecation($$self{deprecated}, $objCSignal->get_deprecated(),
@@ -1684,7 +1702,7 @@ sub output_wrap_signal($$$$$$$$$$$$$$$$$)
     $deprecated, $deprecation_docs, $newin, $exceptionHandler,
     $detail_name, $bTwoSignalMethods);
 
-  if($bNoDefaultHandler eq 0)
+  if (!$bNoDefaultHandler)
   {
     $objOutputter->output_wrap_default_signal_handler_h($filename, $line_num,
       $objCppSignal, $objCSignal, $ifdef, $deprecated, $exceptionHandler);

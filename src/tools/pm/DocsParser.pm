@@ -13,8 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
 # Based on XML::Parser tutorial found at http://www.devshed.com/Server_Side/Perl/PerlXML/PerlXML1/page1.html
@@ -24,6 +23,7 @@ package DocsParser;
 use XML::Parser;
 use strict;
 use warnings;
+use feature 'state';
 
 use Util;
 use Function;
@@ -61,6 +61,9 @@ $DocsParser::currentParam = undef;
 
 $DocsParser::objCurrentFunction = undef; #Function
 %DocsParser::hasharrayFunctions = (); #Function elements
+%DocsParser::type_names = (); # Type names (e.g. enums) with non-standard C-to-C++ translation.
+%DocsParser::enumerator_name_prefixes = (); # Enumerator name prefixes with non-standard C-to-C++ translation.
+%DocsParser::enumerator_names = (); # Enumerator names with non-standard C-to-C++ translation.
 
 $DocsParser::commentStart = "  /** ";
 $DocsParser::commentMiddleStart = "   * ";
@@ -89,7 +92,7 @@ sub read_defs($$$)
     return;
   }
 
-  # C++ overide documentation:
+  # C++ override documentation:
   $DocsParser::CurrentFile = $path . '/' . $filename_override;
 
   # It is not an error if the documentation override file does not exist.
@@ -176,6 +179,21 @@ sub parse_on_start($$%)
   elsif($tag eq "mapping")
   {
     $$DocsParser::objCurrentFunction{mapped_class} = $attr{class};
+  }
+  elsif($tag eq "substitute_type_name")
+  {
+    $DocsParser::type_names{$attr{from}} = $attr{to};
+  }
+  elsif($tag eq "substitute_enumerator_name")
+  {
+    if (exists $attr{from_prefix})
+    {
+      $DocsParser::enumerator_name_prefixes{$attr{from_prefix}} = $attr{to_prefix};
+    }
+    if (exists $attr{from})
+    {
+      $DocsParser::enumerator_names{$attr{from}} = $attr{to};
+    }
   }
   elsif($tag ne "root")
   {
@@ -282,7 +300,7 @@ sub lookup_enum_documentation($$$$$$$)
   # Replace @newin in the enum description, but don't in the element descriptions.
   my $description = "\@enum $cpp_enum_name\n";
   $description .= $$objFunction{description};
-  DocsParser::convert_docs_to_cpp($objFunction, \$description);
+  DocsParser::convert_docs_to_cpp($c_enum_name, \$description);
   DocsParser::replace_or_add_newin(\$description, $newin);
 
   # Add note about deprecation if we have specified that in our _WRAP_ENUM(),
@@ -293,7 +311,7 @@ sub lookup_enum_documentation($$$$$$$)
   }
 
   # Append the enum description docs.
-  DocsParser::convert_docs_to_cpp($objFunction, \$docs);
+  DocsParser::convert_docs_to_cpp($c_enum_name, \$docs);
   $docs .= "\n\n$description";
   DocsParser::add_m4_quotes(\$docs);
 
@@ -309,14 +327,17 @@ sub lookup_enum_documentation($$$$$$$)
   return $docs;
 }
 
-# $strCommentBlock lookup_documentation($strFunctionName, $deprecation_docs, $newin, $objCppfunc)
-# The final objCppfunc parameter is optional.  If passed, it is used to
-# decide if the final C parameter should be omitted if the C++ method
-# has a slot parameter. It is also used for converting C parameter names to
-# C++ parameter names in the documentation, if they differ.
-sub lookup_documentation($$$;$)
+# $strCommentBlock lookup_documentation($strFunctionName, $deprecation_docs,
+#   $newin, $objCppfunc, $errthrow, $voidreturn)
+# The parameters from objCppfunc are optional. If objCppfunc is passed, it is used for
+# - deciding if the final C parameter shall be omitted if the C++ method
+#   has a slot parameter,
+# - converting C parameter names to C++ parameter names in the documentation,
+#   if they differ,
+# - deciding if the @return section shall be omitted.
+sub lookup_documentation($$$;$$$)
 {
-  my ($functionName, $deprecation_docs, $newin, $objCppfunc) = @_;
+  my ($functionName, $deprecation_docs, $newin, $objCppfunc, $errthrow, $voidreturn) = @_;
 
   my $objFunction = $DocsParser::hasharrayFunctions{$functionName};
   if(!$objFunction)
@@ -332,7 +353,7 @@ sub lookup_documentation($$$;$)
     print "DocsParser.pm: Warning: No C docs for: \"$functionName\"\n";
   }
 
-  DocsParser::convert_docs_to_cpp($objFunction, \$text);
+  DocsParser::convert_docs_to_cpp($functionName, \$text);
   DocsParser::replace_or_add_newin(\$text, $newin);
   # A blank line, marking the end of a paragraph, is needed after @newin.
   # Most @newins are at the end of a function description.
@@ -346,7 +367,11 @@ sub lookup_documentation($$$;$)
   }
 
   my %param_name_mappings = DocsParser::append_parameter_docs($objFunction, \$text, $objCppfunc);
-  DocsParser::append_return_docs($objFunction, \$text);
+  unless ((defined($objCppfunc) && $$objCppfunc{rettype} eq "void") || $voidreturn)
+  {
+    DocsParser::append_return_docs($objFunction, \$text);
+  }
+  DocsParser::add_throws(\$text, $errthrow);
 
   # Convert C parameter names to C++ parameter names where they differ.
   foreach my $key (keys %param_name_mappings)
@@ -370,6 +395,20 @@ sub lookup_documentation($$$;$)
   $text .= "\n${DocsParser::commentEnd}\n";
 
   return $text;
+}
+
+# void convert_value_to_cpp(\$text)
+# Converts e.g. a property's default value.
+sub convert_value_to_cpp($)
+{
+  my ($text) = @_;
+
+  $$text =~ s"\bFALSE\b"<tt>false</tt>"g;
+  $$text =~ s"\bTRUE\b"<tt>true</tt>"g;
+  $$text =~ s"\bNULL\b"<tt>nullptr</tt>"g;
+
+  # Enumerator names
+  $$text =~ s/\b([A-Z]+)_([A-Z\d_]+)\b/&DocsParser::substitute_enumerator_name($1, $2)/eg;
 }
 
 # void remove_example_code($obj_name, \$text)
@@ -537,7 +576,7 @@ sub append_parameter_docs($$;$)
       $param_name_mappings{$param} = "slot";
     }
 
-    DocsParser::convert_docs_to_cpp($obj_function, \$desc);
+    DocsParser::convert_docs_to_cpp($$obj_function{name}, \$desc);
     if(length($desc) > 0)
     {
       $desc  .= '.' unless($desc =~ /(?:^|\.)$/);
@@ -553,7 +592,7 @@ sub append_return_docs($$)
   my ($obj_function, $text) = @_;
 
   my $desc = $$obj_function{return_description};
-  DocsParser::convert_docs_to_cpp($obj_function, \$desc);
+  DocsParser::convert_docs_to_cpp($$obj_function{name}, \$desc);
 
   $desc  =~ s/\.$//;
   $$text .= "\n\@return \u${desc}." unless($desc eq "");
@@ -562,7 +601,7 @@ sub append_return_docs($$)
 
 sub convert_docs_to_cpp($$)
 {
-  my ($obj_function, $text) = @_;
+  my ($doc_func, $text) = @_;
 
   # Chop off leading and trailing whitespace.
   $$text =~ s/^\s+//;
@@ -571,7 +610,7 @@ sub convert_docs_to_cpp($$)
   # Convert C documentation to C++.
   DocsParser::remove_c_memory_handling_info($text);
   DocsParser::convert_tags_to_doxygen($text);
-  DocsParser::substitute_identifiers($$obj_function{name}, $text);
+  DocsParser::substitute_identifiers($doc_func, $text);
 
   $$text =~ s/\bX\s+Window\b/X&nbsp;\%Window/g;
   $$text =~ s/\bWindow\s+manager/\%Window manager/g;
@@ -712,6 +751,24 @@ sub replace_or_add_newin($$)
   }
 }
 
+# void add_throws(\$text, $errthrow)
+# If $errthrow is defined and not empty, and $$text does not contain a @throw,
+# @throws or @exception Doxygen command, add one or more @throws commands.
+sub add_throws($$)
+{
+  my ($text, $errthrow) = @_;
+
+  return if (!defined($errthrow) or $errthrow eq "");
+
+  if (!($$text =~ /[\@\\](throws?|exception)\b/))
+  {
+    # Each comma, not preceded by backslash, creates a new @throws command.
+    $errthrow =~ s/([^\\]),\s*/$1\n\@throws /g;
+    $errthrow =~ s/\\,/,/g; # Delete backslash before comma
+    $$text .= "\n\n\@throws $errthrow";
+  }
+}
+
 # Convert <simplelist> tags to a list of newline-separated elements.
 sub convert_simplelist($)
 {
@@ -769,14 +826,12 @@ sub substitute_identifiers($$)
     s/(^|\s)::([a-z\d-]+)(\(\))*([^:\w]|$)/my $name = "$1signal_$2()$4"; $name =~ s"-"_"g; "$name";/ge;
     s/(#[A-Z]\w+)::([a-z\d-]+)(\(\))*([^:\w]|$)/my $name = "$1::signal_$2()$4"; $name =~ s"-"_"g; "$name";/ge;
 
-    s/[#%]([A-Z][a-z]*)([A-Z][A-Za-z]+)\b/$1::$2/g; # type names
+    # Type names
+    s/[#%]([A-Z][a-z]*)([A-Z][A-Za-z]+)\b/&DocsParser::substitute_type_name($1, $2)/eg;
 
-    s/[#%]([A-Z])([A-Z]*)_([A-Z\d_]+)\b/$1\L$2\E::$3/g; # enum values
+    # Enumerator names
+    s/[#%]([A-Z]+)_([A-Z\d_]+)\b/&DocsParser::substitute_enumerator_name($1, $2)/eg;
 
-    # Undo wrong substitutions.
-    s/\bHas::/HAS_/g;
-    s/\bNo::/NO_/g;
-    s/\bO::/O_/g;
     s/\bG:://g; #Rename G::Something to Something.
 
     # Substitute callback types to slot types.
@@ -787,6 +842,68 @@ sub substitute_identifiers($$)
   }
 }
 
+sub substitute_type_name($$)
+{
+  my ($module, $name) = @_;
+  my $c_name = $module . $name;
+
+  if (exists $DocsParser::type_names{$c_name})
+  {
+    return $DocsParser::type_names{$c_name};
+  }
+  #print "DocsParser.pm: Assuming the type $c_name shall become " . (($module eq "G") ? "" : "${module}::") . "$name.\n";
+  return $module . "::" . $name;
+}
+
+sub substitute_enumerator_name($$)
+{
+  state $first_call = 1;
+  state @sorted_keys;
+
+  my ($module, $name) = @_;
+  my $c_name = $module . "_" . $name;
+
+  if (exists $DocsParser::enumerator_names{$c_name})
+  {
+    return $DocsParser::enumerator_names{$c_name};
+  }
+
+  if ($first_call)
+  {
+    # Sort only once, on the first call.
+    # "state @sorted_keys = ...;" is not possible. Only a scalar variable
+    # can have a one-time assignment in its defining "state" statement.
+    $first_call = 0;
+    @sorted_keys = reverse sort keys(%DocsParser::enumerator_name_prefixes);
+  }
+
+  # This is a linear search through the keys of %DocsParser::enumerator_name_prefixes.
+  # It's inefficient if %DocsParser::enumerator_name_prefixes contains many values.
+  #
+  # If one key is part of another key (e.g. G_REGEX_MATCH_ and G_REGEX_),
+  # search for a match against the longer key before the shorter key.
+  foreach my $key (@sorted_keys)
+  {
+    if ($c_name =~ m/^$key/)
+    {
+      # $c_name begins with $key. Replace that part of $c_name with the C++ analogue.
+      $c_name =~ s/^$key/$DocsParser::enumerator_name_prefixes{$key}/;
+      return $c_name; # Now it's the C++ name.
+    }
+  }
+
+  # Don't apply the default substitution to these module names.
+  # They are not really modules.
+  if (grep {$module eq $_} qw(HAS NO O SO AF))
+  {
+    return $c_name;
+  }
+
+  my $cxx_name = (($module eq "G") ? "" : (ucfirst(lc($module)) . "::")) . $name;
+
+  #print "DocsParser.pm: Assuming the enumerator $c_name shall become $cxx_name.\n";
+  return $cxx_name;
+}
 
 sub substitute_function($$)
 {

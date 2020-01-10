@@ -11,8 +11,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <glibmm/object.h>
@@ -99,7 +98,9 @@ public:
 
   _WRAP_VFUNC(TlsCertificateFlags verify_chain_finish(const Glib::RefPtr<AsyncResult>& result), "verify_chain_finish", errthrow)
 
+dnl// create_certificate_handle_vfunc() shall return a newly allocated string.
 #m4 _CONVERSION(`GTlsCertificate*',`const Glib::RefPtr<const TlsCertificate>&',`Glib::wrap($3, true)')
+#m4 _CONVERSION(`gchar*',`Glib::ustring',`Glib::convert_return_gchar_ptr_to_ustring($3)')
   _WRAP_VFUNC(Glib::ustring create_certificate_handle(const Glib::RefPtr<const TlsCertificate>& certificate) const, "create_certificate_handle")
 
 #m4 _CONVERSION(`Glib::RefPtr<TlsCertificate>',`GTlsCertificate*',`G_TLS_CERTIFICATE(g_object_ref(Glib::unwrap($3)))')

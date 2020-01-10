@@ -23,6 +23,9 @@
 
 #ifdef GLIBMM_CONFIGURE
 
+/* Define only on Mac OS, COCOA */
+/* #undef GLIBMM_OS_COCOA */
+
 /* Define if extern "C" and extern "C++" function pointers are compatible. */
 #define GLIBMM_CAN_ASSIGN_NON_EXTERN_C_FUNCTIONS_TO_EXTERN_C_CALLBACKS 1
 
@@ -88,7 +91,7 @@
 #define GLIBMM_MICRO_VERSION 0
 
 /* Minor version number of glibmm. */
-#define GLIBMM_MINOR_VERSION 50
+#define GLIBMM_MINOR_VERSION 56
 
 /* This is always set. This is only for backwards compatibility. */
 #define GLIBMM_PROPERTIES_ENABLED 1

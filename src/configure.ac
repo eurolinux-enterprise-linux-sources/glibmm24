@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([glibmm], [2.50.0],
+AC_INIT([glibmm], [2.56.0],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=glibmm],
         [glibmm], [http://www.gtkmm.org/])
 AC_PREREQ([2.59])
@@ -54,6 +54,26 @@ AC_MSG_CHECKING([for native Windows host])
 AS_CASE([$host_os], [mingw*], [glibmm_host_windows=yes], [glibmm_host_windows=no])
 AC_MSG_RESULT([$glibmm_host_windows])
 AM_CONDITIONAL([HOST_WINDOWS_NATIVE], [test "x$glibmm_host_windows" = xyes])
+
+# This test for Mac OS is copied from glib. If the result of glib's test
+# is ever made available outside glib, use glib's result instead of this test.
+# glib: https://bugzilla.gnome.org/show_bug.cgi?id=780309
+# glibmm: https://bugzilla.gnome.org/show_bug.cgi?id=781947
+glibmm_have_cocoa=no
+AC_MSG_CHECKING([for Mac OS X Cocoa support])
+AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
+#include <Cocoa/Cocoa.h>
+#ifdef GNUSTEP_BASE_VERSION
+#error "Detected GNUstep, not Cocoa"
+#endif
+]])],[glibmm_have_cocoa=yes],[])
+
+AC_MSG_RESULT([$glibmm_have_cocoa])
+AM_CONDITIONAL(OS_COCOA, [test "$glibmm_have_cocoa" = "yes"])
+AS_IF([test "$glibmm_have_cocoa" = "yes"],
+[
+  AC_DEFINE([GLIBMM_OS_COCOA], [1], [Define only on Mac OS, COCOA])
+])
 
 # TODO: This makes no sense. --danielk
 AS_IF([test "x$enable_static" = xyes],

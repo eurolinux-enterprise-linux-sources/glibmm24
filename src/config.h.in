@@ -82,6 +82,9 @@
 /* Minor version number of glibmm. */
 #undef GLIBMM_MINOR_VERSION
 
+/* Define only on Mac OS, COCOA */
+#undef GLIBMM_OS_COCOA
+
 /* This is always set. This is only for backwards compatibility. */
 #undef GLIBMM_PROPERTIES_ENABLED
 

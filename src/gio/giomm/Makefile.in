@@ -228,17 +228,22 @@ am__objects_1 = action.lo actiongroup.lo actionmap.lo \
 	tlsinteraction.lo tlspassword.lo tlsserverconnection.lo \
 	volume.lo volumemonitor.lo zlibdecompressor.lo \
 	zlibcompressor.lo
-am__objects_2 = desktopappinfo.lo unixconnection.lo \
-	unixcredentialsmessage.lo unixfdlist.lo unixfdmessage.lo \
-	unixinputstream.lo unixoutputstream.lo unixsocketaddress.lo
-@HOST_WINDOWS_NATIVE_FALSE@am__objects_3 = $(am__objects_2)
-am__objects_4 = $(am__objects_1) $(am__objects_3)
-am__objects_5 = $(am__objects_4) wrap_init.lo
-am__objects_6 = $(am__objects_5)
-am__objects_7 = contenttype.lo init.lo slot_async.lo socketsource.lo
-am__objects_8 = $(am__objects_7)
-am__objects_9 = $(am__objects_6) $(am__objects_8)
-am_libgiomm_@GIOMM_API_VERSION@_la_OBJECTS = $(am__objects_9)
+am__objects_2 = desktopappinfo.lo
+am__objects_3 = unixconnection.lo unixcredentialsmessage.lo \
+	unixfdlist.lo unixfdmessage.lo unixinputstream.lo \
+	unixoutputstream.lo unixsocketaddress.lo
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_FALSE@am__objects_4 =  \
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_FALSE@	$(am__objects_2) \
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_FALSE@	$(am__objects_3)
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_TRUE@am__objects_4 =  \
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_TRUE@	$(am__objects_3)
+am__objects_5 = $(am__objects_1) $(am__objects_4)
+am__objects_6 = $(am__objects_5) wrap_init.lo
+am__objects_7 = $(am__objects_6)
+am__objects_8 = contenttype.lo init.lo slot_async.lo socketsource.lo
+am__objects_9 = $(am__objects_8)
+am__objects_10 = $(am__objects_7) $(am__objects_9)
+am_libgiomm_@GIOMM_API_VERSION@_la_OBJECTS = $(am__objects_10)
 libgiomm_@GIOMM_API_VERSION@_la_OBJECTS =  \
 	$(am_libgiomm_@GIOMM_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -651,7 +656,6 @@ giomm_files_any_hg = \
 	zlibcompressor.hg
 
 giomm_files_posix_hg = \
-	desktopappinfo.hg		\
 	unixconnection.hg		\
 	unixcredentialsmessage.hg 	\
 	unixfdlist.hg 			\
@@ -660,10 +664,18 @@ giomm_files_posix_hg = \
 	unixoutputstream.hg 		\
 	unixsocketaddress.hg
 
-@HOST_WINDOWS_NATIVE_FALSE@giomm_files_arch_hg = $(giomm_files_posix_hg)
+giomm_files_not_mac = \
+	desktopappinfo.hg
+
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_FALSE@giomm_files_arch_hg = $(giomm_files_not_mac) $(giomm_files_posix_hg)
+@HOST_WINDOWS_NATIVE_FALSE@@OS_COCOA_TRUE@giomm_files_arch_hg = $(giomm_files_posix_hg)
 @HOST_WINDOWS_NATIVE_TRUE@giomm_files_arch_hg = 
 giomm_files_used_hg = $(giomm_files_any_hg) $(giomm_files_arch_hg)
-giomm_files_hg = $(giomm_files_any_hg) $(giomm_files_posix_hg)
+giomm_files_hg = \
+  $(giomm_files_any_hg) \
+  $(giomm_files_posix_hg) \
+  $(giomm_files_not_mac)
+
 giomm_files_ccg = $(giomm_files_hg:.hg=.ccg)
 giomm_files_built_cc = $(giomm_files_used_hg:.hg=.cc) wrap_init.cc
 giomm_files_built_h = $(giomm_files_used_hg:.hg=.h)

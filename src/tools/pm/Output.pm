@@ -13,8 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 package Output;
 use strict;
@@ -100,15 +99,11 @@ sub check_deprecation($$$$$$)
     print STDERR "Warning, $main::source: The $entity_name $entity_type" .
       " is deprecated in the .defs file, but not in _WRAP_$wrapper.\n";
   }
-  # Uncomment the following lines some time in the future, when most
-  # signal.defs files have been updated with deprecation information.
-  # generate_extra_defs.cc was updated to generate this info soon after
-  # glibmm 2.47.6.
-  #elsif (!$defs_deprecated && $wrap_deprecated)
-  #{
-  #  print STDERR "Warning, $main::source: The $entity_name $entity_type" .
-  #    " is deprecated in _WRAP_$wrapper, but not in the .defs file.\n";
-  #}
+  elsif (!$defs_deprecated && $wrap_deprecated)
+  {
+    print STDERR "Warning, $main::source: The $entity_name $entity_type" .
+      " is deprecated in _WRAP_$wrapper, but not in the .defs file.\n";
+  }
 }
 
 sub ifdef($$)
@@ -562,7 +557,6 @@ sub output_wrap_ctor($$$$$)
     }
 
     #Ctor Declaration:
-    #TODO: Add explicit.
     $self->append("  explicit " . $objCppfunc->get_declaration($arg_list) . "\n");
 
     my $errthrow = "";
@@ -636,7 +630,7 @@ sub output_wrap_sig_decl($$$$$$$$$$$$$$)
 
   # Create a merged Doxygen comment block for the signal from the looked up
   # docs (the block will also contain a prototype of the slot as an example).
-  my $doxycomment = $objCppfunc->get_refdoc_comment($documentation);
+  my $doxycomment = $objCppfunc->get_refdoc_comment($documentation, $$objCSignal{flags});
 
   # If there was already a previous doxygen comment, we want to merge this
   # one with the previous so it is one big comment. If
@@ -708,6 +702,7 @@ sub output_wrap_enum($$$$$$$$$$$$)
   $objEnum->beautify_values();
 
   my $elements = $objEnum->build_element_list($ref_subst_in, $ref_subst_out, "  ");
+  add_m4_quotes(\$elements);
 
   if(!$elements)
   {
@@ -794,6 +789,7 @@ sub output_wrap_gerror($$$$$$$$$$$$$)
   unshift(@$ref_subst_out, "");
 
   my $elements = $objEnum->build_element_list($ref_subst_in, $ref_subst_out, "    ");
+  add_m4_quotes(\$elements);
 
   # Get the enum documentation from the parsed docs.
   my $enum_docs = DocsParser::lookup_enum_documentation("$c_type", "Code",
@@ -819,7 +815,7 @@ sub output_wrap_gerror($$$$$$$$$$$$$)
     # $class_docs has got ` and ' replaced and m4 quotes added in WrapParser::
     # on_comment_doxygen() and extract_preceding_documentation().
     # Fix $extra_class_docs here. $deprecation_docs can contain any characters.
-    DocsParser::add_m4_quotes(\$extra_class_docs);
+    add_m4_quotes(\$extra_class_docs);
     $class_docs .= $extra_class_docs;
   }
 
@@ -853,22 +849,22 @@ sub output_wrap_any_property($$$$$$$$$$)
   my $proxy_suffix = "";
 
   # Read/Write:
-  if($objProperty->get_construct_only() eq 1)
+  if ($objProperty->get_construct_only())
   {
     # construct-only functions can be read, but not written.
     $proxy_suffix = "_ReadOnly";
 
-    if($objProperty->get_readable() ne 1)
+    if (!$objProperty->get_readable())
     {
       $self->output_wrap_failed($name, "attempt to wrap write-only and construct-only property.");
       return;
     }
   }
-  elsif($objProperty->get_readable() ne 1)
+  elsif (!$objProperty->get_readable())
   {
     $proxy_suffix = "_WriteOnly";
   }
-  elsif($objProperty->get_writable() ne 1)
+  elsif (!$objProperty->get_writable())
   {
     $proxy_suffix = "_ReadOnly";
   }
@@ -902,7 +898,6 @@ sub output_wrap_any_property($$$$$$$$$$)
     my $objdoc = $objProperty->get_docs("", "");
     if ($objdoc ne "")
     {
-      add_m4_quotes(\$objdoc);
       $documentation = "$objdoc\n   *\n   * $documentation";
     }
   }
@@ -910,10 +905,26 @@ sub output_wrap_any_property($$$$$$$$$$)
   {
     # Try to get the (usually short) documentation from the Property object.
     $documentation = $objProperty->get_docs($deprecation_docs, $newin);
+  }
+
+  # Default value, if available:
+  my $default_value = $objProperty->get_default_value();
+  if (defined($default_value))
+  {
+    DocsParser::convert_value_to_cpp(\$default_value);
+
+    # Add double quotes around a string value.
+    if ($objProperty->get_type() eq "GParamString")
+    {
+      $default_value = "\"" . $default_value . "\"";
+    }
+    $default_value = "Default value: $default_value";
+    add_m4_quotes(\$default_value);
     if ($documentation ne "")
     {
-      add_m4_quotes(\$documentation);
+      $documentation .= "\n   *\n   * ";
     }
+    $documentation .= $default_value;
   }
 
   #Declaration:

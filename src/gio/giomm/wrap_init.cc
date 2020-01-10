@@ -52,9 +52,9 @@
 #include "dbussubtreevtable.h"
 #include "dbusutils.h"
 #include "dbuswatchname.h"
-#ifndef G_OS_WIN32
+#if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 #include "desktopappinfo.h"
-#endif // ifndef G_OS_WIN32
+#endif // if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 #include "drive.h"
 #include "emblem.h"
 #include "emblemedicon.h"
@@ -186,9 +186,9 @@ GType g_dbus_message_get_type(void);
 GType g_dbus_method_invocation_get_type(void);
 GType g_dbus_proxy_get_type(void);
 GType g_dbus_server_get_type(void);
-#ifndef G_OS_WIN32
+#if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 GType g_desktop_app_info_get_type(void);
-#endif // ifndef G_OS_WIN32
+#endif // if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 GType g_emblem_get_type(void);
 GType g_emblemed_icon_get_type(void);
 GType g_file_enumerator_get_type(void);
@@ -302,9 +302,9 @@ namespace DBus { class Message_Class { public: static Glib::ObjectBase* wrap_new
 namespace DBus { class MethodInvocation_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class Proxy_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
 namespace DBus { class Server_Class { public: static Glib::ObjectBase* wrap_new(GObject*); }; }
-#ifndef G_OS_WIN32
+#if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 class DesktopAppInfo_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
-#endif // ifndef G_OS_WIN32
+#endif // if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
 class Emblem_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class EmblemedIcon_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
 class FileEnumerator_Class { public: static Glib::ObjectBase* wrap_new(GObject*); };
@@ -429,9 +429,9 @@ void wrap_init()
   Glib::wrap_register(g_dbus_method_invocation_get_type(), &DBus::MethodInvocation_Class::wrap_new);
   Glib::wrap_register(g_dbus_proxy_get_type(), &DBus::Proxy_Class::wrap_new);
   Glib::wrap_register(g_dbus_server_get_type(), &DBus::Server_Class::wrap_new);
-#ifndef G_OS_WIN32
+#if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
   Glib::wrap_register(g_desktop_app_info_get_type(), &DesktopAppInfo_Class::wrap_new);
-#endif // ifndef G_OS_WIN32
+#endif // if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
   Glib::wrap_register(g_emblem_get_type(), &Emblem_Class::wrap_new);
   Glib::wrap_register(g_emblemed_icon_get_type(), &EmblemedIcon_Class::wrap_new);
   Glib::wrap_register(g_file_enumerator_get_type(), &FileEnumerator_Class::wrap_new);
@@ -533,9 +533,9 @@ void wrap_init()
   DBus::MethodInvocation::get_type();
   DBus::Proxy::get_type();
   DBus::Server::get_type();
-#ifndef G_OS_WIN32
+#if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
   DesktopAppInfo::get_type();
-#endif // ifndef G_OS_WIN32
+#endif // if !defined(G_OS_WIN32) && !defined(GLIBMM_OS_COCOA)
   Emblem::get_type();
   EmblemedIcon::get_type();
   FileEnumerator::get_type();

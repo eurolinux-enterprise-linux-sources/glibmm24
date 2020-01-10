@@ -11,8 +11,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef GLIBMM_CAN_USE_THREAD_LOCAL
@@ -198,11 +197,11 @@ DispatchNotifier::DispatchNotifier(const Glib::RefPtr<MainContext>& context)
 
   try
   {
-#ifdef G_OS_WIN32
-    const int fd = GPOINTER_TO_INT(fd_receiver_);
-#else
-    const int fd = fd_receiver_;
-#endif
+    // PollFD::fd_t is the type of GPollFD::fd.
+    // In Windows, it has the same size as HANDLE, but it's not guaranteed to be the same type.
+    // In Unix, a file descriptor is an int.
+    const auto fd = (PollFD::fd_t)fd_receiver_;
+
     // The following code is equivalent to
     // context_->signal_io().connect(
     //   sigc::mem_fun(*this, &DispatchNotifier::pipe_io_handler), fd, Glib::IO_IN);
